@@ -1,7 +1,31 @@
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Orbitersdk/samples/ProjectApollo)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
+
+
+
+####### Template #######
+#add_library(ASTP SHARED
+#    ${SRC_DIR}/
+#)
+
+#target_include_directories(ASTP PUBLIC
+#	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+#)
+
+#set_target_properties(ASTP
+#	PROPERTIES
+#	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+#	OUTPUT_NAME ASTP
+#)
+
+#install(TARGETS ASTP
+#	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+#)
+
+
+####### ApolloRTCCMFD #######
+
 add_library(ApolloRTCCMFD SHARED
-    ${SRC_DIR}/
     ${SRC_DIR}/src_launch/rtcc.cpp
     ${SRC_DIR}/src_rtccmfd/ApollomfdButtons.cpp
     ${SRC_DIR}/src_rtccmfd/ApolloRTCCMFD.cpp
@@ -48,6 +72,29 @@ set_target_properties(ApolloRTCCMFD
 )
 
 install(TARGETS ApolloRTCCMFD
+#	RUNTIME
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### ASTP #######
+add_library(ASTP SHARED
+    ${SRC_DIR}/src_saturn/ASTP.cpp
+    ${SRC_DIR}/src_sys/payload.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+)
+
+target_include_directories(ASTP PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(ASTP
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME ASTP
+)
+
+install(TARGETS ASTP
 #	RUNTIME
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )

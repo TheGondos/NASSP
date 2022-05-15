@@ -37,7 +37,7 @@
 #include "connector.h"
 #include "sivbsystems.h"
 #include "sivb.h"
-#include "astp.h"
+#include "ASTP.h"
 
 static int refcount = 0;
 static MESHHANDLE hastp;
