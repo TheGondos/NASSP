@@ -135,7 +135,7 @@ void FloatBag::clbkPostStep (double simt, double simdt, double mjd) {
 	if (extendBeacon) {
 		if (procBeacon < 1) {
 			procBeacon += simdt / 5;
-			procBeacon  = min(procBeacon, 1);
+			procBeacon  = std::min(procBeacon, 1.0);
 			SetAnimation(animBeacon, procBeacon);
 		} 
 	}

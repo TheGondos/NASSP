@@ -267,10 +267,10 @@ void Crawler::clbkPreStep(double simt, double simdt, double mjd) {
 	} else return;
 
 	if ((keyLeft && viewPos == VIEWPOS_FRONTCABIN) || (keyRight && viewPos == VIEWPOS_REARCABIN)) {
-		wheeldeflect = max(-1,wheeldeflect - (0.5 * simdt * (pow(2.0, log10(timeW))) / timeW));
+		wheeldeflect = std::max(-1.0,wheeldeflect - (0.5 * simdt * (pow(2.0, log10(timeW))) / timeW));
 	
 	} else if ((keyRight && viewPos == VIEWPOS_FRONTCABIN) || (keyLeft && viewPos == VIEWPOS_REARCABIN)) {
-		wheeldeflect = min(1, wheeldeflect + (0.5 * simdt * (pow(2.0, log10(timeW))) / timeW));
+		wheeldeflect = std::min(1.0, wheeldeflect + (0.5 * simdt * (pow(2.0, log10(timeW))) / timeW));
 
 	} else if (keyCenter) {
 		wheeldeflect = 0;
@@ -360,13 +360,13 @@ void Crawler::DoFirstTimestep() {
 	oapiGetHeading(GetHandle(), &targetHeading);
 	
 	// Turn off pretty much everything that Orbitersound does by default.
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, FALSE);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, FALSE);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, FALSE);
-	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, FALSE);
-	soundlib.SoundOptionOnOff(PLAYRADIOATC, FALSE);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, FALSE);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, FALSE);
+	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
+	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
+	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
+	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, false);
+	soundlib.SoundOptionOnOff(PLAYRADIOATC, false);
+	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
+	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
 
 	if (!standalone) {
 		if (LVName[0])
@@ -536,7 +536,7 @@ int Crawler::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int Crawler::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int Crawler::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (!firstTimestepDone) return 0;
 
@@ -744,7 +744,7 @@ void Crawler::SetView(int viewpos) {
 	}	
 }
 
-void Crawler::SetMeshesVisibility(WORD mode) {
+void Crawler::SetMeshesVisibility(uint16_t mode) {
 
 	SetMeshVisibilityMode(meshidxCrawler, mode);
 	SetMeshVisibilityMode(meshidxTruck1, mode);

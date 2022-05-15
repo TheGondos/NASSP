@@ -2858,7 +2858,7 @@ void Saturn::SetStage(int s)
 
 	if (stage >= CSM_LEM_STAGE) {
 
-		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, TRUE);
+		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, true);
 		ClearTLISounds();
 
 		iuCommandConnector.Disconnect();
@@ -4091,17 +4091,17 @@ void Saturn::GenericLoadStateSetup()
 	// Disable cabin fans.
 	//
 
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, FALSE);
+	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
 
 	// Disable Rolling, landing, speedbrake, crash sound. This causes issues in Orbiter 2016.
-	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, FALSE);
+	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, false);
 
 	//
 	// We do our own countdown, so ignore the standard one.
 	//
 
 	if (!UseATC)
-		soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, FALSE);
+		soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
 
 	//
 	// Load mission-based sound files. Some of these are just being
@@ -4147,11 +4147,11 @@ void Saturn::GenericLoadStateSetup()
 
 	if (stage > CSM_LEM_STAGE || stage < PRELAUNCH_STAGE)
 	{
-		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, FALSE);
+		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, false);
 	}
 	else
 	{
-		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, TRUE);
+		soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, true);
 	}
 
 	if (stage < LAUNCH_STAGE_TWO) {
@@ -4165,7 +4165,7 @@ void Saturn::GenericLoadStateSetup()
 		//
 
 		if (!UseATC)
-			soundlib.SoundOptionOnOff(PLAYRADIOATC, FALSE);
+			soundlib.SoundOptionOnOff(PLAYRADIOATC, false);
 
 		soundlib.LoadMissionSound(S2ShutS, SII_CUTOFF_SOUND, SIISHUTDOWN_SOUND);
 		soundlib.LoadMissionSound(S4CutS, GO_FOR_ORBIT_SOUND, SIVBSHUTDOWN_SOUND);
@@ -4222,13 +4222,13 @@ void Saturn::GenericLoadStateSetup()
 	// Turn off the timer display on launch.
 	//
 	
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, FALSE);
+	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
 
 	//
 	// Turn off docking sound
 	//
 	
-	soundlib.SoundOptionOnOff(PLAYDOCKINGSOUND, FALSE);
+	soundlib.SoundOptionOnOff(PLAYDOCKINGSOUND, false);
 
 	//
 	// Check Saturn devices.

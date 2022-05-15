@@ -410,7 +410,7 @@ void SoundLib::LoadVesselSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 	s.SetSoundData(DoLoadSound(SoundPath, extended));
 }
 
-void SoundLib::SoundOptionOnOff(int option,BOOL status)
+void SoundLib::SoundOptionOnOff(int option, bool status)
 
 {
 	::SoundOptionOnOff(SoundlibId, option, status);
@@ -682,7 +682,7 @@ bool FadeInOutSound::play(int volume /*= 255*/)
 	{
 		freq = hasFrequencyShift()
 			? fMin + (currentVolume * (fMax - fMin) / 255)
-			: NULL;
+			: 0;
 		Sound::play(LOOP, currentVolume, freq);
 	}
 	else

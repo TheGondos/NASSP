@@ -120,3 +120,73 @@ set_target_properties(CMChute
 install(TARGETS CMChute
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+
+####### Crawler #######
+add_library(Crawler SHARED
+    ${SRC_DIR}/src_launch/Crawler.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(Crawler PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+)
+
+set_target_properties(Crawler
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Crawler
+)
+
+install(TARGETS Crawler
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### EVA #######
+add_library(EVA SHARED
+${SRC_DIR}/src_csm/eva.cpp
+${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(EVA PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+)
+
+set_target_properties(EVA
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME EVA
+)
+
+install(TARGETS EVA
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### FloatBag #######
+add_library(FloatBag SHARED
+    ${SRC_DIR}/src_landing/FloatBag.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(FloatBag PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(FloatBag
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME FloatBag
+)
+
+install(TARGETS FloatBag
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)

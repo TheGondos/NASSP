@@ -35,7 +35,7 @@ public:
 	void clbkLoadStateEx(FILEHANDLE scn, void *status);
 	void clbkSaveState(FILEHANDLE scn);
 	int clbkConsumeDirectKey(char *kstate);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 	void clbkPreStep (double simt, double simdt, double mjd);
 	void clbkPostStep(double simt, double simdt, double mjd);
 	void clbkVisualCreated(VISHANDLE vis, int refcount);
@@ -93,7 +93,7 @@ protected:
 	void SetView();
 	void SetView(int viewpos);
 	void SlowIfDesired(double timeAcceleration);
-	void SetMeshesVisibility(WORD mode);
+	void SetMeshesVisibility(uint16_t mode);
 
 	VECTOR3 panelMeshoffset;
     int panelMeshidx;

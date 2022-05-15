@@ -34,7 +34,7 @@ public:
 	void clbkSetClassCaps(FILEHANDLE cfg);
 	void clbkLoadStateEx(FILEHANDLE scn, void *status);
 	void clbkSaveState(FILEHANDLE scn);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 	int clbkConsumeDirectKey(char *kstate);
 	void clbkPreStep(double simt, double simdt, double mjd);
 	void clbkPostStep(double simt, double simdt, double mjd);
@@ -96,5 +96,5 @@ protected:
 	void DefineCraneAnimation(MGROUP_TRANSFORM *mgroup[], double pickupHeight, double releaseHeight);
 	void DefineSaturnAnimation(MGROUP_TRANSFORM *mgroup[], int meshindex, double pickupHeight, double releaseHeight);
 	void DefineCrane2Animation(MGROUP_TRANSFORM *mgroup[], double pickupHeight, double length);
-	void SetSaturnMeshVisibilityMode(int buildStatus, WORD mode);
+	void SetSaturnMeshVisibilityMode(int buildStatus, uint16_t mode);
 };

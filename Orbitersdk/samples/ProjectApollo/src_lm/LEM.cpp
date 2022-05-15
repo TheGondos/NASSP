@@ -660,15 +660,15 @@ void LEM::Init()
 	// Initial sound setup
 	//
 
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, FALSE);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, FALSE);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, FALSE);
+	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
+	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
+	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
 	/// \todo Disabled for now because of the LEVA and the descent stage vessel
 	///		  Enable before CSM docking
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, FALSE);
+	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
 
 	// Disable Rolling, landing, speedbrake, crash sound. This causes issues in Orbiter 2016.
-	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, FALSE);
+	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, false);
 
 	strncpy(AudioLanguage, "English", 64);
 	soundlib.SetLanguage(AudioLanguage);

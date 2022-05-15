@@ -51,11 +51,11 @@ S1C::S1C (OBJHANDLE hObj, int fmodel) : VESSEL2(hObj, fmodel)
 	/// it's disabled for the moment. 
 	
 	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, FALSE);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, FALSE);
-	soundlib.SoundOptionOnOff(PLAYRADIOATC, FALSE);
-	soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, FALSE);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, FALSE);
+	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
+	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
+	soundlib.SoundOptionOnOff(PLAYRADIOATC, false);
+	soundlib.SoundOptionOnOff(PLAYWHENATTITUDEMODECHANGE, false);
+	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
 #endif
 }
 

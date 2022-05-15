@@ -175,7 +175,7 @@ public:
 	/// \param option Orbitersound option number.
 	/// \param onoff Turn Orbitersound option on or off.
 	///
-	void SoundOptionOnOff(int option, int onoff);
+	void SoundOptionOnOff(int option, bool onoff);
 	void SetLanguage(char *language);
 	void SetVolume(int type, int percent);
 	int GetSoundVolume(int flags, int volume);

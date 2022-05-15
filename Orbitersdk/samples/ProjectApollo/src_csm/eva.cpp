@@ -32,6 +32,7 @@
 #include "eva.h"
 #include "tracer.h"
 #include "math.h"
+#include <cstring>
 
 //
 // Set the file name for the tracer code.
