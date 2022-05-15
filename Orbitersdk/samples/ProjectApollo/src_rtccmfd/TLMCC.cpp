@@ -379,7 +379,7 @@ void TLMCCProcessor::Option2()
 
 	double dt = -OrbMech::period(outarray.sv_lls1.R, outarray.sv_lls1.V, mu_M)*(double)(MEDQuantities.Revs_circ + 1);
 	EphemerisData sv_circ;
-	INT ITS;
+	int ITS;
 	pRTCC->PMMCEN(outarray.sv_lls1, 0.0, 10.0*24.0*3600.0, 1, dt, 1.0, sv_circ, ITS);
 	dt = OrbMech::time_radius(sv_circ.R, sv_circ.V, DataTable.rad_lls+MEDQuantities.H_T_circ, 1.0, mu_M);
 	pRTCC->PMMCEN(sv_circ, 0.0, 10.0*24.0*3600.0, 1, dt, 1.0, sv_circ, ITS);
@@ -481,7 +481,8 @@ TLMCC_Option_2_E:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	outtab.GMT_pc1 = outtab.GMT_pc2 = outarray.GMT_pl;
@@ -560,7 +561,7 @@ void TLMCCProcessor::Option3()
 	double lat_TEI, lng_TEI, GMT_TEI, dlng, dt;
 	EphemerisData sv_TEI1, sv_TEI2;
 	VECTOR3 R_TEI_EMP, V_TEI_EMP;
-	INT ITS;
+	int ITS;
 
 	GMT_TEI = outarray.GMT_nd + DataTable.T_lo;
 	pRTCC->PMMCEN(outarray.sv_lls2, 0.0, 10.0*24.0*3600.0, 1, GMT_TEI - outarray.sv_lls2.GMT, 1.0, sv_TEI1, ITS);
@@ -647,7 +648,8 @@ TLMCC_Option_3_E:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	outtab.GMT_pc1 = outtab.GMT_pc2 = outarray.GMT_pl;
@@ -866,7 +868,8 @@ TLMCC_Option_4_D:
 	S_apo = S2C;
 	S_apo.V = S2C.V - DV_temp;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 	outarray.LOIOffset = S3I.V - S3C.V;
 
@@ -879,7 +882,8 @@ TLMCC_Option_4_D:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	//Step 6
@@ -1016,7 +1020,7 @@ void TLMCCProcessor::Option5()
 	double lat_TEI, lng_TEI, GMT_TEI, dlng, dt;
 	EphemerisData sv_TEI1, sv_TEI2;
 	VECTOR3 R_TEI_EMP, V_TEI_EMP;
-	INT ITS;
+	int ITS;
 
 	GMT_TEI = outarray.GMT_nd + DataTable.T_lo;
 	pRTCC->PMMCEN(outarray.sv_lls2, 0.0, 10.0*24.0*3600.0, 1, GMT_TEI - outarray.sv_lls2.GMT, 1.0, sv_TEI1, ITS);
@@ -1090,7 +1094,8 @@ TLMCC_Option_5_D:
 	S_apo = S2C;
 	S_apo.V = S2C.V - DV_temp;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 	outarray.LOIOffset = S3I.V - S3C.V;
 
@@ -1103,7 +1108,8 @@ TLMCC_Option_5_D:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	//Step 6
@@ -1406,7 +1412,8 @@ TLMCC_Option_9A_C:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	//Step 9
@@ -1542,7 +1549,8 @@ TLMCC_Option_9B_C:
 	S2C.V = VF;
 	DV_temp = S2C.V - S_apo.V;
 	RVIO(true, S_apo.R, S1.V, r, v1, theta, phi, gamma1, psi1);
-	RVIO(true, S1.R, S1.V + DV_temp, r, v2, theta, phi, gamma2, psi2);
+	VECTOR3 Vtmp = S1.V + DV_temp;
+	RVIO(true, S1.R, Vtmp, r, v2, theta, phi, gamma2, psi2);
 	NewGuess = _V((v2 - v1)*3600.0 / R_E, gamma2 - gamma1, psi2 - psi1);
 
 	//Step 8
@@ -2738,7 +2746,7 @@ bool TLMCCProcessor::IntegratedTrajectoryComputer(std::vector<double> &var, void
 	EphemerisData sv0, sv0_apo, sv_nd;
 	VECTOR3 H_pg;
 	double dv_mcc, dgamma_mcc, dpsi_mcc, mfm0, R_nd, lat_nd, lng_nd, inc_pg, dt_node;
-	INT ITS;
+	int ITS;
 
 	//Store in array
 	vars->dv_mcc = var[0];
@@ -2884,6 +2892,9 @@ bool TLMCCProcessor::ConicMissionComputer(std::vector<double> &var, void *varPtr
 	double dv_mcc, dgamma_mcc, dpsi_mcc, dv_tei;
 	double mfm0, beta, GMT_patch, ainv, gamma;
 	double ainv_pl, a, e, i, n, P, eta, dpsi_lopc, DV_R;
+	VECTOR3 Rtemp;
+	VECTOR3 Vtemp;
+	double DV_DOI;
 
 	//Store in array
 	vars->dv_mcc = var[0];
@@ -3066,8 +3077,8 @@ TLMCC_Conic_A1:
 		}
 	}
 
-	VECTOR3 Rtemp = vars->SGSLOI.R;
-	VECTOR3 Vtemp = vars->SGSLOI.V;
+	Rtemp = vars->SGSLOI.R;
+	Vtemp = vars->SGSLOI.V;
 	LIBRAT(Rtemp, Vtemp, vars->GMT_nd, 6);
 	U_DS = unit(crossp(Rtemp, Vtemp));
 
@@ -3087,7 +3098,7 @@ TLMCC_Conic_A1:
 	outarray.M_loi = MCOMP(DV_LOI, MEDQuantities.Config, MEDQuantities.useSPS, outarray.M_mcc);
 
 	gamma = vars->gamma_L - vars->gamma1;
-	double DV_DOI = sqrt(vars->V2*vars->V2 + vars->V_L * vars->V_L - 2.0*vars->V_L*vars->V2*cos(gamma));
+	DV_DOI = sqrt(vars->V2*vars->V2 + vars->V_L * vars->V_L - 2.0*vars->V_L*vars->V2*cos(gamma));
 	outarray.M_cir = MCOMP(DV_DOI, MEDQuantities.Config, MEDQuantities.useSPS, outarray.M_loi);
 
 	LIBRAT(vars->sv_lls1.R, vars->sv_lls1.V, vars->sv_lls1.GMT, 5);
@@ -3425,7 +3436,7 @@ bool TLMCCProcessor::RBETA(VECTOR3 R0, VECTOR3 V0, double r, int Q, double mu, d
 	{
 		double cos_E0 = 1.0 / e * (1.0 - r0 * ainv);
 		double cos_E = 1.0 / e * (1.0 - r * ainv);
-		temp = max(0.0, 1.0 - cos_E0 * cos_E0);
+		temp = std::max(0.0, 1.0 - cos_E0 * cos_E0);
 		if (temp < 0)
 		{
 			return true;

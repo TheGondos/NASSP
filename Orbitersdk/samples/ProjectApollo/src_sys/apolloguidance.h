@@ -37,7 +37,7 @@ class PanelSDK;
 #include <bitset>
 #include "powersource.h"
 
-#include "control.h"
+#include "Control.h"
 #include "yaAGC/agc_engine.h"
 #include "thread.h"
 #include <thread>
@@ -265,7 +265,7 @@ public:
 	///
 	/// \brief Triggers Virtual AGC core dump
 	///
-	void VirtualAGCCoreDump(char *fileName);
+	void VirtualAGCCoreDump(const char *fileName);
 
 	//
 	// Generally useful setup.

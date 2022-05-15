@@ -25,7 +25,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -2859,7 +2859,7 @@ void OrdealRotationalSwitch::DrawSwitch(SURFHANDLE drawSurface) {
 		sprintf(label, "%d", value);
 
 		HDC hDC = oapiGetDC(drawSurface);
-		HFONT font = CreateFont(22, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+		oapi::Font *font = CreateFont(22, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
 		SelectObject(hDC, font);
 		SetTextColor(hDC, RGB(255, 255, 255));
 		SetTextAlign(hDC, TA_CENTER);
@@ -3864,7 +3864,7 @@ RoundMeter::~RoundMeter()
 		delete pswitchrot;
 }
 
-void RoundMeter::Init(HPEN p0, HPEN p1, SwitchRow &row)
+void RoundMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row)
 
 {
 	MeterSwitch::Init(row);
@@ -3939,7 +3939,7 @@ void ElectricMeter::SetSurface(SURFHANDLE srf, int x, int y)
 	FrameSurface = srf;
 }
 
-void ElectricMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, e_object *dcindicatorswitch)
+void ElectricMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, e_object *dcindicatorswitch)
 
 {
 	RoundMeter::Init(p0, p1, row);

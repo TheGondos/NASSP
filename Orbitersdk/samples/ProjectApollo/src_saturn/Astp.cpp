@@ -22,13 +22,13 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 
 #pragma include_alias( <fstream.h>, <fstream> )
 
 #define ORBITER_MODULE
 
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include "stdio.h"
 
 #include "PanelSDK/PanelSDK.h"
@@ -39,19 +39,15 @@
 #include "sivb.h"
 #include "astp.h"
 
-HINSTANCE g_hDLL;
-
 static int refcount = 0;
 static MESHHANDLE hastp;
 
-DLLCLBK void InitModule(HINSTANCE hModule)
+DLLCLBK void InitModule(oapi::DynamicModule *hModule)
 {
-	g_hDLL = hModule;
-
 	hastp = oapiLoadMeshGlobal("ProjectApollo/nASTP2");
 }
 
-DLLCLBK void ExitModule(HINSTANCE hModule)
+DLLCLBK void ExitModule(oapi::DynamicModule *hModule)
 {
 
 }

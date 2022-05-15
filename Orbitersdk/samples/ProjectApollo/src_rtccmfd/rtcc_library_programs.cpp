@@ -188,6 +188,7 @@ int RTCC::ELNMVC(double &TL, double TR, int L, unsigned &NumVec, int &TUP)
 	//64 = On if requested ephemeris is not being carried
 	//128 = On if requested interval does not overlap ephemeris span
 	int err = 0;
+	bool firstpass;
 
 	//Obtain pointer to ephemeris table name
 	OrbitEphemerisTable *tab;
@@ -241,7 +242,7 @@ int RTCC::ELNMVC(double &TL, double TR, int L, unsigned &NumVec, int &TUP)
 	//Set up counters and flags to find location of TL in ephemeris table
 	double TREQ, T_Mid;
 	unsigned LB, UB, Mid;
-	bool firstpass = true;
+	firstpass = true;
 	LB = 0;
 	UB = tab->EPHEM.table.size() - 1;
 	TREQ = TL;
@@ -773,6 +774,7 @@ void RTCC::ELVCTR(const ELVCTRInputTable &in, ELVCTROutputTable2 &out, Ephemeris
 		double TS = EPH.Header.TL;
 		double TE = EPH.Header.TR;
 		unsigned J = 0;
+		unsigned E;
 		for (J = 0;J < mantimes.Table.size();J++)
 		{
 			//Equal to maneuver initiate time, go directly to 5A
@@ -822,7 +824,7 @@ void RTCC::ELVCTR(const ELVCTRInputTable &in, ELVCTROutputTable2 &out, Ephemeris
 		goto RTCC_ELVCTR_H;
 	RTCC_ELVCTR_3:
 		ORER = 1;
-		unsigned E = 0;
+		E = 0;
 		while (EPH.table[E].GMT <= in.GMT)
 		{
 			//Direct hit
@@ -1660,6 +1662,7 @@ void RTCC::PLAWDT(const PLAWDTInput &in, PLAWDTOutput &out)
 	unsigned int J, N, K, BLK;
 
 	MissionPlanTable *mpt;
+	bool tli;
 
 	//No error yet...
 	out.Err = 0;
@@ -1719,7 +1722,7 @@ void RTCC::PLAWDT(const PLAWDTInput &in, PLAWDTOutput &out)
 		out.KFactor = mpt->KFactor;
 	}
 	//Search for TLI
-	bool tli = false;
+	tli = false;
 	unsigned tlinum;
 	for (unsigned i = 0;i < mpt->ManeuverNum;i++)
 	{
@@ -1877,7 +1880,7 @@ RTCC_PLAWDT_M_5:
 	if (CC[RTCC_CONFIG_C])
 	{
 		out.ConfigWeight = out.ConfigWeight + out.CSMWeight;
-		out.ConfigArea = max(out.ConfigArea, out.CSMArea);
+		out.ConfigArea = std::max(out.ConfigArea, out.CSMArea);
 	}
 	if (CC[RTCC_CONFIG_S] == false)
 	{
@@ -1948,12 +1951,12 @@ RTCC_PLAWDT_8_WDOT:
 	}
 RTCC_PLAWDT_8_Y:
 	out.ConfigWeight = out.ConfigWeight + out.SIVBWeight;
-	out.ConfigArea = max(out.ConfigArea, out.SIVBArea);
+	out.ConfigArea = std::max(out.ConfigArea, out.SIVBArea);
 RTCC_PLAWDT_8_Z:
 	if (CC[RTCC_CONFIG_A])
 	{
 		out.ConfigWeight = out.ConfigWeight + out.LMAscWeight;
-		out.ConfigArea = max(out.ConfigArea, out.LMAscArea);
+		out.ConfigArea = std::max(out.ConfigArea, out.LMAscArea);
 	}
 	else
 	{
@@ -1963,7 +1966,7 @@ RTCC_PLAWDT_8_Z:
 	if (CC[RTCC_CONFIG_D])
 	{
 		out.ConfigWeight = out.ConfigWeight + out.LMDscWeight;
-		out.ConfigArea = max(out.ConfigArea, out.LMDscArea);
+		out.ConfigArea = std::max(out.ConfigArea, out.LMDscArea);
 	}
 	else
 	{
@@ -1984,6 +1987,9 @@ bool RTCC::PLEFEM(int IND, double HOUR, int YEAR, VECTOR3 *R_EM, VECTOR3 *V_EM, 
 	//IND: 1 = Sun and Moon ephemerides. 2 = all data. 3 = all Moon data. 4 = Moon ephemerides. 5 = libration matrix only
 	double T, C[6];
 	int i, j, k;
+	
+	double x[18];
+	bool des[4] = {false, false, false, false};
 
 	if (IND > 0)
 	{
@@ -2007,9 +2013,6 @@ bool RTCC::PLEFEM(int IND, double HOUR, int YEAR, VECTOR3 *R_EM, VECTOR3 *V_EM, 
 	j = i - 2;
 	//Is time contained in Sun/Moon data array?
 	if (j < 0 || j > 65) goto RTCC_PLEFEM_A;
-
-	double x[18];
-	bool des[4] = {false, false, false, false};
 
 	//Which data to get?
 	switch (abs(IND))

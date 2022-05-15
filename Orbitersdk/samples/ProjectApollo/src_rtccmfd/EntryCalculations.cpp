@@ -89,7 +89,7 @@ namespace EntryCalculations
 				K2 = 2.4 + 0.000285*(vefps - 33625.0);
 			}
 		}
-		phie = min(2000.0, K1 / (abs(abs(gammaedeg) - K2)));
+		phie = std::min(2000.0, K1 / (abs(abs(gammaedeg) - K2)));
 		if (vefps < 26000.0)
 		{
 			Te = 8660.0 * phie / vefps;
@@ -483,7 +483,7 @@ namespace EntryCalculations
 			ecosE_1 = 1.0 - r1 / a_m;
 			//Calculate eccentric anomaly
 			E_1 = atan2(esinE_1, ecosE_1);
-			//E_1 between 0° and 360°
+			//E_1 between 0ï¿½ and 360ï¿½
 			if (E_1 < 0)
 			{
 				E_1 += PI2;
@@ -1164,7 +1164,7 @@ bool RetrofirePlanning::RMSDBMP(EphemerisData sv, double GETI, double lat_T, dou
 
 	//Save data in class
 	sv0 = sv;
-	//If latitude less than -90° don't iterate on it
+	//If latitude less than -90ï¿½ don't iterate on it
 	if (lat_T < -PI05)
 	{
 		pRTCC->RZJCTTC.Type = 2;
@@ -4814,7 +4814,7 @@ bool RTEEarth::EntryIter()
 			dx = (x - xapo) / (theta_long - dlngapo)*dlng;
 			if (length(V2 - sv_ig.V) > dv_max && dx < 0)
 			{
-				dx = 0.5*max(1.0, revcor);
+				dx = 0.5*std::max(1, revcor);
 				revcor++;
 			}
 			else if (abs(dx) > dxmax)
@@ -5100,6 +5100,7 @@ void ConicRTEEarthNew::INITAL()
 	double SAZ, CAZ, T1, T2, A_m, beta_r, p, R_a, A, DV, e, V_a, beta_a, T_1i, T_s, delta_0, Am1, Am2, beta_r_apo, A_Z;
 	double theta_mu, theta_md, K1, K2, U_rmin, T_apo, DNDT, I_0, T, delta, U_r, VR_a, VT_a, eta_ar;
 	int QA, FLAG;
+	double eps = 0.005; //TBD
 
 	NOSOLN = 0;
 	STORE = false;
@@ -5248,7 +5249,7 @@ RTEEarth_INITAL_B:
 		goto RTEEarth_INITAL_End;
 	}
 
-	TSW6 = max(2.0, T_min);
+	TSW6 = std::max(2.0, T_min);
 	T = TSW6;
 	VELCOM(TSW6, r0, beta_r, DT, p, QA, SW6, U_r, VR_a, VT_a, beta_a, eta_ar, DV);
 	if (T > T_apo)
@@ -5289,7 +5290,7 @@ RTEEarth_INITAL_C:
 
 	DNDT = PRTIAL(FLAG, r0, U_rmax);
 	delta = asin(cos(eta_ar + eta_rz_avg))*dotp(R0, _V(0, 0, 1)) + sin(eta_ar + eta_rz_avg)*dotp(R2, _V(0, 0, 1));
-	double eps = 0.005; //TBD
+	
 	if (DNDT > w_E*pow(cos(delta), 2) / cos(I_0) + eps)
 	{
 		T1 = TSW6;
@@ -5352,9 +5353,9 @@ bool ConicRTEEarthNew::RUBR(int QA, int QE, double R_a, double U_0, double U_r, 
 	V_a = sqrt(mu*(U_r*U_r / mu + 2.0 / R_a - 2.0 / RR));
 	//Sine of postabort flight-path angle
 	sin_beta_a = U_r * RR / V_a / R_a * sin(beta_r);
-	//Postabort flight-path angle (-90° to 90°)
+	//Postabort flight-path angle (-90ï¿½ to 90ï¿½)
 	beta_a = asin(sin_beta_a);
-	//If no apogee passage is desired, make angle 90° to 270°. MSC memo was wrong, probably.
+	//If no apogee passage is desired, make angle 90ï¿½ to 270ï¿½. MSC memo was wrong, probably.
 	if (QA == 0)
 	{
 		beta_a = PI - beta_a;
@@ -5451,9 +5452,9 @@ void ConicRTEEarthNew::VELCOM(double T, double R_a, double &beta_r, double &dt, 
 	} while (abs(beta_r - beta_rp) >= 1e-5);
 	//Calculate velocity after abort
 	V_a = sqrt(U_r*U_r + 2.0*mu * (1.0 / R_a - 1.0 / RR));
-	//Flight path angle after abort (0 to 90°)
+	//Flight path angle after abort (0 to 90ï¿½)
 	beta_a = asin(RR*U_r*sin(beta_r) / (R_a*V_a));
-	//Full range (0° to 180°)
+	//Full range (0ï¿½ to 180ï¿½)
 	beta_a = abs(beta_a + PI * ((double)QA - 1.0));
 	C0 = R_a / RR * OrbMech::cot(beta_r);
 	C1 = (OrbMech::cot(beta_a) + C0) / (1.0 - R_a / RR);
@@ -5580,7 +5581,7 @@ ConicRTE_FCUA_B:
 			}
 			else
 			{
-				U_rmax_apo = min(U_rmax, 36323.0*0.3048);
+				U_rmax_apo = std::min(U_rmax, 36323.0*0.3048);
 			}
 			beta_r = EntryCalculations::ReentryTargetLine(U_rmax_apo*KMPER*1000.0 / SCPHR, false);
 			RUBR(QA, 0, r_a, u0, U_r, beta_r, A, DV, e, T, V_a, beta_a);
@@ -7235,7 +7236,7 @@ bool RTEMoon::MCUA(double &i_r, double &INTER, double &dv)
 						continue;
 					}
 				}
-				TOL = min(0.017, 0.5*Di_r);
+				TOL = std::min(0.017, 0.5*Di_r);
 				if (LOOP > 20 || abs(i_r) < 0.001 || abs(dv - DV_est1) < 0.1*0.3048 || (ISUB != 0 && dv > DVTAB.data[ISUB - 1]))
 				{
 					break;
@@ -7340,8 +7341,8 @@ bool RTEMoon::MCUA(double &i_r, double &INTER, double &dv)
 			if (Di_r > 0.017453293)
 			{
 				IRSCAN = 1;
-				i_rmin = max(i_rmins, SSi_r);
-				i_rmax = min(i_rmax, i_rmin + 2.0*Di_r);
+				i_rmin = std::max(i_rmins, SSi_r);
+				i_rmax = std::min(i_rmax, i_rmin + 2.0*Di_r);
 			}
 		}
 

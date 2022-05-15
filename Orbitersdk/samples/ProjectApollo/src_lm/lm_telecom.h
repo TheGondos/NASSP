@@ -248,11 +248,8 @@ protected:
 	LEM *lem;					   // Ship we're installed in
 	h_HeatLoad *PCMHeat;			//PCM Heat Load
 
-	// Winsock2
-	WSADATA wsaData;				// Winsock subsystem data
-	SOCKET m_socket;				// TCP socket
-	sockaddr_in service;			// SOCKADDR_IN
-	SOCKET AcceptSocket;			// Accept Socket
+	SOCKETHANDLE m_socket;				// TCP socket
+	SOCKETHANDLE AcceptSocket;			// Accept Socket
 	int conn_state;                 // Connection State
 	int uplink_state;               // Uplink State
 	void perform_io(double simt);   // Get data from here to there
@@ -279,7 +276,7 @@ protected:
 	unsigned char rx_data[1024];    // Characters recieved
 	unsigned char mcc_data[2048];	// MCC-provided incoming data
 
-	bool registerSocket(SOCKET sock);
+	//bool registerSocket(SOCKET sock);
 
 	friend class MCC;				// Allow MCC to write directly to buffer
 };

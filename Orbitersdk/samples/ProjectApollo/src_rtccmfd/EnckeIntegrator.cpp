@@ -110,7 +110,7 @@ void EnckeFreeFlightIntegrator::Propagate(EMMENIInputTable &in)
 	}
 	else if (ISTOPS == 4)
 	{
-		//0.0001° tolerance
+		//0.0001ï¿½ tolerance
 		DEV = 0.0001*RAD;
 	}
 	else
@@ -193,7 +193,7 @@ void EnckeFreeFlightIntegrator::Edit()
 EMMENI_Edit_3B:
 	TIME = abs(TRECT + tau);
 	rr = length(R);
-	dt_max = min(dt_lim, K*OrbMech::power(rr, 1.5) / sqrt(mu));
+	dt_max = std::min(dt_lim, K*OrbMech::power(rr, 1.5) / sqrt(mu));
 
 	//Should we even check?
 	if (ISTOPS == 1)
@@ -250,7 +250,7 @@ EMMENI_Edit_3B:
 	//Special time logic
 	if (ISTOPS == 1)
 	{
-		dt = HMULT * min(abs(RCALC), dt_max);
+		dt = HMULT * std::min(abs(RCALC), dt_max);
 		if (abs(dt) > 1e-6)
 		{
 			IEND = 0;

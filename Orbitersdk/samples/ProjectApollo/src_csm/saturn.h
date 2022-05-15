@@ -57,7 +57,7 @@
 #include "MechanicalAccelerometer.h"
 #include "checklistController.h"
 #include "payload.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "qball.h"
 #include "canard.h"
 #include "siisystems.h"
@@ -66,8 +66,6 @@
 #include "csmsensors.h"
 #include "rhc.h"
 
-#define DIRECTINPUT_VERSION 0x0800
-#include "dinput.h"
 #include "vesim.h"
 
 //
@@ -78,6 +76,7 @@
 
 class IU;
 class SICSystems;
+class MCC;
 
 namespace mission
 {
@@ -823,7 +822,7 @@ public:
 
 	//This simply equips us with a reference to either the mfd debug string, 
 	//or in the extreme case, the orbiter debug string
-	char *(__cdecl *debugString)();
+	char *(*debugString)();
 	bool debugConnected;
 	///
 	/// \brief Standard constructor with the usual Orbiter parameters.
@@ -925,18 +924,10 @@ public:
 	// RHC/THC 
 	//
 
-	// DirectInput stuff
-	/// Handle to DLL instance
-	HINSTANCE dllhandle;
-	/// pointer to DirectInput class itself
-	LPDIRECTINPUT8 dx8ppv;
 	/// Joysticks-Enabled flag / counter - Zero if we aren't using DirectInput, nonzero is the number of joysticks we have.
 	int js_enabled;
 	/// Pointers to DirectInput joystick devices
-	LPDIRECTINPUTDEVICE8 dx8_joystick[2]; ///< One for THC, one for RHC, ignore extras
-	DIDEVCAPS			 dx8_jscaps[2];   ///< Joystick capabilities
-	DIJOYSTATE2			 dx8_jstate[2];   ///< Joystick state
-	HRESULT				 dx8_failure;     ///< DX failure reason
+	GLFWgamepadstate	 dx8_jstate[2];   ///< Joystick state
 	Vesim vesim;                          ///< Vessel Specific Input Mngr
 	int rhc_id;							  ///< Joystick # for the RHC
 	int rhc_rot_id;						  ///< ID of ROTATOR axis to use for RHC Z-axis
@@ -997,7 +988,7 @@ public:
 	void clbkPreStep(double simt, double simdt, double mjd);
 	bool clbkLoadPanel (int id);
 	int clbkConsumeDirectKey(char *keystate);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 	bool clbkLoadVC (int id);
 	bool clbkVCMouseEvent (int id, int event, VECTOR3 &p);
 	bool clbkVCRedrawEvent (int id, int event, SURFHANDLE surf);
@@ -1663,7 +1654,7 @@ protected:
 	int fdaiDisabled;
 	int fdaiSmooth;
 
-	HBITMAP hBmpFDAIRollIndicator;
+	SURFHANDLE hBmpFDAIRollIndicator;
 
 	//Panels
 
@@ -3522,7 +3513,7 @@ protected:
 	// And state that doesn't need to be saved.
 	//
 
-	boolean StageUnloadState = 0;
+	bool StageUnloadState = false;
 	double LastVPAccelTime = -10000.0, StageUnloadTime = -1.0;
 
 	///
@@ -4659,7 +4650,7 @@ extern MESHHANDLE hcmseatsunfolded;
 extern MESHHANDLE hcmCOAScdr;
 extern MESHHANDLE hcmCOAScdrreticle;
 
-extern void SetupgParam(HINSTANCE hModule);
+extern void SetupgParam();
 extern void DeletegParam();
 
 #endif // _PA_SATURN_H

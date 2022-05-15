@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include "stdio.h"
@@ -311,7 +311,7 @@ void LEM::SetLmAscentHoverStage()
 	//Mesh is shifted up by 0.99 meters when it is loaded and then 1.75 meters down with ShiftCG in this function
 	//Therefore we need to calculate: 232.96 in - (254 in - 0.99 m + 1.75 m) = -1.294416 m
 	//Point of thrust application is also shifted 3.75 in (0.09525 m) in the z-axis.
-	//And it's canted at 1.5° to point through the CG which is located forward of the centerline
+	//And it's canted at 1.5ï¿½ to point through the CG which is located forward of the centerline
     th_hover[0] = CreateThruster (_V( 0.0,  -1.294416, 0.09525), _V( 0,cos(1.5*RAD),sin(1.5*RAD)), APS_THRUST, ph_Asc, APS_ISP);
 	thg_hover = CreateThrusterGroup (th_hover, 1, THGROUP_USER);
 	

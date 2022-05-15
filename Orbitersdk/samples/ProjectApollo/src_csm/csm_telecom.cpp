@@ -21,7 +21,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -33,7 +33,7 @@
 #include "nasspsound.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "saturn.h"
 #include "LEM.h"
 #include "ioChannels.h"
@@ -901,7 +901,7 @@ void HGA::TimeStep(double simt, double simdt)
 		BodyToAC(U_RB, AAxisCmd, CAxisCmd);
 		BAxisCmd = 0.0;
 
-		//sprintf(oapiDebugString(), "PitchCmd: %lf° YawCmd: %lf° AAxisCmd: %lf° CAxisCmd: %lf°", PitchCmd, YawCmd, AAxisCmd*DEG, CAxisCmd*DEG);
+		//sprintf(oapiDebugString(), "PitchCmd: %lfï¿½ YawCmd: %lfï¿½ AAxisCmd: %lfï¿½ CAxisCmd: %lfï¿½", PitchCmd, YawCmd, AAxisCmd*DEG, CAxisCmd*DEG);
 	}
 	else if (AutoTrackingMode == true) //this auto-tracking is used in both the AUTO and the REAQC modes. Beamwidth switching, LOS/AOS logic and scanlimit(warn) log are handled in a seperate block of code 
 	{ 
@@ -963,11 +963,11 @@ void HGA::TimeStep(double simt, double simdt)
 		CAxisCmd = Gamma;
 	}
 
-	//sprintf(oapiDebugString(), "AzimuthErrorSigNorm: %lf ElevationErrorSigNorm: %lf A_CMD: %lf B_CMD: %lf C_CMD: %lf SignalStrength %lf AzmuthTrackErrorDeg %lf°", AzimuthErrorSignalNorm, ElevationErrorSignalNorm, AAxisCmd, BAxisCmd, CAxisCmd, SignalStrength, AzmuthTrackErrorDeg);
+	//sprintf(oapiDebugString(), "AzimuthErrorSigNorm: %lf ElevationErrorSigNorm: %lf A_CMD: %lf B_CMD: %lf C_CMD: %lf SignalStrength %lf AzmuthTrackErrorDeg %lfï¿½", AzimuthErrorSignalNorm, ElevationErrorSignalNorm, AAxisCmd, BAxisCmd, CAxisCmd, SignalStrength, AzmuthTrackErrorDeg);
 
 	//SERVO DRIVE
 
-	// 5°/s rate limit as per CSM Data Book (3.7.4.1)
+	// 5ï¿½/s rate limit as per CSM Data Book (3.7.4.1)
 	ServoDrive(Alpha, AAxisCmd, 5.0*RAD, simdt);
 	ServoDrive(Beta, BAxisCmd, 5.0*RAD, simdt);
 	ServoDrive(Gamma, CAxisCmd, 5.0*RAD, simdt);
@@ -998,14 +998,14 @@ void HGA::TimeStep(double simt, double simdt)
 		Gamma = -4.0*RAD;
 	}
 
-	//sprintf(oapiDebugString(), "AAxisCmd: %lf° CAxisCmd: %lf° Alpha: %lf° Gamma: %lf°", AAxisCmd*DEG, CAxisCmd*DEG, Alpha*DEG, Gamma*DEG);
+	//sprintf(oapiDebugString(), "AAxisCmd: %lfï¿½ CAxisCmd: %lfï¿½ Alpha: %lfï¿½ Gamma: %lfï¿½", AAxisCmd*DEG, CAxisCmd*DEG, Alpha*DEG, Gamma*DEG);
 
 	//READOUT RESOLVER
 	VECTOR3 U_Readout;
 	U_Readout = ABCAndVectorToBody(Alpha, 0, Gamma, _V(1.0, 0.0, 0.0));
 	BodyVectorToPitchYaw(U_Readout, PitchRes, YawRes);
 
-	//sprintf(oapiDebugString(), "Alpha: %lf° Gamma: %lf° PitchRes: %lf° YawRes: %lf°", Alpha*DEG, Gamma*DEG, PitchRes*DEG, YawRes*DEG);
+	//sprintf(oapiDebugString(), "Alpha: %lfï¿½ Gamma: %lfï¿½ PitchRes: %lfï¿½ YawRes: %lfï¿½", Alpha*DEG, Gamma*DEG, PitchRes*DEG, YawRes*DEG);
 
 	VECTOR3 U_RP, pos, R_E, R_M, U_R, U_CSM;
 	MATRIX3 Rot;
@@ -1147,7 +1147,7 @@ void HGA::TimeStep(double simt, double simdt)
 		scanlimitwarn = false;
 	}
 
-	/*sprintf(oapiDebugString(), "A: %lf° B: %lf° C: %lf° PitchRes: %lf° YawRes: %lf°, SignalStrength %lf, RelAng %lf°, CSMrelang %lf°, Warn: %d, Limit: %d, Beam: %d, Auto: %d, Whiparound: %d",
+	/*sprintf(oapiDebugString(), "A: %lfï¿½ B: %lfï¿½ C: %lfï¿½ PitchRes: %lfï¿½ YawRes: %lfï¿½, SignalStrength %lf, RelAng %lfï¿½, CSMrelang %lfï¿½, Warn: %d, Limit: %d, Beam: %d, Auto: %d, Whiparound: %d",
 		Alpha*DEG, Beta*DEG, Gamma*DEG, PitchRes*DEG, YawRes*DEG, SignalStrength, relang*DEG, CSMrelang*DEG, scanlimitwarn, scanlimit, RcvBeamWidthMode, AutoTrackingMode, WhiparoundIsSet);*/
 }
 

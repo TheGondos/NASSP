@@ -29,11 +29,11 @@
 
 static int refcount = 0;
 
-DLLCLBK void InitModule(HINSTANCE hDLL)
+DLLCLBK void InitModule(oapi::DynamicModule *hDLL)
 {
 }
 
-DLLCLBK void ExitModule(HINSTANCE hDLL)
+DLLCLBK void ExitModule(oapi::DynamicModule *hDLL)
 {
 }
 

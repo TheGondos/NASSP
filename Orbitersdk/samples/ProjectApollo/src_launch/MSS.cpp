@@ -24,9 +24,9 @@
 
 #define ORBITER_MODULE
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include "stdio.h"
 #include "math.h"
 #include "nasspsound.h"
@@ -37,11 +37,10 @@
 #include "nasspdefs.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "saturn.h"
 #include "papi.h"
 
-HINSTANCE g_hDLL;
 char trace_file[] = "ProjectApollo MSS.log";
 
 // Pad and park coordinates
@@ -52,9 +51,7 @@ char trace_file[] = "ProjectApollo MSS.log";
 #define PAD_LAT 28.60839
  
 
-DLLCLBK void InitModule(HINSTANCE hModule) {
-
-	g_hDLL = hModule;
+DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
 }
 
 

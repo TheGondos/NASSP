@@ -22,9 +22,9 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include <stdio.h>
 
 #include "nasspdefs.h"
@@ -200,7 +200,7 @@ void FDAI::RotateBall(double simdt) {
 
 	double delta, deltamax;
 
-	deltamax = 0.87*simdt; //About 50°/s
+	deltamax = 0.87*simdt; //About 50ï¿½/s
 
 	delta = target.z - now.z;
 	if (delta > deltamax) {
@@ -762,8 +762,8 @@ HBITMAP RotateMemoryDC(HBITMAP hBmpSrc, HDC hdcSrc, int SrcX, int SrcY, float an
 	rt.right = dstX;
 	rt.bottom = dstY;
 
-	HBRUSH brush = CreateSolidBrush(0x00FF00FF);
-	HBRUSH brushTemp = (HBRUSH)SelectObject(hdcDst, brush);
+	oapi::Brush *brush = CreateSolidBrush(0x00FF00FF);
+	oapi::Brush *brushTemp = (HBRUSH)SelectObject(hdcDst, brush);
 	FillRect(hdcDst, &rt, brush);
 	SelectObject(hdcDst, brushTemp);
 	DeleteObject(brush);

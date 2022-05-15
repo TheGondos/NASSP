@@ -24,9 +24,9 @@
 
 #define ORBITER_MODULE
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include "stdio.h"
 #include "math.h"
 
@@ -178,8 +178,8 @@ void LRV::init()
 	Bat2Cap = 121;  // remaining capacity of battery 2 [Ah]
 	Bat1Volt = 36; // voltage of battery 1 [V]
 	Bat2Volt = 37; // voltage of battery 2 [V]
-	Bat1Temp = 80; // temperature of battery 1 [°F]
-	Bat2Temp = 78; // temperature of battery 2 [°F]
+	Bat1Temp = 80; // temperature of battery 1 [ï¿½F]
+	Bat2Temp = 78; // temperature of battery 2 [ï¿½F]
 
 	// LRV Console
 	vccVis = NULL;
@@ -1092,7 +1092,7 @@ DLLCLBK void ovcExit (VESSEL *vessel)
 		delete sv;
 }
 
-DLLCLBK void InitModule (HINSTANCE hModule)
+DLLCLBK void InitModule (oapi::DynamicModule *hModule)
 {
 
 }

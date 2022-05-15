@@ -24,9 +24,9 @@
 
 #define ORBITER_MODULE
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include "stdio.h"
 #include "math.h"
 #include "nasspsound.h"
@@ -41,7 +41,7 @@
 #include "nasspdefs.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "saturn.h"
 #include "saturn1b.h"
 #include "s1b.h"
@@ -49,7 +49,6 @@
 #include "papi.h"
 #include "RCA110A.h"
 
-HINSTANCE g_hDLL;
 char trace_file[] = "ProjectApollo LC34.log";
 
 
@@ -78,9 +77,7 @@ PARTICLESTREAMSPEC liftoffStreamSpec = {
 };
 
 
-DLLCLBK void InitModule(HINSTANCE hModule) {
-
-	g_hDLL = hModule;
+DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
 }
 
 

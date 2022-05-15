@@ -33,10 +33,6 @@
 typedef unsigned long *DWORD_PTR;
 #endif
 
-// X15 direct sound include to add landing sound
-
-#include "dsound.h"
-
 // MODIF x15  managing landing sound
 
 ///
@@ -83,14 +79,6 @@ protected:
 	int    mandatory ;
 	
 	SoundLib soundlib;
-	LPDIRECTSOUND8  m_pDS;
-	LPDIRECTSOUNDBUFFER pDSBPrimary;
-    LPDIRECTSOUNDBUFFER* apDSBuffer;
-
-    VOID*   pDSLockedBuffer     ;
-    DWORD   dwDSLockedBufferSize;
-
-
 };
 
 #endif // SOUNDEVENTS_H

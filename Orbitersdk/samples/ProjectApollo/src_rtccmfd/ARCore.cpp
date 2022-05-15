@@ -2,7 +2,7 @@
 
 #include "soundlib.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "IMU.h"
 #include "saturn.h"
 #include "saturnv.h"
@@ -15,21 +15,14 @@
 #include "TLMCC.h"
 #include "rtcc.h"
 #include "nassputils.h"
-
+#include <unistd.h>
+#include <cassert>
 using namespace nassp;
 
-static WSADATA wsaData;
-static SOCKET m_socket;
-static sockaddr_in clientService;
-static SOCKET close_Socket = INVALID_SOCKET;
+static SOCKETHANDLE m_socket;
 static char debugString[100];
 static char debugStringBuffer[100];
 static char debugWinsock[100];
-
-static DWORD WINAPI RTCCMFD_Trampoline(LPVOID ptr) {
-	ARCore *core = (ARCore *)ptr;
-	return(core->subThread());
-}
 
 AR_GCore::AR_GCore(VESSEL* v)
 {
@@ -479,13 +472,7 @@ ARCore::ARCore(VESSEL* v, AR_GCore* gcin)
 	{
 		g_Data.emem[i] = 0;
 	}
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		sprintf(debugWinsock, "ERROR AT WSAStartup()");
-	}
-	else {
-		sprintf(debugWinsock, "DISCONNECTED");
-	}
+
 	P30TIG = 0;
 	dV_LVLH = _V(0.0, 0.0, 0.0);
 
@@ -844,7 +831,7 @@ void ARCore::MinorCycle(double SimT, double SimDT, double mjd)
 	if (g_Data.connStatus > 0 && g_Data.uplinkBuffer.size() > 0) {
 		if (SimT > g_Data.uplinkBufferSimt + 0.1) {
 			unsigned char data = g_Data.uplinkBuffer.front();
-			send(m_socket, (char *)&data, 1, 0);
+			oapiSocketSend(m_socket, &data, 1);
 			g_Data.uplinkBuffer.pop();
 			g_Data.uplinkBufferSimt = SimT;
 		}
@@ -853,7 +840,7 @@ void ARCore::MinorCycle(double SimT, double SimDT, double mjd)
 		if (g_Data.connStatus == 1)	{
 			sprintf(debugWinsock, "DISCONNECTED");
 			g_Data.connStatus = 0;
-			closesocket(m_socket);
+			oapiSocketClose(m_socket);
 		}
 	}
 }
@@ -2158,28 +2145,25 @@ void ARCore::UplinkData(bool isCSM)
 		int bytesRecv = SOCKET_ERROR;
 		char addr[256];
 		char buffer[8];
-		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_socket == INVALID_SOCKET) {
+		m_socket = oapiSocketCreate();
+		if (m_socket == OAPI_INVALID_SOCKET) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "ERROR AT SOCKET(): %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "ERROR AT oapiSocketCreate()");
 			return;
 		}
-		sprintf(addr, "127.0.0.1");
-		clientService.sin_family = AF_INET;
-		clientService.sin_addr.s_addr = inet_addr(addr);
+		int port;
 		if (isCSM)
 		{
-			clientService.sin_port = htons(14242);
+			port = 14242;
 		}
 		else
 		{
-			clientService.sin_port = htons(14243);
+			port = 14243;
 		}
-		if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR) {
+		if (!oapiSocketConnect(m_socket,"127.0.0.1", port)) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "FAILED TO CONNECT, ERROR %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "FAILED TO CONNECT");
+			oapiSocketClose(m_socket);
 			return;
 		}
 		sprintf(debugWinsock, "CONNECTED");
@@ -2214,28 +2198,25 @@ void ARCore::UplinkData2(bool isCSM)
 		int bytesRecv = SOCKET_ERROR;
 		char addr[256];
 		char buffer[8];
-		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_socket == INVALID_SOCKET) {
+		m_socket = oapiSocketCreate();
+		if (m_socket == OAPI_INVALID_SOCKET) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "ERROR AT SOCKET(): %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "ERROR AT oapiSocketCreate()");
 			return;
 		}
-		sprintf(addr, "127.0.0.1");
-		clientService.sin_family = AF_INET;
-		clientService.sin_addr.s_addr = inet_addr(addr);
+		int port;
 		if (isCSM)
 		{
-			clientService.sin_port = htons(14242);
+			port = 14242;
 		}
 		else
 		{
-			clientService.sin_port = htons(14243);
+			port = 14243;
 		}
-		if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR) {
+		if (!oapiSocketConnect(m_socket, "127.0.0.1", port)) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "FAILED TO CONNECT, ERROR %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "FAILED TO CONNECT");
+			oapiSocketClose(m_socket);
 			return;
 		}
 		sprintf(debugWinsock, "CONNECTED");
@@ -2270,28 +2251,25 @@ void ARCore::UplinkDataV70V73(bool v70, bool isCSM)
 		int bytesRecv = SOCKET_ERROR;
 		char addr[256];
 		char buffer[8];
-		m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_socket == INVALID_SOCKET) {
+		m_socket = oapiSocketCreate();
+		if (m_socket == OAPI_INVALID_SOCKET) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "ERROR AT SOCKET(): %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "ERROR AT oapiSocketCreate()");
 			return;
 		}
-		sprintf(addr, "127.0.0.1");
-		clientService.sin_family = AF_INET;
-		clientService.sin_addr.s_addr = inet_addr(addr);
+		int port;
 		if (isCSM)
 		{
-			clientService.sin_port = htons(14242);
+			port = 14242;
 		}
 		else
 		{
-			clientService.sin_port = htons(14243);
+			port = 14243;
 		}
-		if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR) {
+		if (!oapiSocketConnect(m_socket, "127.0.0.1", port)) {
 			//g_Data.uplinkDataReady = 0;
-			sprintf(debugWinsock, "FAILED TO CONNECT, ERROR %ld", WSAGetLastError());
-			closesocket(m_socket);
+			sprintf(debugWinsock, "FAILED TO CONNECT");
+			oapiSocketClose(m_socket);
 			return;
 		}
 		sprintf(debugWinsock, "CONNECTED");
@@ -2513,17 +2491,21 @@ int ARCore::startSubthread(int fcn) {
 		// Punt thread
 		subThreadMode = fcn;
 		subThreadStatus = 1; // Busy
-		DWORD id = 0;
-		hThread = CreateThread(NULL, 0, RTCCMFD_Trampoline, this, 0, &id);
+		std::thread t(&ARCore::subThread, this);
+		t.detach();
 	}
 	else {
+		printf("ARCore subthread not done!\n");
+		assert(false);
+		exit(EXIT_FAILURE);
 		//Kill thread
+		/*
 		DWORD exitcode = 0;
 		if (TerminateThread(hThread, exitcode))
 		{
 			subThreadStatus = 0;
 			if (hThread != NULL) { CloseHandle(hThread); }
-		}
+		}*/
 		return(-1);
 	}
 	return(0);
@@ -2547,7 +2529,8 @@ int ARCore::subThread()
 	subThreadStatus = 2; // Running
 	switch (subThreadMode) {
 	case 0: // Test
-		Sleep(5000); // Waste 5 seconds
+//		Sleep(5000); // Waste 5 seconds
+		sleep(5);
 		Result = 0;  // Success (negative = error)
 		break;
 	case 1: //Lambert Targeting
@@ -4909,7 +4892,7 @@ int ARCore::subThread()
 	}
 
 	subThreadStatus = Result;
-	if (hThread != NULL) { CloseHandle(hThread); }
+//	if (hThread != NULL) { CloseHandle(hThread); }
 
 	return(0);
 }

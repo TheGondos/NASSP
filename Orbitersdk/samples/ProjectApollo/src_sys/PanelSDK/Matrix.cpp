@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-#include "matrix.h"
+#include "Matrix.h"
 #include "vectors.h"
 #include <math.h>
 

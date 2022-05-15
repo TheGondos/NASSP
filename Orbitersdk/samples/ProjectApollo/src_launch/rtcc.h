@@ -45,6 +45,7 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include "MCCPADForms.h"
 
 class Saturn;
+class MCC;
 
 #define RTCC_START_STRING	"RTCC_BEGIN"
 #define RTCC_END_STRING	    "RTCC_END"
@@ -385,7 +386,7 @@ struct EarthEntryOpt
 	double TIGguess; //Initial estimate for the TIG
 	double ReA = 0; //Reentry angle at entry interface, 0 starts iteration to find reentry angle
 	double lng; //Longitude of the desired splashdown coordinates
-	bool nominal; //Calculates minimum DV deorbit or nominal 31.7° line deorbit
+	bool nominal; //Calculates minimum DV deorbit or nominal 31.7ï¿½ line deorbit
 	int enginetype = RTCC_ENGINETYPE_CSMSPS;		//Engine type used for the maneuver
 	bool entrylongmanual; //Targeting a landing zone or a manual landing longitude
 	bool useSV = false;		//true if state vector is to be used
@@ -656,7 +657,7 @@ struct SkyRendOpt
 	double GETbase;		//usually MJD at launch
 	int man;			//0 = Presettings, 1 = NC1, 2 = NC2, 3 = NCC, 4 = NSR, 5 = TPI, 6 = TPM, 7 = NPC
 	bool PCManeuver;	//0 = NC1 is setting up NPC, 1 = NC2 is setting up NPC
-	bool NPCOption;		//0 = NC1 or NC2 with out-of-plane component, setting up a NPC maneuver 90° later
+	bool NPCOption;		//0 = NC1 or NC2 with out-of-plane component, setting up a NPC maneuver 90ï¿½ later
 	double TPIGuess;	//Estimate for the TPI time
 	double t_TPI;		//Time of TPI
 	double E_L;			//Elevation angle at TPI
@@ -694,7 +695,7 @@ struct LunarLiftoffTimeOpt
 	LunarLiftoffTimeOpt();
 
 	//Flag that controls at which time CSI is done
-	//0: CSI is done 90° from insertion
+	//0: CSI is done 90ï¿½ from insertion
 	//1: CSI is done at an input elapsed time from insertion
 	//2: CSI is done at LM apocynthion
 	int I_BURN;
@@ -897,7 +898,7 @@ struct SPQOpt //Coelliptic Sequence Processor
 	bool N_PC = false;
 	//Plane change threshold
 	double T_BNPC = 0.0;
-	//Initial phase angle (0 = -180° to 180°, 1 = 0 to 180°, 2 = -180° to 0)
+	//Initial phase angle (0 = -180ï¿½ to 180ï¿½, 1 = 0 to 180ï¿½, 2 = -180ï¿½ to 0)
 	int I_Theta = 0;
 	//0 = CDH not scheduled, 1 = CDH scheduled
 	bool CDH = true;
@@ -1505,8 +1506,8 @@ struct MPTManDisplay
 struct MissionPlanTable
 {
 	MissionPlanTable();
-	void SaveState(FILEHANDLE scn, char *start_str, char *end_str);
-	void LoadState(FILEHANDLE scn, char *end_str);
+	void SaveState(FILEHANDLE scn, const char *start_str, const char *end_str);
+	void LoadState(FILEHANDLE scn, const char *end_str);
 
 	//Word 1 (Byte 3,4)
 	//Number of maneuvers in table
@@ -3145,7 +3146,7 @@ public:
 		int Chaser = 3;
 		double CSMVectorTime = 0.0;
 		double ThresholdTime = 0.0;
-		//CSI Flag: 0 = CSI done 90° from insertion, negative: CSI at LM apocynthion, positive: CSI done at a delta time from insertion
+		//CSI Flag: 0 = CSI done 90ï¿½ from insertion, negative: CSI at LM apocynthion, positive: CSI done at a delta time from insertion
 		double CSI_Flag = -1.0;
 		//CDH Flag: 0 = CDH done at upcoming apsis after CSI, positive: CDH is done at N/2 after CSI, must be odd number
 		int CDH_Flag = 1;
@@ -3791,7 +3792,7 @@ public:
 		//Block 38
 		double ActualWedgeAngle;
 		//Block 40
-		double LDPPAzimuth = 0.0; //Greater or equal to zero, lower than 360°. If 0, LDPP will compute azimuth
+		double LDPPAzimuth = 0.0; //Greater or equal to zero, lower than 360ï¿½. If 0, LDPP will compute azimuth
 		//Block 41
 		double LDPPHeightofPDI = 50000.0*0.3048;
 		//Block 42 1st word
@@ -3994,7 +3995,7 @@ public:
 		int R31_BurnMode = 3;		//1 = DV, 2 = DT, 3 = V, Gamma Target (only SPS)
 		double R31_dt = 0.0;
 		double R31_dv = 0.0;
-		int R31_AttitudeMode = 2;	//1 = LVLH, 2 = 31.7° window line on horizon
+		int R31_AttitudeMode = 2;	//1 = LVLH, 2 = 31.7ï¿½ window line on horizon
 		VECTOR3 R31_LVLHAttitude = _V(0.0, -48.5*RAD, PI);
 		double R31_UllageTime = 15.0;
 		bool R31_Use4UllageThrusters = true;	//0 = two thrusters, 1 = four thrusters
@@ -4623,8 +4624,8 @@ private:
 	void FindRadarAOSLOS(SV sv, double GETbase, double lat, double lng, double &GET_AOS, double &GET_LOS);
 	void FindRadarMidPass(SV sv, double GETbase, double lat, double lng, double &GET_Mid);
 	double GetSemiMajorAxis(SV sv);
-	void papiWriteScenario_REFS(FILEHANDLE scn, char *item, int tab, int i, REFSMMATData in);
-	bool papiReadScenario_REFS(char *line, char *item, int &tab, int &i, REFSMMATData &out);
+	void papiWriteScenario_REFS(FILEHANDLE scn, const char *item, int tab, int i, REFSMMATData in);
+	bool papiReadScenario_REFS(const char *line, const char *item, int &tab, int &i, REFSMMATData &out);
 	void DMissionRendezvousPlan(SV sv_A0, double GETbase, double &t_TPI0);
 	void FMissionRendezvousPlan(VESSEL *chaser, VESSEL *target, SV sv_A0, double GETbase, double t_TIG, double t_TPI, double &t_Ins, double &CSI);
 

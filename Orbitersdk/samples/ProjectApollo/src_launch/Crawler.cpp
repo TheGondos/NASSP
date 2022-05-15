@@ -24,9 +24,9 @@
 
 #define ORBITER_MODULE
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 
 #include "stdio.h"
 #include "math.h"
@@ -51,12 +51,9 @@
 #define VIEWPOS_REARGANGWAY				5
 #define VIEWPOS_RIGHTREARGANGWAY		6
 
-HINSTANCE g_hDLL;
 char trace_file[] = "ProjectApollo Crawler.log";
 
-DLLCLBK void InitModule(HINSTANCE hModule) {
-
-	g_hDLL = hModule;
+DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
 }
 
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel) {

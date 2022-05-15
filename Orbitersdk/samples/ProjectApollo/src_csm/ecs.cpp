@@ -22,9 +22,9 @@
 
   **************************** Revision History ****************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include <stdio.h>
 
 #include "PanelSDK/PanelSDK.h"
@@ -34,7 +34,7 @@
 #include "nasspdefs.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "ioChannels.h"
 
 #include "saturn.h"
@@ -821,7 +821,7 @@ void CrewStatus::Timestep(double simdt) {
 		suitPressureHighTime = 3600;
 	}
 
-	// Suit temperature above about 45°C or below about 0°C for 12 hours
+	// Suit temperature above about 45ï¿½C or below about 0ï¿½C for 12 hours
 	if (atm.SuitTempK > 320 || atm.SuitTempK < 270) {
 		if (suitTemperatureTime <= 0) {
 			status = ECS_CREWSTATUS_DEAD;

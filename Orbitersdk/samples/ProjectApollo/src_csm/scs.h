@@ -415,15 +415,15 @@ protected:
 	bool T1QS67;
 	//Roll rate 2 to FDAI No. 1 disable
 	bool T1QS68;
-	//Roll rate scale factor enable 5° or 50°
+	//Roll rate scale factor enable 5ï¿½ or 50ï¿½
 	bool T1QS71;
-	//Roll rate scale factor enable 50°
+	//Roll rate scale factor enable 50ï¿½
 	bool T1QS72;
 	//GDC roll error to FDAI No. 1 and No. 2 disable
 	bool T1QS73;
-	//FDAI No. 1 50° scale factor disable
+	//FDAI No. 1 50ï¿½ scale factor disable
 	bool T1QS75;
-	//FDAI No. 2 50° scale factor disable
+	//FDAI No. 2 50ï¿½ scale factor disable
 	bool T1QS76;
 	//Attitude set/IMU gain disable
 	bool T1QS78;
@@ -458,9 +458,9 @@ protected:
 	bool T2QS68;
 	//Roll rate 1 to FDAI No. 2 yaw rate cross coupling disable
 	bool T2QS69;
-	//Yaw rate scale factor enable 5° or 10°
+	//Yaw rate scale factor enable 5ï¿½ or 10ï¿½
 	bool T2QS71;
-	//Yaw rate scale factor enable 10°
+	//Yaw rate scale factor enable 10ï¿½
 	bool T2QS72;
 	//GDC yaw body attitude error to FDAI No. 1 disable
 	bool T2QS73;
@@ -493,9 +493,9 @@ protected:
 	bool T3QS65;
 	//FDAI No. 1 pitch error scale factor low range enable
 	bool T3QS67;
-	//Pitch rate scale factor enable 5° or 10°
+	//Pitch rate scale factor enable 5ï¿½ or 10ï¿½
 	bool T3QS71;
-	//Pitch rate scale factor enable 10°
+	//Pitch rate scale factor enable 10ï¿½
 	bool T3QS72;
 	//GDC pitch body attitude error to FDAI No. 1 disable
 	bool T3QS73;
@@ -922,6 +922,7 @@ protected:
 	friend class SaturnEMSDvDisplay;
 	friend class SaturnEMSScrollDisplay;
 };
-
+/*
 PBITMAPINFO CreateBitmapInfoStruct(HBITMAP hBmp);
 bool CreateBMPFile(LPTSTR pszFile, PBITMAPINFO pbi, HBITMAP hBMP, HDC hDC);
+*/

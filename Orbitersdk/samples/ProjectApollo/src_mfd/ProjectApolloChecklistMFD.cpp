@@ -22,9 +22,9 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 
 #include "math.h"
 #include "windows.h"
@@ -34,8 +34,8 @@
 #include "nasspdefs.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
-#include "lemcomputer.h"
+#include "CSMcomputer.h"
+#include "LEMcomputer.h"
 #include "saturn.h"
 #include "LEM.h"
 #include "Crawler.h"
@@ -75,9 +75,8 @@
 #define HLINE   .04
 
 static int hMFD;
-static HINSTANCE g_hDLL;
 
-void ProjectApolloChecklistMFDopcDLLInit (HINSTANCE hDLL)
+void ProjectApolloChecklistMFDopcDLLInit ()
 {
 	static char* name = "Project Apollo Checklist";
 	MFDMODESPECEX spec;
@@ -86,9 +85,8 @@ void ProjectApolloChecklistMFDopcDLLInit (HINSTANCE hDLL)
 	spec.context = NULL;
 	spec.msgproc = ProjectApolloChecklistMFD::MsgProc;
 	hMFD = oapiRegisterMFDMode(spec);
-	g_hDLL = hDLL;
 }
-void ProjectApolloChecklistMFDopcDLLExit (HINSTANCE hDLL)
+void ProjectApolloChecklistMFDopcDLLExit ()
 {
 	oapiUnregisterMFDMode(hMFD);
 }
@@ -784,7 +782,7 @@ void ProjectApolloChecklistMFD::Update (HDC hDC)
 {
 	static RECT ShadedBox;
 	ChecklistItem *item;
-	HBRUSH hBr;
+	oapi::Brush *hBr;
 
 	HDC hDCTemp = CreateCompatibleDC(hDC);
 	HBITMAP hBmpTemp = (HBITMAP) SelectObject(hDCTemp, hBmpLogo);

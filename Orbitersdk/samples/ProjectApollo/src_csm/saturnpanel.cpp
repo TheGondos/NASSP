@@ -23,7 +23,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -40,7 +40,7 @@
 #include "toggleswitch.h"
 #include "apolloguidance.h"
 #include "dsky.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "ioChannels.h"
 
 #include "saturn.h"
@@ -222,7 +222,7 @@ void Saturn::InitReticle() {
 void drawReticle(SURFHANDLE surf, double shaft, double panelPixelHeight, int reticleLineCnt, int reticleLineLen[], double **reticleLine, POINT ptbuf[]) {
 	HGDIOBJ oldObj;
 	HDC hDC = oapiGetDC(surf);
-	HPEN pen = CreatePen(PS_SOLID, 1, RGB(211, 171, 23));
+	oapi::Pen *pen = CreatePen(PS_SOLID, 1, RGB(211, 171, 23));
 	oldObj = SelectObject(hDC, pen);
 	double reticleMul = 0.5*panelPixelHeight / tan(oapiCameraAperture());
 	double cosShaft = cos(shaft), sinShaft = sin(shaft);
@@ -3562,10 +3562,7 @@ void Saturn::SetSwitches(int panel) {
 	Altimeter.Init(srf[SRF_ALTIMETER], srf[SRF_ALTIMETER2], this);
 }
 
-void SetupgParam(HINSTANCE hModule) {
-
-	g_Param.hDLL = hModule;
-
+void SetupgParam() {
 	//
 	// allocate GDI resources
 	//
@@ -4040,7 +4037,7 @@ void Saturn::PanelIndicatorSwitchStateRequested(IndicatorSwitch *s) {
 	} else if (s == &FuelCellRadTempIndicator) {
 		FuelCellStatus fc;
 		GetFuelCellStatus(FuelCellIndicatorsSwitch.GetState() + 1, fc);
-		if (fc.CoolingTempF < -30.0 || stage > CSM_LEM_STAGE)	// indication if temperature below -30°F
+		if (fc.CoolingTempF < -30.0 || stage > CSM_LEM_STAGE)	// indication if temperature below -30ï¿½F
 			FuelCellRadTempIndicator.SetState(0);
 		else
 			FuelCellRadTempIndicator.SetState(1);

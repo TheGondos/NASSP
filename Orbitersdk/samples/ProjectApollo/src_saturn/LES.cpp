@@ -22,9 +22,9 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbiterSDK.h"
+#include "Orbitersdk.h"
 
 #include "nasspdefs.h"
 #include "LES.h"
@@ -298,7 +298,7 @@ void LES::AddEngines()
 	//
 	// Yes, the jettison engines _are_ supposed to point in different
 	// directions! It's intended to rotate the LES after jettison to
-	// move it away from the Saturn. Angles chosen for 4° thrust vector.
+	// move it away from the Saturn. Angles chosen for 4ï¿½ thrust vector.
 	//
 
 	VECTOR3 m_exhaust_ref1 = _V(sin(30.0*RAD), 0, cos(30.0*RAD));

@@ -22,9 +22,9 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbiterSDK.h"
+#include "Orbitersdk.h"
 
 #include "nasspdefs.h"
 #include "soundlib.h"
@@ -40,7 +40,7 @@
 
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "lemcomputer.h"
+#include "LEMcomputer.h"
 
 #include "payload.h"
 #include "sivb.h"
@@ -665,7 +665,7 @@ void SIVB::clbkPreStep(double simt, double simdt, double mjd)
 				}
 				// Special handling Apollo 7
 				if (VehicleNo == 205) {
-					// The +X (+Y in Apollo axes) moved to about 25° only at first, 
+					// The +X (+Y in Apollo axes) moved to about 25ï¿½ only at first, 
 					// during the rendezvous in orbit 19 (about MET 30h) the panel was found 
 					// hinged completely, so we do that at MET 15h (see Mission Report 11.7)
 					if (MissionTime < 15. * 3600.) {

@@ -22,9 +22,9 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 
 #include "math.h"
 #include "windows.h"
@@ -34,8 +34,8 @@
 #include "nasspdefs.h"
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
-#include "lemcomputer.h"
+#include "CSMcomputer.h"
+#include "LEMcomputer.h"
 #include "IMU.h"
 #include "saturn.h"
 #include "LEM.h"
@@ -57,7 +57,6 @@ using namespace nassp;
 // ==============================================================
 // Global variables
 
-static HINSTANCE g_hDLL;
 static int g_MFDmode; // identifier for new MFD mode
 
 #define SD_RECEIVE      0x00
@@ -109,7 +108,7 @@ static char debugString[100];
 static char debugStringBuffer[100];
 static char debugWinsock[100];
 
-void ProjectApolloMFDopcDLLInit (HINSTANCE hDLL)
+void ProjectApolloMFDopcDLLInit ()
 {
 	static char *name = "Project Apollo";      // MFD mode name
 	MFDMODESPECEX spec;
@@ -120,7 +119,6 @@ void ProjectApolloMFDopcDLLInit (HINSTANCE hDLL)
 
 	// Register the new MFD mode with Orbiter
 	g_MFDmode = oapiRegisterMFDMode (spec);
-	g_hDLL = hDLL;
 
 	g_Data.prog = 0;
 	g_Data.progVessel = NULL;
@@ -159,7 +157,7 @@ void ProjectApolloMFDopcDLLInit (HINSTANCE hDLL)
 	g_Data.iuUplinkYaw = 0.0;
 }
 
-void ProjectApolloMFDopcDLLExit (HINSTANCE hDLL)
+void ProjectApolloMFDopcDLLExit ()
 {
 	// Unregister the custom MFD mode when the module is unloaded
 	oapiUnregisterMFDMode (g_MFDmode);
@@ -841,11 +839,11 @@ void ProjectApolloMFD::Update (HDC hDC)
 		TextOut(hDC, (int) (width * 0.9), (int) (height * 0.6), buffer, strlen(buffer));
 		sprintf(buffer, "%.1lf nm  ", peDist * 0.000539957);
 		TextOut(hDC, (int) (width * 0.9), (int) (height * 0.65), buffer, strlen(buffer));
-		sprintf(buffer, "%.2lf°   ", elem.i * DEG);
+		sprintf(buffer, "%.2lfï¿½   ", elem.i * DEG);
 		TextOut(hDC, (int) (width * 0.9), (int) (height * 0.7), buffer, strlen(buffer));
-		sprintf(buffer, "%.2lf°   ", lat * DEG);
+		sprintf(buffer, "%.2lfï¿½   ", lat * DEG);
 		TextOut(hDC, (int) (width * 0.9), (int) (height * 0.8), buffer, strlen(buffer));
-		sprintf(buffer, "%.2lf°   ", lon * DEG);
+		sprintf(buffer, "%.2lfï¿½   ", lon * DEG);
 		TextOut(hDC, (int) (width * 0.9), (int) (height * 0.85), buffer, strlen(buffer));
 
 		if (g_Data.killrot) {
@@ -1087,9 +1085,9 @@ void ProjectApolloMFD::Update (HDC hDC)
 			TextOut(hDC, (int)(width * 0.7), (int)(height * 0.45), buffer, strlen(buffer));
 			sprintf(buffer, "%.1f s", g_Data.iuUplinkDT);
 			TextOut(hDC, (int)(width * 0.7), (int)(height * 0.5), buffer, strlen(buffer));
-			sprintf(buffer, "%.01f°", g_Data.iuUplinkPitch*DEG);
+			sprintf(buffer, "%.01fï¿½", g_Data.iuUplinkPitch*DEG);
 			TextOut(hDC, (int)(width * 0.7), (int)(height * 0.55), buffer, strlen(buffer));
-			sprintf(buffer, "%.01f°", g_Data.iuUplinkYaw*DEG);
+			sprintf(buffer, "%.01fï¿½", g_Data.iuUplinkYaw*DEG);
 			TextOut(hDC, (int)(width * 0.7), (int)(height * 0.6), buffer, strlen(buffer));
 		}
 		else if (g_Data.iuUplinkType == DCSUPLINK_REMOVE_INHIBIT_MANEUVER4)

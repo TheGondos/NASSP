@@ -23,9 +23,9 @@
   **************************************************************************/
 //############################################################################//
 #define ORBITER_MODULE
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>,<fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 //############################################################################//
 #include "stdio.h"
 #include "math.h"
@@ -46,7 +46,7 @@ const double timprc[3]={1,6,5};
 #define CH_MAIN   1
 #define CH_DROGUE 2
 //############################################################################//
-DLLCLBK void InitModule(HINSTANCE hModule)               {}
+DLLCLBK void InitModule(oapi::DynamicModule *hModule)               {}
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel,int flightmodel){return new CMChute(hvessel,flightmodel);}
 DLLCLBK void    ovcExit(VESSEL *vessel)                  {if(vessel)delete(CMChute*)vessel;}
 //############################################################################//

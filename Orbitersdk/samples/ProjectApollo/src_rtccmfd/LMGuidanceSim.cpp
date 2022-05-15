@@ -440,7 +440,7 @@ void AscDescIntegrator::Init(VECTOR3 U_TD_init)
 
 bool AscDescIntegrator::Integration(VECTOR3 &R, VECTOR3 &V, double &mnow, double &t_total, VECTOR3 U_TD, double t_remain, double Thrust, double Isp)
 {
-	dt = min(dt_max, t_remain);
+	dt = std::min(dt_max, t_remain);
 
 	if (acos2(dotp(U_TD, U_TD_cur)) < max_rate*dt)
 	{

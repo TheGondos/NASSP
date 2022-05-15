@@ -24,9 +24,9 @@
 
 #define ORBITER_MODULE
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
+#include "Orbitersdk.h"
 #include "stdio.h"
 #include "math.h"
 #include "nasspsound.h"
@@ -48,9 +48,6 @@
 #include "sivb.h"
 #include "papi.h"
 #include "RCA110A.h"
-
-HINSTANCE g_hDLL;
-
 
 // States
 #define STATE_PRELAUNCH			0
@@ -76,9 +73,7 @@ PARTICLESTREAMSPEC liftoffStreamSpec = {
 };
 
 
-DLLCLBK void InitModule(HINSTANCE hModule) {
-
-	g_hDLL = hModule;
+DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
 }
 
 

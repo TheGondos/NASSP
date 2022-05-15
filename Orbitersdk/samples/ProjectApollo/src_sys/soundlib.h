@@ -25,7 +25,14 @@
 #ifndef SOUNDLIB_H
 #define SOUNDLIB_H
 
-#include "OrbiterSoundSDK50.h"
+//#include "OrbiterSoundSDK50.h"
+
+/*
+  OrbiterSound stub
+*/
+#define NOLOOP 0
+#define EXTENDEDPLAY int
+#define DEFAULT 0
 
 ///
 /// \ingroup Sound
@@ -37,7 +44,7 @@ public:
 	virtual ~SoundData();
 	bool isValid();
 	bool isPlaying();
-	bool play(int flags, int libflags, int volume, int playvolume, int frequency = NULL);
+	bool play(int flags, int libflags, int volume, int playvolume, int frequency = 0);
 	void stop();
 	void done();
 	void setID(int num) { id = num; };
@@ -81,13 +88,13 @@ public:
 	bool isPlaying();
 	void setFlags(int fl);
 	void clearFlags(int fl);
-	bool play(int flags = NOLOOP, int volume = 255, int frequency = NULL);
+	bool play(int flags = NOLOOP, int volume = 255, int frequency = 0);
 	void stop();
 	void done();
 	void SetSoundData(SoundData *s);
 	void SetSoundLib(SoundLib *s) { sl = s; };
 
-	Sound& Sound::operator=(const Sound &s);
+	Sound& operator=(const Sound &s);
 
 protected:
 	int soundflags;
@@ -105,8 +112,8 @@ public:
 	void setFadeTime(int seconds) { fadeSlope = 255 / seconds; }
 
 	void setFrequencyShift(int minFreq, int maxFreq) { fMin = minFreq; fMax = maxFreq; }
-	void clearFrequencyShift() { fMin = fMax = NULL; }
-	bool hasFrequencyShift() const { return fMin != NULL && fMax != NULL; }
+	void clearFrequencyShift() { fMin = fMax = 0; }
+	bool hasFrequencyShift() const { return fMin != 0 && fMax != 0; }
 
 private:
 	int riseSlope     = 255 / 4; // [vol/sec]

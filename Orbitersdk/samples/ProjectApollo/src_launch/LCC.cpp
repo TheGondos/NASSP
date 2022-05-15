@@ -94,7 +94,7 @@ void LCC::clbkLoadStateEx(FILEHANDLE scn, void *status)
 
 	while (oapiReadScenario_nextline(scn, line)) {
 		if (!_strnicmp(line, "PAD_NAME", 8)) {
-			sscanf_s(line + 8, "%s", PadName, sizeof(PadName));
+			sscanf(line + 8, "%s", PadName);
 		}
 		else ParseScenarioLineEx(line, status);
 	}
@@ -118,11 +118,11 @@ void LCC::SLCCLoadProgram(const char *str)
 	rca110a->ReadFile(str);
 }
 
-DLLCLBK void InitModule(HINSTANCE hDLL)
+DLLCLBK void InitModule(oapi::DynamicModule *hDLL)
 {
 }
 
-DLLCLBK void ExitModule(HINSTANCE hDLL)
+DLLCLBK void ExitModule(oapi::DynamicModule *hDLL)
 {
 }
 

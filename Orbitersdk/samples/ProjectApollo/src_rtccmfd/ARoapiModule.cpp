@@ -54,7 +54,7 @@ static char *name = "Apollo RTCC MFD";
 // ==============================================================
 //
 
-DLLCLBK void InitModule(HINSTANCE hDLL) {          // Called by Orbiter when module selected in the Launchpad
+DLLCLBK void InitModule(oapi::DynamicModule *hDLL) {          // Called by Orbiter when module selected in the Launchpad
 	g_coreMod = new ARoapiModule(hDLL);           // Declare a single root class instance for ApolloRTCCMFD for this simulation run
 
 
@@ -68,21 +68,21 @@ DLLCLBK void InitModule(HINSTANCE hDLL) {          // Called by Orbiter when mod
 	nGutsUsed = 0;
 }
 
-DLLCLBK void ExitModule(HINSTANCE hDLL) {          // Called by Orbiter when module deselected in the Launchpad
+DLLCLBK void ExitModule(oapi::DynamicModule *hDLL) {          // Called by Orbiter when module deselected in the Launchpad
 	oapiUnregisterMFDMode(g_MFDmode);                // Unregister use as an MFD. Note - don't kill the g_coreMod module (Orbiter does this)
 	g_coreMod = NULL;
 	nGutsUsed = 0;
 }
 
-int ARoapiModule::MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam) {  // Message parser, handling MFD open requests
+OAPI_MSGTYPE ARoapiModule::MsgProc(MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *param, VESSEL *vessel) {  // Message parser, handling MFD open requests
 	switch (msg) {
-	case OAPI_MSG_MFD_OPENED:
-		return (int)(new ApolloRTCCMFD(LOWORD(wparam), HIWORD(wparam), (VESSEL*)lparam, mfd));    // Open an ephemeral RTCC instance each time we make a new RTCC MFD, plus F8, etc/ 
+	case OAPI_MSG_MFD_OPENEDEX:
+		return (OAPI_MSGTYPE)(new ApolloRTCCMFD(param->w, param->h, vessel, mfd));    // Open an ephemeral RTCC instance each time we make a new RTCC MFD, plus F8, etc/ 
 	}
 	return 0;
 }
 
-ARoapiModule::ARoapiModule(HINSTANCE hDLL) : oapi::Module(hDLL) {}
+ARoapiModule::ARoapiModule(oapi::DynamicModule *hDLL) : oapi::Module(hDLL) {}
 ARoapiModule::~ARoapiModule() {}
 
 void ARoapiModule::clbkSimulationStart(RenderMode mode) {}

@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -38,7 +38,7 @@
 
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 
 #include "saturn.h"
 #include "papi.h"
@@ -407,7 +407,7 @@ void CSMCautionWarningSystem::TimeStep(double simt)
 		sat->GetDisplayedAtmosStatus(datm);
 
 		//
-		// Glycol temperature of the EcsRadTempPrimOutletMeter lower than -30°F
+		// Glycol temperature of the EcsRadTempPrimOutletMeter lower than -30ï¿½F
 		// Use displayed value instead of the PanelSDK to make use of the "damping" 
 		// of the SuitComprDeltaPMeter to pervent alarms because of the fluctuations during 
 		// high time acceleration.

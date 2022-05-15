@@ -82,7 +82,7 @@ public:
 	bool LoadPanel(int id);
 	void PanelEvent(int id,int event,SURFHANDLE surf);
 	void MouseEvent(int id,int event,int mx,int my);
-	int  KeybEvent(DWORD key,char *kstate);
+	int  KeybEvent(int key,char *kstate);
 	void MFDEvent(int mfd);
 	void Timestep(double time);
 	void SimpleTimestep(double simdt);

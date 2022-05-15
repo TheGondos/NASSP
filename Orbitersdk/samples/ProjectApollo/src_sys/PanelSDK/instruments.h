@@ -28,10 +28,10 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <stdio.h>
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
-#include "orbitersdk.h"
-#include "matrix.h"
+#include "Orbitersdk.h"
+#include "Matrix.h"
 
 class Panel;
 
@@ -293,16 +293,16 @@ public:
 class  GDI_resources //global holder of resources
 {public:
 	//these are always present
-    HBRUSH hBRUSH_TotalBlack;
-	HBRUSH hBRUSH_TotalWhite;
-	HBRUSH hBRUSH_Gray;
+    oapi::Brush *hBRUSH_TotalBlack;
+	oapi::Brush *hBRUSH_TotalWhite;
+	oapi::Brush *hBRUSH_Gray;
 
-	HPEN  hPEN_NULL,hPEN_Cyan,hPEN_Brown;
-	HPEN  hPEN_Green;
+	oapi::Pen * hPEN_NULL,hPEN_Cyan,hPEN_Brown;
+	oapi::Pen * hPEN_Green;
 
 	SURFHANDLE h_Surface[50]; //up to 50 resources can be defined
-	HFONT hFNT_Panel[10];	//we can use up to 10 fonts on texts
-    HPEN  hPEN[10];
+	oapi::Font *hFNT_Panel[10];	//we can use up to 10 fonts on texts
+    oapi::Pen * hPEN[10];
 	bool Panel_Resources_Loaded;
 	int num_surfaces;
 	int num_fonts;
@@ -342,8 +342,8 @@ public:
    SURFHANDLE surf;					//surface pointer to the screened instrument
    char name[25];					//the name of the panel
 
-   HINSTANCE hModule;				//handle to program instance // ??need this to load resource bitmaps.. ugh.. windows is idiot!!!
-   HDC hDC;
+//   HINSTANCE hModule;				//handle to program instance // ??need this to load resource bitmaps.. ugh.. windows is idiot!!!
+//   HDC hDC;
 
    instrument_list *instruments;	//list of instruments
 

@@ -18,8 +18,8 @@
 #include "ARCore.h"
 #include "soundlib.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
-#include "lemcomputer.h"
+#include "CSMcomputer.h"
+#include "LEMcomputer.h"
 #include "saturn.h"
 #include "saturnv.h"
 #include "LEM.h"
@@ -34,13 +34,13 @@ struct RTCCMFDInputBoxData
 
 class ApolloRTCCMFD: public MFD2 {
 public:
-	ApolloRTCCMFD (DWORD w, DWORD h, VESSEL *vessel, UINT im);
+	ApolloRTCCMFD (int w, int h, VESSEL *vessel, MfdId im);
 	~ApolloRTCCMFD ();
 	char *ButtonLabel (int bt);
 	int ButtonMenu (const MFDBUTTONMENU **menu) const;
 	bool Update (oapi::Sketchpad *skp);
 	bool ConsumeButton(int bt, int event);
-	bool ConsumeKeyBuffered(DWORD key);
+	bool ConsumeKeyBuffered(int key);
 	void WriteStatus(FILEHANDLE scn) const;
 	void ReadStatus(FILEHANDLE scn);
 	void StoreStatus(void) const;
@@ -155,15 +155,15 @@ public:
 	void menuEntryCalc();
 	void menuEntryUpdateCalc();
 	void menuSaveSplashdownTarget();
-	bool set_SaveSplashdownTarget(char *str);
+	bool set_SaveSplashdownTarget(const char *str);
 	void LoadSplashdownTargetToRTEDManualInput();
 	void menuDeorbitCalc();
 	void menuCycleRetrofireType();
 	void menuTransferRTEToMPT();
 	bool set_RTESolution(char *str);
 	void menuGeneralMEDRequest();
-	void menuGeneralMEDRequest(char *message);
-	void GeneralMEDRequest(char *str);
+	void menuGeneralMEDRequest(const char *message);
+	void GeneralMEDRequest(const char *str);
 	void EntryRangeDialogue();
 	void menuSVCalc();
 	void menuSwitchSVSlot();
@@ -553,7 +553,7 @@ public:
 	void set_MPTDirectInputTIG(double tig);
 	void menuMPTDirectInputDock();
 	void menuMPTDirectInputFinalConfig();
-	void set_MPTDirectInputFinalConfig(char *cfg);
+	void set_MPTDirectInputFinalConfig(const char *cfg);
 	void menuMPTDirectInputUllageDT();
 	void set_MPTDirectInputUllageDT(double dt);
 	void menuMPTDirectInputUllageThrusters();
@@ -574,7 +574,7 @@ public:
 	void set_MPTInitM50LMAscentWT(double mass);
 	void set_MPTInitM50SIVBWT(double mass);
 	void menuMPTInitM55Config();
-	void set_MPTInitM55Config(char *cfg);
+	void set_MPTInitM55Config(const char *cfg);
 	void menuMPTM50Update();
 	void menuMPTM55Update();
 	void menuMPTInitAutoUpdate();
@@ -744,7 +744,7 @@ public:
 	void set_RTEDManualDV(VECTOR3 DV);
 	void menuSetRTEDEntryProfilePage();
 	void menuAGCTimeUpdateCalc();
-	void set_AGCTimeUpdateCalc(char *dt);
+	void set_AGCTimeUpdateCalc(const char *dt);
 	void menuAGCTimeUpdateComparison();
 	void menuAGCTimeUpdateUplink();
 	void menuAGCLiftoffTimeComparision();

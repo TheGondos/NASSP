@@ -25,8 +25,8 @@
 /// \bug Avoids bug in VC++
 #pragma once
 
-#include < GL\gl.h >                                
-#include < GL\glu.h >
+//#include < GL\gl.h >                                
+//#include < GL\glu.h >
 
 class FDAI {
 
@@ -38,7 +38,7 @@ public:
 	void Timestep(double simt, double simdt);
 	void SystemTimestep(double simdt);
 	void PaintMe(VECTOR3 rates, VECTOR3 errors, SURFHANDLE surf, SURFHANDLE hFDAI,
-		SURFHANDLE hFDAIRoll, SURFHANDLE hFDAIOff, SURFHANDLE hFDAINeedles, HBITMAP hBmpRoll, int smooth);
+		SURFHANDLE hFDAIRoll, SURFHANDLE hFDAIOff, SURFHANDLE hFDAINeedles, SURFHANDLE hBmpRoll, int smooth);
 	void AnimateFDAI(VECTOR3 rates, VECTOR3 errors, UINT animR, UINT animP, UINT animY, UINT errorR, UINT errorP, UINT errorY, UINT rateR, UINT rateP, UINT rateY);
 	void SetAttitude(VECTOR3 attitude);
 
@@ -61,11 +61,11 @@ protected:
 	double lastPaintTime;
 
 	//some stuff for OpenGL
-	HDC hDC2;
-	HGLRC hRC;
-	HBITMAP hBMP;
-	HBITMAP hBMP_old;
-	GLUquadricObj *quadObj;
+//	HDC hDC2;
+//	HGLRC hRC;
+	SURFHANDLE hBMP;
+	SURFHANDLE hBMP_old;
+//	GLUquadricObj *quadObj;
 
 	e_object *DCSource, *ACSource;
 	bool noAC;

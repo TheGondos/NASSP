@@ -31,7 +31,7 @@
 typedef struct {
 	char	LandingBase[256];	// Name of the landing base used for the mission.	
 	char    TargetCelbody[64];	// Target Celbody for the Target Intercept program.
-	double	AZIMUTCOR;			// Launch azimut correction (= launch azimuth - 90°), NULL if not available.
+	double	AZIMUTCOR;			// Launch azimut correction (= launch azimuth - 90ï¿½), NULL if not available.
 	double	MJDTLI;				// MJD of TLI burn, NULL if not available.
 	double	MJDLOI;				// MJD of first LOI burn, NULL if not available.
 	double	MJDPEC;				// MJD of free return pericynthion, NULL if not available.
@@ -72,7 +72,7 @@ public:
 	IMFD_BURN_DATA GetBurnData() { return LastBurnData; };
 
 private:
-	HANDLE      IMFD_MemoryMapping;
+	//HANDLE      IMFD_MemoryMapping;
 	IMFDCOMSET *IMFD_MemoryMapped;
 	VESSEL *Vessel;
 	IMFDConstantConfiguration ConstantConfiguration;
@@ -81,7 +81,7 @@ private:
 	int BurnFlags;
 	int BurnRequestState;
 	bool BurnDataValid;
-	DWORD LastBurnReadTime;	
+	float LastBurnReadTime;	
 	IMFD_BURN_DATA LastBurnData;
 };
 

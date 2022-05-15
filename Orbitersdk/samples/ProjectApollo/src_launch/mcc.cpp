@@ -21,12 +21,12 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include "soundlib.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "LEMcomputer.h"
 #include "papi.h"
 #include "saturn.h"
@@ -533,7 +533,7 @@ void MCC::Init(){
 	// MISSION STATE
 	MissionPhase = 0;
 	setState(MMST_PRELAUNCH);
-	// Earth Revolutions count up from 1, 1st Moon Revolution starts at -180° longitude around the time of LOI.
+	// Earth Revolutions count up from 1, 1st Moon Revolution starts at -180ï¿½ longitude around the time of LOI.
 	EarthRev = 1;
 	MoonRev = 0;
 
@@ -2529,7 +2529,7 @@ void MCC::drawPad(bool writetofile){
 			sprintf_s(buffer2, "XX%0d:%02.0f RET .05G\n%+07.2f LAT\n%+07.2f LONG\n", mm, ss, form->Lat[0], form->Lng[0]);
 			buffer3.append(buffer2);
 			SStoHHMMSS(form->Ret2[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE (55°) N66\n", mm, ss, form->DRE[0]);
+			sprintf_s(buffer2, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE (55ï¿½) N66\n", mm, ss, form->DRE[0]);
 			buffer3.append(buffer2);
 			SStoHHMMSS(form->RetBBO[0], hh, mm, ss);
 			sprintf_s(buffer2, "XX%0d:%02.0f RETBBO\n", mm, ss);
@@ -2766,7 +2766,7 @@ void MCC::drawPad(bool writetofile){
 			SStoHHMMSS(form->T1[i], hh, mm, ss);
 			sprintf(buffer, "%sT1 %03d:%02d:%02.f (HOR)\n", buffer, hh, mm, ss);
 			SStoHHMMSS(form->T2[i], hh, mm, ss);
-			sprintf(buffer, "%sT2 %03d:%02d:%02.f (35°)\n", buffer, hh, mm, ss);
+			sprintf(buffer, "%sT2 %03d:%02d:%02.f (35ï¿½)\n", buffer, hh, mm, ss);
 
 			if (form->CRDist[i] > 0)
 			{

@@ -23,6 +23,7 @@
   **************************************************************************/
 #if !defined(_THREAD_H)
 #define _THREAD_H
+/*
 #include <windows.h>
 
 
@@ -86,5 +87,26 @@ protected:
     static DWORD WINAPI ThreadEntry (void *pArg);
     Thread     thread;
 };
-
+*/
+#include <thread>
+class Runnable
+{
+public:
+    Runnable ();
+    virtual ~Runnable () {}
+    void Kill ();
+protected:
+    virtual void Run () = 0;
+    std::thread m_thread;
+};
+#include <semaphore.h>
+class Event final {
+public:
+    Event() { sem_init(&m_semid, 0, 0); }
+    ~Event() { sem_destroy(&m_semid); }
+    void Raise() { sem_post(&m_semid); }
+    void Wait() { sem_wait(&m_semid); }
+private:
+    sem_t m_semid;
+};
 #endif

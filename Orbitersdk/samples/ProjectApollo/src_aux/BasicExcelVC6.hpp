@@ -133,7 +133,7 @@ struct LittleEndian
 	#define READWRITE(Type) \
 	static void Read(const char* buffer, Type& retVal, int pos=0, int bytes=0)	\
 	{	\
-		retVal = Type(0);	\
+		retVal = (Type)(0);	\
 		if (bytes == 0) bytes = sizeof(Type);	\
 		for (size_t i=0; i<bytes; ++i)	\
 		{	\
@@ -159,7 +159,7 @@ struct LittleEndian
 	}	\
 	static void Read(const vector<char>& buffer, Type& retVal, int pos=0, int bytes=0)	\
 	{	\
-		retVal = Type(0);	\
+		retVal = (Type)(0);	\
 		if (bytes == 0) bytes = sizeof(Type);	\
 		for (size_t i=0; i<bytes; ++i)	\
 		{	\
@@ -189,10 +189,8 @@ struct LittleEndian
 	READWRITE(short)
 	READWRITE(int)
 	READWRITE(unsigned int)
-	READWRITE(long)
-	READWRITE(unsigned long)
-	READWRITE(__int64)
-	READWRITE(unsigned __int64)
+	READWRITE(int64_t)
+	READWRITE(uint64_t)
 
 	#undef READWRITE
 
@@ -333,7 +331,7 @@ protected:
 		void Write(char* block);
 		void Read(char* block);
 
-		__int64 fileType_;		// Magic number identifying this as a compound file system (0x0000)
+		int64_t fileType_;			// Magic number identifying this as a compound file system (0x0000)
 		int uk1_;					// Unknown constant (0x0008)
 		int uk2_;					// Unknown constant (0x000C)
 		int uk3_;					// Unknown constant (0x0010)
@@ -922,7 +920,7 @@ public:
 				private:
 					union 
 					{
-						__int64 intvalue_;
+						int64_t intvalue_;
 						double doublevalue_;
 					} intdouble_;
 				};

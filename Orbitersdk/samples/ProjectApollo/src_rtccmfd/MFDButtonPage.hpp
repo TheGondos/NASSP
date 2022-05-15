@@ -25,7 +25,7 @@
 #ifndef MFDButtonPage_H
 #define MFDButtonPage_H
 
-#include <OrbiterSDK.h>
+#include <Orbitersdk.h>
 #include <map>
 #include <vector>
 
@@ -105,7 +105,7 @@ class MFDButtonPage
             If SearchForKeysInOtherPages() returns true, then other pages are searched for as well.
             Call from MFD::ConsumeKeyBuffered(). Example:
             \code
-            bool LaunchMFD::ConsumeKeyBuffered(DWORD key)
+            bool LaunchMFD::ConsumeKeyBuffered(int key)
             {
                 return m_buttonPages.ConsumeKeyBuffered(this, key);
             }
@@ -113,7 +113,7 @@ class MFDButtonPage
             \param mfdInstance - Instance of your MFD class (this)
             \param key - key designation, like OAPI_KEY_T
         */
-        bool ConsumeKeyBuffered( MFDClass * mfdInstance, DWORD key ) const;
+        bool ConsumeKeyBuffered( MFDClass * mfdInstance, int key ) const;
 
         /// Reacts on continuous keyboard presses
         /**
@@ -189,7 +189,7 @@ class MFDButtonPage
             \param funLClick - on left click MFD function pointer (handler). Example: & MyMFD::OpenDialogTarget. The handler can"t take any arguments.
             \param funRClick - on right click MFD function pointer (handler). Optional
         */
-        void RegisterFunction( const std::string & label, DWORD key,
+        void RegisterFunction( const std::string & label, int key,
                               MFDFunctionPtr funLClick, MFDFunctionPtr funRClick = NULL );
 
         /// Registeres handler in MFD scope for buttons that should have a continous reaction
@@ -201,7 +201,7 @@ class MFDButtonPage
             \param funLClick - on left click MFD function pointer (handler). Example: & MyMFD::OpenDialogTarget. The handler can"t take any arguments.
             \param funRClick - on right click MFD function pointer (handler). Optional
         */
-        void RegisterFunctionCont( const std::string & label, DWORD key,
+        void RegisterFunctionCont( const std::string & label, int key,
                               MFDFunctionPtr funLClick, MFDFunctionPtr funRClick = NULL );
 
         /// Registeres button page, and buttons menu
@@ -234,18 +234,18 @@ class MFDButtonPage
             std::vector<bool> m_continuousClick;
             std::vector<MFDFunctionPtr> m_buttonsLeftClick;
             std::vector<MFDFunctionPtr> m_buttonsRightClick;
-            std::map<DWORD, MFDFunctionPtr> m_keys;
-            std::map<DWORD, bool> m_continuousKey;
+            std::map<int, MFDFunctionPtr> m_keys;
+            std::map<int, bool> m_continuousKey;
         };
 
-        bool PressKey( MFDClass * mfdInstance, DWORD key ) const;
-        void RegisterFuncPriv( bool continuous, const std::string & label, DWORD key,
+        bool PressKey( MFDClass * mfdInstance, int key ) const;
+        void RegisterFuncPriv( bool continuous, const std::string & label, int key,
                               MFDFunctionPtr funLClick, MFDFunctionPtr funRClick);
 
         std::vector<Page> m_pages; ///< Current page index
         mutable size_t m_i; ///< Current page index
 
-        typedef std::map<DWORD, bool>::const_iterator MapBoolIterator;
+        typedef std::map<int, bool>::const_iterator MapBoolIterator;
 };
 
 // Public:
@@ -304,7 +304,7 @@ bool MFDButtonPage<MFDClass>::ConsumeButton( MFDClass * mfdInstance, int button,
 }
 
 template <class MFDClass>
-bool MFDButtonPage<MFDClass>::ConsumeKeyBuffered( MFDClass * mfdInstance, DWORD key ) const
+bool MFDButtonPage<MFDClass>::ConsumeKeyBuffered( MFDClass * mfdInstance, int key ) const
 {
     // First search for the key on this page
     MapBoolIterator it = m_pages.at(m_i).m_continuousKey.find(key);
@@ -370,14 +370,14 @@ char * MFDButtonPage<MFDClass>::ButtonLabel (int bt) const
 
 // Protected:
 template <class MFDClass>
-void MFDButtonPage<MFDClass>::RegisterFunction( const std::string & label, DWORD key,
+void MFDButtonPage<MFDClass>::RegisterFunction( const std::string & label, int key,
                                                MFDFunctionPtr funLClick, MFDFunctionPtr funRClick )
 {
     RegisterFuncPriv( false, label, key, funLClick, funRClick);
 }
 
 template <class MFDClass>
-void MFDButtonPage<MFDClass>::RegisterFunctionCont( const std::string & label, DWORD key,
+void MFDButtonPage<MFDClass>::RegisterFunctionCont( const std::string & label, int key,
                                                MFDFunctionPtr funLClick, MFDFunctionPtr funRClick )
 {
     RegisterFuncPriv( true, label, key, funLClick, funRClick);
@@ -395,11 +395,10 @@ int MFDButtonPage<MFDClass>::RegisterPage( const MFDBUTTONMENU * menu, int size 
 
 // Private:
 template <class MFDClass>
-bool MFDButtonPage<MFDClass>::PressKey( MFDClass * mfdInstance, DWORD key ) const
+bool MFDButtonPage<MFDClass>::PressKey( MFDClass * mfdInstance, int key ) const
 {
-    typedef std::map<DWORD, MFDFunctionPtr>::const_iterator MapFuncIterator;
     // First search for the key on this page
-    MapFuncIterator it = m_pages.at(m_i).m_keys.find(key);
+    auto it = m_pages.at(m_i).m_keys.find(key);
     if (it != m_pages.at(m_i).m_keys.end() )
     {
         (mfdInstance->*(it->second))(); // Call the function
@@ -413,7 +412,7 @@ bool MFDButtonPage<MFDClass>::PressKey( MFDClass * mfdInstance, DWORD key ) cons
         {
             if ( m_i == j )
                 continue; // The current page was already queried
-            MapFuncIterator it = m_pages.at(j).m_keys.find(key);
+            auto it = m_pages.at(j).m_keys.find(key);
             if (it != m_pages.at(j).m_keys.end() )
             {
                 (mfdInstance->*(it->second))();  // Call the function
@@ -425,7 +424,7 @@ bool MFDButtonPage<MFDClass>::PressKey( MFDClass * mfdInstance, DWORD key ) cons
 }
 
 template <class MFDClass>
-void MFDButtonPage<MFDClass>::RegisterFuncPriv( bool continuous, const std::string & label, DWORD key,
+void MFDButtonPage<MFDClass>::RegisterFuncPriv( bool continuous, const std::string & label, int key,
                               MFDFunctionPtr funLClick, MFDFunctionPtr funRClick)
 {
     if ( m_pages.empty() )

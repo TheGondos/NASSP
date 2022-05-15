@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -2891,7 +2891,7 @@ void LEM_SteerableAnt::Timestep(double simdt){
 
 	//sprintf(oapiDebugString(), "%f %f %f %f", HornSignalStrength[0], HornSignalStrength[1], HornSignalStrength[2], HornSignalStrength[3]);
 
-	//sprintf(oapiDebugString(), "Relative Angle: %f°, SignalStrength: %f", (relang[0]+ relang[1]+ relang[2]+ relang[3])/4*DEG, SignalStrength);
+	//sprintf(oapiDebugString(), "Relative Angle: %fï¿½, SignalStrength: %f", (relang[0]+ relang[1]+ relang[2]+ relang[3])/4*DEG, SignalStrength);
 	// sprintf(oapiDebugString(),"SBand Antenna Temp: %f AH %f",antenna.Temp,antheater.pumping);
 
 

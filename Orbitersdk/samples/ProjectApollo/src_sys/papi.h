@@ -23,17 +23,17 @@
   **************************************************************************/
 
 #pragma warning(disable : 4996 ) 
-
+#include <cstring>
 
 // All inline functions and const variables should be static, see
 // http://www.orbitersim.com/Forum/Default.aspx?g=posts&m=172439#172439
 
-static inline void papiWriteScenario_bool(FILEHANDLE scn, char *item, bool b) {
+static inline void papiWriteScenario_bool(FILEHANDLE scn, const char *item, bool b) {
 
 	oapiWriteScenario_int(scn, item, (b ? 1 : 0));
 }
 
-static inline void papiWriteScenario_double(FILEHANDLE scn, char *item, double d) {
+static inline void papiWriteScenario_double(FILEHANDLE scn, const char *item, double d) {
 
 	char buffer[256];
 
@@ -41,7 +41,7 @@ static inline void papiWriteScenario_double(FILEHANDLE scn, char *item, double d
 	oapiWriteLine(scn, buffer);
 }
 
-static inline void papiWriteScenario_double2(FILEHANDLE scn, char *item, double d1, double d2) {
+static inline void papiWriteScenario_double2(FILEHANDLE scn, const char *item, double d1, double d2) {
 
 	char buffer[256];
 
@@ -49,7 +49,7 @@ static inline void papiWriteScenario_double2(FILEHANDLE scn, char *item, double 
 	oapiWriteLine(scn, buffer);
 }
 
-static inline void papiWriteScenario_vec(FILEHANDLE scn, char *item, VECTOR3 v) {
+static inline void papiWriteScenario_vec(FILEHANDLE scn, const char *item, VECTOR3 v) {
 
 	char buffer[256];
 
@@ -57,7 +57,7 @@ static inline void papiWriteScenario_vec(FILEHANDLE scn, char *item, VECTOR3 v) 
 	oapiWriteLine(scn, buffer);
 }
 
-static inline void papiWriteScenario_mx(FILEHANDLE scn, char *item, MATRIX3 m) {
+static inline void papiWriteScenario_mx(FILEHANDLE scn, const char *item, MATRIX3 m) {
 
 	char buffer[256];
 
@@ -65,7 +65,7 @@ static inline void papiWriteScenario_mx(FILEHANDLE scn, char *item, MATRIX3 m) {
 	oapiWriteLine(scn, buffer);
 }
 
-static inline bool papiReadScenario_bool(char *line, char *item, bool &b) {
+static inline bool papiReadScenario_bool(const char *line, const char *item, bool &b) {
 
 	char buffer[256];
 	int i = 0;
@@ -81,7 +81,7 @@ static inline bool papiReadScenario_bool(char *line, char *item, bool &b) {
 	return false;
 }
 
-static inline bool papiReadScenario_int(char *line, char *item, int &i) {
+static inline bool papiReadScenario_int(const char *line, const char *item, int &i) {
 
 	char buffer[256];
 	int j;
@@ -97,7 +97,7 @@ static inline bool papiReadScenario_int(char *line, char *item, int &i) {
 	return false;
 }
 
-static inline bool papiReadScenario_double(char *line, char *item, double &d) {
+static inline bool papiReadScenario_double(const char *line, const char *item, double &d) {
 
 	char buffer[256];
 	double e;
@@ -113,7 +113,7 @@ static inline bool papiReadScenario_double(char *line, char *item, double &d) {
 	return false;
 }
 
-static inline bool papiReadScenario_vec(char *line, char *item, VECTOR3 &v) {
+static inline bool papiReadScenario_vec(const char *line, const char *item, VECTOR3 &v) {
 
 	char buffer[256];
 	VECTOR3 w;
@@ -141,19 +141,19 @@ static inline void papiCameraSetAperture(double fov) {
 	double *pfov, *pfovx;
 	double* d;
 	void* p;
-	DWORD a, *b, *c;
+	uint32_t a, *b, *c;
 
 	p=&c;
-	b=(DWORD*)p;
+	b=(uint32_t*)p;
 	*b=0x4F4990;
 	a=*c;
 	a+=0x2C8;
 
 	p=&d;
-	*(DWORD*)p=a;//0x381CD68;
+	*(uint32_t*)p=a;//0x381CD68;
 	pfov=d;
 
-	*(DWORD*)p=a+8;//0x381CD68;
+	*(uint32_t*)p=a+8;//0x381CD68;
 	pfovx=d;
 
 	oapiCameraSetAperture(fov);
@@ -172,22 +172,22 @@ static inline double papiCameraAperture() {
 	double *pfov;
 	double* d;
 	void* p;
-	DWORD a, *b, *c;
+	uint32_t a, *b, *c;
 
 	p=&c;
-	b=(DWORD*)p;
+	b=(uint32_t*)p;
 	*b=0x4F4990;
 	a=*c;
 	a+=0x2C8;
 
 	p=&d;
-	*(DWORD*)p=a;//0x381CD68;
+	*(uint32_t*)p=a;//0x381CD68;
 	pfov=d;
 
 	return *pfov;
 }
 
-static inline void papiWriteScenario_boolarr(FILEHANDLE scn, char *item, bool *v, int len) {
+static inline void papiWriteScenario_boolarr(FILEHANDLE scn, const char *item, const bool *v, int len) {
 
 	char buffer[256], buffer2[256];
 	int s;
@@ -202,7 +202,7 @@ static inline void papiWriteScenario_boolarr(FILEHANDLE scn, char *item, bool *v
 	oapiWriteLine(scn, buffer);
 }
 
-static inline bool papiReadScenario_boolarr(char *line, char *item, bool *v, int len) {
+static inline bool papiReadScenario_boolarr(const char *line, const char *item, bool *v, int len) {
 
 	char buffer[256];
 	int in = 0;
@@ -222,7 +222,7 @@ static inline bool papiReadScenario_boolarr(char *line, char *item, bool *v, int
 	return false;
 }
 
-static inline void papiWriteScenario_intarr(FILEHANDLE scn, char *item, int *v, int len) {
+static inline void papiWriteScenario_intarr(FILEHANDLE scn, const char *item, int *v, int len) {
 
 	char buffer[256], buffer2[256];
 	int s;
@@ -237,7 +237,7 @@ static inline void papiWriteScenario_intarr(FILEHANDLE scn, char *item, int *v, 
 	oapiWriteLine(scn, buffer);
 }
 
-static inline bool papiReadScenario_intarr(char *line, char *item, int *v, int len) {
+static inline bool papiReadScenario_intarr(const char *line, const char *item, int *v, int len) {
 
 	char buffer[256];
 	int pos, cur;
@@ -255,7 +255,7 @@ static inline bool papiReadScenario_intarr(char *line, char *item, int *v, int l
 	return false;
 }
 
-static inline void papiWriteScenario_doublearr(FILEHANDLE scn, char *item, double *v, int len) {
+static inline void papiWriteScenario_doublearr(FILEHANDLE scn, const char *item, const double *v, int len) {
 
 	char buffer[256], buffer2[256];
 	int s;
@@ -270,7 +270,7 @@ static inline void papiWriteScenario_doublearr(FILEHANDLE scn, char *item, doubl
 	oapiWriteLine(scn, buffer);
 }
 
-static inline bool papiReadScenario_doublearr(char *line, char *item, double *v, int len) {
+static inline bool papiReadScenario_doublearr(const char *line, const char *item, double *v, int len) {
 
 	char buffer[256];
 	int pos, cur;
@@ -288,7 +288,7 @@ static inline bool papiReadScenario_doublearr(char *line, char *item, double *v,
 	return false;
 }
 
-static inline bool papiReadScenario_string(char *line, char *item, char *i) {
+static inline bool papiReadScenario_string(const char *line, const char *item, char *i) {
 
 	char buffer[256];
 

@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 
@@ -33,7 +33,7 @@
 #include "toggleswitch.h"
 #include "nasspdefs.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "ioChannels.h"
 #include "saturn.h"
 #include "papi.h"
@@ -175,7 +175,7 @@ void SMRCSPropellantSource::Timestep(double simt, double simdt) {
 
 		// propellant/thruster handling
 		//
-		// Nitrogen tetroxide (the oxidizer) has a freezing temperature of about 10°F (fuel much below)
+		// Nitrogen tetroxide (the oxidizer) has a freezing temperature of about 10ï¿½F (fuel much below)
 		// Min. pressure of 50 psi was chosen arbitrarily just to have reasonable engine behavior
 		//		
 		if (GetPackageTempF() > 10 && propellantPressurePSI > 50 && (primPropellantValve.IsOpen() || secPropellantValve.IsOpen())) {
@@ -518,7 +518,7 @@ void CMRCSPropellantSource::OpenHeliumValves() {
 
 	if (heliumValvesOpen) return;
 
-	// Cool down helium tank by 10°F
+	// Cool down helium tank by 10ï¿½F
 	heliumTank->SetTemp(FahrenheitToKelvin(KelvinToFahrenheit(heliumTank->GetTemp()) - 10.));
 	heliumValvesOpen = true;
 }
@@ -585,10 +585,10 @@ double CMRCSPropellantSource::GetHeliumPressurePSI() {
 	if (!our_vessel) return 0;
 	
 	if (!heliumValvesOpen) {
-		// 4150 psi at 75°F
+		// 4150 psi at 75ï¿½F
 		return heliumTank->GetTemp() * 13.973;
 	} else {
-		// 3400 at 65°F to 800 psi at 0°F, linear depending on propellant quantity
+		// 3400 at 65ï¿½F to 800 psi at 0ï¿½F, linear depending on propellant quantity
 		double q = 1;
 		if (source_prop) 
 			q = our_vessel->GetPropellantMass(source_prop) / CM_RCS_FUEL_PER_TANK;

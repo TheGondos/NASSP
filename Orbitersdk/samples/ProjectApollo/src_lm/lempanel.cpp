@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include "stdio.h"
@@ -46,11 +46,9 @@
 
 static GDIParams g_Param;
 
-void InitGParam(HINSTANCE hModule)
+void InitGParam()
 
 {
-	g_Param.hDLL = hModule;
-
 	// allocate GDI resources
 	g_Param.font[0]  = CreateFont (-13, 0, 0, 0, 700, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
 	g_Param.font[1]  = CreateFont (-10, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
@@ -92,7 +90,7 @@ void DrawReticle (HDC hDC, double angle, int dimmer)
 	HGDIOBJ oldObj;
 	int xend,yend;
 	// Set up Dimmer Pen
-	HPEN pen = CreatePen(PS_SOLID,1,RGB(dimmer,64,64));
+	oapi::Pen *pen = CreatePen(PS_SOLID,1,RGB(dimmer,64,64));
 	oldObj = SelectObject (hDC, pen);
 	// Draw crosshair vertical member
 	xend = RETICLE_X_CENTER - (int)(RETICLE_RADIUS * sin(angle));
@@ -1145,7 +1143,7 @@ POINT pt[4];
 	// oapiBlt (surf, srf[5], 0, 0, 0, 0, 96, 96, SURF_PREDEF_CK);
 }
 
-void DrawNeedle (HDC hDC, int x, int y, double rad, double angle, HPEN pen0, HPEN pen1)
+void DrawNeedle (HDC hDC, int x, int y, double rad, double angle, oapi::Pen *pen0, oapi::Pen *pen1)
 
 {
 	double dx = rad * cos(angle), dy = rad * sin(angle);
@@ -1174,7 +1172,7 @@ void LEM::RedrawPanel_XPointer (CrossPointer *cp, SURFHANDLE surf) {
 	if(iy < -60) iy = -60;
 	if(iy > 60 ) iy = 60;
 	hDC = oapiGetDC(surf);
-	HPEN pen = CreatePen(PS_SOLID, 3, RGB(0, 0, 0));
+	oapi::Pen *pen = CreatePen(PS_SOLID, 3, RGB(0, 0, 0));
 	SelectObject(hDC, pen);
 	MoveToEx(hDC, 0, 65 + ix, NULL);
 	LineTo(hDC, 134, 65 + ix);

@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -384,7 +384,7 @@ void ATCA::Timestep(double simt, double simdt) {
 		//Attitude Error Limiter
 		if (!K14)
 		{
-			//Limits attitude rate to 5.0°/s
+			//Limits attitude rate to 5.0ï¿½/s
 			if (K11)
 			{
 				Limiter(V_atterr.z, atterr_limit_dsc_ry);
@@ -397,7 +397,7 @@ void ATCA::Timestep(double simt, double simdt) {
 
 		if (!K15)
 		{
-			//Limits attitude rate to 10.0°/s
+			//Limits attitude rate to 10.0ï¿½/s
 			if (K12)
 			{
 				Limiter(V_atterr.y, atterr_limit_dsc_p);
@@ -410,7 +410,7 @@ void ATCA::Timestep(double simt, double simdt) {
 
 		if (!K16)
 		{
-			//Limits attitude rate to 5.0°/s
+			//Limits attitude rate to 5.0ï¿½/s
 			if (K13)
 			{
 				Limiter(V_atterr.x, atterr_limit_dsc_ry);
@@ -1938,7 +1938,7 @@ void GASTA::Timestep(double simt)
 		gasta_att.x = atan2(sin(imu_att.z), cos(imu_att.z)*cos(imu_att.x));
 	}
 
-	//Map angles between 0° and 360°, just to be sure
+	//Map angles between 0ï¿½ and 360ï¿½, just to be sure
 	if (gasta_att.x < 0)
 	{
 		gasta_att.x += PI2;

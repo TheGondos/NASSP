@@ -239,7 +239,7 @@ public:
 	
 	void Init();											// Initialization
 	void TimeStep(double simdt);					        // Timestep
-	virtual void keyDown(DWORD key);						// Notification of keypress	
+	virtual void keyDown(int key);						// Notification of keypress	
 	void addMessage(char *msg);								// Add message into buffer
 	void redisplayMessages();								// Cause messages in ring buffer to be redisplayed
 	void pushCMCUplinkString(const char *str);              // Send sequence to CMC

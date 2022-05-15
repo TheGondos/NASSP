@@ -22,8 +22,8 @@
 
   **************************************************************************/
 
-#include "hsystems.h"
-#include "orbitersdk.h"
+#include "Hsystems.h"
+#include "Orbitersdk.h"
 #include <stdio.h>
 #include <math.h>
 #include "nasspdefs.h"
@@ -991,7 +991,7 @@ h_Radiator::~h_Radiator() {
 
 void h_Radiator::refresh(double dt) 
 {
-	Qr = rad * size * 5.67e-8 * dt * pow(Temp - 2.7, 4); //Stefan–Boltzmann law
+	Qr = rad * size * 5.67e-8 * dt * pow(Temp - 2.7, 4); //Stefanï¿½Boltzmann law
 	Qc = rad * (100 * size * (Temp - parent->Vessel->GetAtmTemperature()))*(parent->Vessel->GetAtmDensity() / 1.225)*dt; //convective heat transfer, useful for preventing the radiators from cooling to 0K on the pad
 	
 	//if (!strcmp(name, "ECSRADIATOR1"))

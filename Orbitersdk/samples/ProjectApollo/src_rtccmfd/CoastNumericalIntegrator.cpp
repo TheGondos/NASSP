@@ -188,7 +188,7 @@ void CoastIntegrator2::Edit()
 	//Termination control
 PMMCEN_Edit_3B:
 	TIME = abs(TRECT + tau);
-	dt_max = min(dt_lim, K*OrbMech::power(rr, 1.5) / sqrt(mu));
+	dt_max = std::min(dt_lim, K*OrbMech::power(rr, 1.5) / sqrt(mu));
 
 	if (TMIN > TIME)
 	{
@@ -214,7 +214,7 @@ PMMCEN_Edit_3B:
 	//Special time logic
 	if (ISTOPS == 1)
 	{
-		dt = HMULT * min(abs(RCALC), dt_max);
+		dt = HMULT * std::min(abs(RCALC), dt_max);
 		if (abs(dt) > 1e-6)
 		{
 			IEND = 0;

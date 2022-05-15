@@ -28,13 +28,13 @@ See http://nassp.sourceforge.net/license/ for more details.
 
 class ARoapiModule : public oapi::Module {
 public:
-	ARoapiModule(HINSTANCE hDLL);
+	ARoapiModule(oapi::DynamicModule *hDLL);
 	~ARoapiModule();
 	void clbkSimulationStart(RenderMode mode);
 	void clbkSimulationEnd();
 	void clbkPreStep(double simt, double simdt, double mjd);
 	void clbkPostStep(double simt, double simdt, double mjd);
 	void clbkDeleteVessel(OBJHANDLE hVessel);
-	static int MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam);
+	static OAPI_MSGTYPE MsgProc(MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *param, VESSEL *vessel);
 
 };

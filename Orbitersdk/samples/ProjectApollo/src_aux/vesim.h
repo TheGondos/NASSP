@@ -23,9 +23,7 @@ See http://nassp.sourceforge.net/license/ for more details.
 **************************** Revision History ****************************/
 
 #pragma once
-
-#define DIRECTINPUT_VERSION 0x0800
-#include "dinput.h"
+#include <GLFW/glfw3.h>
 
 #define VESIM_INPUTTYPE_BUTTON 1
 #define VESIM_INPUTTYPE_AXIS   2
@@ -47,7 +45,7 @@ typedef  void (*CbInputChanged)(int inputID, int eventType, int newValue, void *
 
 struct VesimInputDefinition {
 	int id;
-	char *name;
+	const char *name;
 	int type;
 	int defaultValue;
 	bool notifyOnChange;
@@ -75,7 +73,7 @@ private:
 	int value;
 
 public:
-	VesimInput(int inputID, char *name, int type, int defaultValue, bool notifyOnChange) :
+	VesimInput(int inputID, const char *name, int type, int defaultValue, bool notifyOnChange) :
 		ID(inputID),
 		name(name),
 		type(type),
@@ -84,7 +82,7 @@ public:
 		value(defaultValue)
 	{};
 
-	int VesimInput::addConnection(int deviceID, int subdeviceType, int subdeviceID, int modifiers, bool reverse);
+	int addConnection(int deviceID, int subdeviceType, int subdeviceID, int modifiers, bool reverse);
 
 	friend class VesimDevice;
 	friend class Vesim;
@@ -99,14 +97,14 @@ private:
 	Vesim *parent;
 	int type;
 	std::vector<VesimDeviceAxis> axes;
-	LPDIRECTINPUTDEVICE8 dx8_joystick {NULL};
-	DIJOYSTATE2			 dx8_jstate;
+	int glfw_joystick = 0;
+	GLFWgamepadstate glfw_jstate;
 
 	void poolDevice();
 
 public:
 	VesimDevice(Vesim* parent);
-	VesimDevice(Vesim* parent, const char* deviceName, LPDIRECTINPUTDEVICE8 dx8_joystick);
+	VesimDevice(Vesim* parent, const char* deviceName, int glfw_joystick);
 	~VesimDevice();
 	friend class Vesim;
 };
@@ -123,11 +121,10 @@ private:
 	std::vector<VesimDevice> vdev;
 	std::vector<VesimDeviceInputConn> vconn;
 
-	bool Vesim::connectDeviceToInput(int inputidx, int deviceID, int subdeviceType, int subdeviceID, bool reverse, int modifiers);
+	bool connectDeviceToInput(int inputidx, int deviceID, int subdeviceType, int subdeviceID, bool reverse, int modifiers);
 public:
 	char* vesselStationName;
-	LPDIRECTINPUT8 dx8ppv;
-
+	
 #ifdef _DEBUG
 	FILE *out_file;
 #endif
@@ -135,11 +132,12 @@ public:
 	~Vesim();
 	bool addInput(int inputID, char *inputName, int inputType, int defaultValue = VESIM_DEFAULT_AXIS_VALUE, bool notifyOnChange = false);
 	bool addInput(VesimInputDefinition *vid);
-	bool setupDevices(char* vesselStationName, LPDIRECTINPUT8 dx8ppv);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *keystate);
+	bool setupDevices(char* vesselStationName);
+	int clbkConsumeBufferedKey(int key, bool down, char *keystate);
 	void poolDevices();
 	int getInputValue(int inputID);
 	void createUserConfigs();
 
-	friend BOOL CALLBACK VesimEnumJoysticksCB(const DIDEVICEINSTANCE* pdidInstance, VOID* pVesim);
+//	friend BOOL CALLBACK VesimEnumJoysticksCB(const DIDEVICEINSTANCE* pdidInstance, VOID* pVesim);
+	void VesimEnumJoysticks();
 };

@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-// To force orbitersdk.h to use <fstream> in any compiler version
+// To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include <stdio.h>
@@ -36,7 +36,7 @@
 
 #include "toggleswitch.h"
 #include "apolloguidance.h"
-#include "csmcomputer.h"
+#include "CSMcomputer.h"
 #include "ioChannels.h"
 
 #include "saturn.h"
@@ -588,7 +588,7 @@ void SaturnPartPressCO2Meter::DoDrawSwitch(double v, SURFHANDLE drawSurface)
 		oapiBlt(drawSurface, NeedleSurface, 215, (20 - (int)((v - 20.0) / 10.0 * 14.0)), 10, 0, 10, 10, SURF_PREDEF_CK);
 }
 
-void SaturnRoundMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s)
+void SaturnRoundMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s)
 {
 	RoundMeter::Init(p0, p1, row);
 	Sat = s;
@@ -644,7 +644,7 @@ void SaturnRightO2FlowMeter::DoDrawSwitch(double v, SURFHANDLE drawSurface)
 }
 
 
-void SaturnEcsRadTempInletMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
+void SaturnEcsRadTempInletMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	ECSIndicatorsSwitch = ecsindicatorsswitch;
@@ -690,7 +690,7 @@ void SaturnEcsRadTempSecOutletMeter::DoDrawSwitch(double v, SURFHANDLE drawSurfa
 }
 
 
-void SaturnGlyEvapTempOutletMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
+void SaturnGlyEvapTempOutletMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	ECSIndicatorsSwitch = ecsindicatorsswitch;
@@ -712,7 +712,7 @@ void SaturnGlyEvapTempOutletMeter::DoDrawSwitch(double v, SURFHANDLE drawSurface
 }
 
 
-void SaturnGlyEvapSteamPressMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
+void SaturnGlyEvapSteamPressMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	ECSIndicatorsSwitch = ecsindicatorsswitch;
@@ -734,7 +734,7 @@ void SaturnGlyEvapSteamPressMeter::DoDrawSwitch(double v, SURFHANDLE drawSurface
 }
 
 
-void SaturnGlycolDischPressMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
+void SaturnGlycolDischPressMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	ECSIndicatorsSwitch = ecsindicatorsswitch;
@@ -756,7 +756,7 @@ void SaturnGlycolDischPressMeter::DoDrawSwitch(double v, SURFHANDLE drawSurface)
 }
 
 
-void SaturnAccumQuantityMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
+void SaturnAccumQuantityMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, RotationalSwitch *ecsindicatorsswitch)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	ECSIndicatorsSwitch = ecsindicatorsswitch;
@@ -778,7 +778,7 @@ void SaturnAccumQuantityMeter::DoDrawSwitch(double v, SURFHANDLE drawSurface)
 }
 
 
-void SaturnH2oQuantityMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, ToggleSwitch *h2oqtyindswitch, PowerSource *pwr)
+void SaturnH2oQuantityMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, ToggleSwitch *h2oqtyindswitch, PowerSource *pwr)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	H2oQtyIndSwitch = h2oqtyindswitch;
@@ -985,7 +985,7 @@ SaturnDCAmpMeter::SaturnDCAmpMeter(double minVal, double maxVal, double vMin, do
 {
 }
 
-void SaturnDCAmpMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, PowerStateRotationalSwitch *dcindicatorswitch)
+void SaturnDCAmpMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, PowerStateRotationalSwitch *dcindicatorswitch)
 {
 	ElectricMeter::Init(p0, p1, row, dcindicatorswitch);
 	DCIndicatorSwitch = dcindicatorswitch;
@@ -1201,7 +1201,7 @@ void SaturnSPSHeliumNitrogenPressMeter::DoDrawSwitch(double v, SURFHANDLE drawSu
 }
 
 
-void SaturnLVSPSPcMeter::Init(HPEN p0, HPEN p1, SwitchRow &row, Saturn *s, ToggleSwitch *lvspspcindicatorswitch, SURFHANDLE frameSurface)
+void SaturnLVSPSPcMeter::Init(oapi::Pen *p0, oapi::Pen *p1, SwitchRow &row, Saturn *s, ToggleSwitch *lvspspcindicatorswitch, SURFHANDLE frameSurface)
 {
 	SaturnRoundMeter::Init(p0, p1, row, s);
 	LVSPSPcIndicatorSwitch = lvspspcindicatorswitch;
@@ -2504,7 +2504,7 @@ void SaturnAltimeter::Init(SURFHANDLE surf1, SURFHANDLE surf2, Saturn *s) {
 	Sat = s;
 };
 
-void SaturnAltimeter::DrawNeedle(HDC hDC, int x, int y, double rad, double angle, HPEN pen0, HPEN pen1)
+void SaturnAltimeter::DrawNeedle(HDC hDC, int x, int y, double rad, double angle, oapi::Pen *pen0, oapi::Pen *pen1)
 {
 	//
     //Needle function by Rob Conley from Mercury code

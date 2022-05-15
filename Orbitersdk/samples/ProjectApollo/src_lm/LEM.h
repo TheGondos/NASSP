@@ -28,12 +28,9 @@
 #include "FDAI.h"
 #include "ORDEAL.h"
 
-// DS20060413 Include DirectInput
-#define DIRECTINPUT_VERSION 0x0800
-#include "dinput.h"
 #include "vesim.h"
 #include "dsky.h"
-#include "imu.h"
+#include "IMU.h"
 #include "cdu.h"
 #include "lmscs.h"
 #include "lm_ags.h"
@@ -104,6 +101,7 @@ typedef struct {
 } LEMECSStatus;
 
 // Systems things
+class MCC;
 
 // Landing Radar
 class LEM_LR : public e_object{
@@ -514,7 +512,7 @@ public:
 	bool clbkVCMouseEvent(int id, int event, VECTOR3 &p);
 	bool clbkVCRedrawEvent(int id, int event, SURFHANDLE surf);
 
-	int  clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int  clbkConsumeBufferedKey(int key, bool down, char *kstate);
 	void clbkPreStep (double simt, double simdt, double mjd);
 	void clbkPostStep(double simt, double simdt, double mjd);
 	void clbkLoadStateEx (FILEHANDLE scn, void *vs);
@@ -634,18 +632,10 @@ public:
 
 	double DebugLineClearTimer;			// Timer for clearing debug line
 		
-	// DS20060413 DirectInput stuff
-	// Handle to DLL instance
-	HINSTANCE dllhandle;
-	// pointer to DirectInput class itself
-	LPDIRECTINPUT8 dx8ppv;
 	// Joysticks-Enabled flag / counter - Zero if we aren't using DirectInput, nonzero is the number of joysticks we have.
 	int js_enabled;
 	// Pointers to DirectInput joystick devices
-	LPDIRECTINPUTDEVICE8 dx8_joystick[2]; // One for THC, one for RHC, ignore extras
-	DIDEVCAPS			 dx8_jscaps[2];   // Joystick capabilities
-	DIJOYSTATE2			 dx8_jstate[2];   // Joystick state
-	HRESULT				 dx8_failure;     // DX failure reason
+	GLFWgamepadstate	 glfw_jstate[2];   // Joystick state
 	Vesim vesim;                          ///< Vessel Specific Input Mngr
 	int rhc_id;							  // Joystick # for the RHC
 	int rhc_rot_id;						  // ID of ROTATOR axis to use for RHC Z-axis
@@ -774,7 +764,7 @@ protected:
 
 	CrossPointer crossPointerLeft;
 
-	HBITMAP hBmpFDAIRollIndicator;
+	SURFHANDLE hBmpFDAIRollIndicator;
 
 	SwitchRow LeftXPointerSwitchRow;
 	ToggleSwitch LeftXPointerSwitch;
@@ -2076,7 +2066,7 @@ extern MESHHANDLE hAstro1;
 extern MESHHANDLE hLMVC;
 
 extern void LEMLoadMeshes();
-extern void InitGParam(HINSTANCE hModule);
+extern void InitGParam();
 extern void FreeGParam();
 
 //Offset from center of LM mesh (full LM) to center of descent stage mesh (for staging)

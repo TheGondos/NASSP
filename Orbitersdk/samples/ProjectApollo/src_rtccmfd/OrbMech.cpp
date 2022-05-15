@@ -1,6 +1,7 @@
 #include "OrbMech.h"
 #include <limits>
 #include <vector>
+#include <cstring>
 
 inline double acosh(double z) { return log(z + sqrt(z + 1.0)*sqrt(z - 1.0)); }
 inline double atanh(double z){ return 0.5*log(1.0 + z) - 0.5*log(1.0 - z); }
@@ -1397,7 +1398,7 @@ VECTOR3 Vinti(VECTOR3 R1, VECTOR3 V1, VECTOR3 R2, double mjd0, double dt, int N,
 		}
 		//return V1_star;
 
-		if (n == nMax2 || _isnan(R2_star.x))// || isinf(R2_star.x))
+		if (n == nMax2 || std::isnan(R2_star.x))// || isinf(R2_star.x))
 		{
 			return _V(0, 0, 0);
 		}
@@ -1915,7 +1916,7 @@ double findelev_gs(VECTOR3 R_A0, VECTOR3 V_A0, VECTOR3 R_gs, double mjd0, double
 		dE = E_A - E;
 		w_P = dotp(V_A, unit(crossp(U_N, R_A)) / r_A);
 		alpha = E + sign(dotp(crossp(R_proj, R_A), U_N))*acos(dotp(R_proj / r_P, R_A / r_A));
-		dt = (alpha - acos(min(1.0, r_P*cos(E) / r_A))) / (w_A - w_P);
+		dt = (alpha - acos(std::min(1.0, r_P*cos(E) / r_A))) / (w_A - w_P);
 
 		if (abs(dt) > dt_max)
 		{
@@ -3244,10 +3245,10 @@ VECTOR3 backupgdcalignment(MATRIX3 REFS, VECTOR3 R_C, double R_E, int &set)
 	MATRIX3 SBNB,SMNB;
 
 	a = -0.5676353234;
-	TA = 32.5*RAD; //50° mark is at 7.5° trunnion plus 25° from center 
+	TA = 32.5*RAD; //50ï¿½ mark is at 7.5ï¿½ trunnion plus 25ï¿½ from center 
 	SA = PI;
 
-	//Star 1: 50° mark. Star 2: R line
+	//Star 1: 50ï¿½ mark. Star 2: R line
 	starset[0][0] = 34;
 	starset[0][1] = 29;
 
@@ -3273,7 +3274,7 @@ VECTOR3 backupgdcalignment(MATRIX3 REFS, VECTOR3 R_C, double R_E, int &set)
 
 		imuang = CALCGAR(REFS, SMNB);
 
-		//The first check is to prevent yaw angle from getting too large. 0.74 is roughly 1-cos(75°)
+		//The first check is to prevent yaw angle from getting too large. 0.74 is roughly 1-cos(75ï¿½)
 		if (cos(imuang.z*2.0) + 0.74>0 && isnotocculted(s_SMA, R_C, R_E) && isnotocculted(s_SMB, R_C, R_E))
 		{
 			return imuang;
@@ -4689,7 +4690,7 @@ void poweredflight(VECTOR3 R, VECTOR3 V, double mjd0, OBJHANDLE gravref, double 
 		a_T = f_T / mnow;
 		tau = v_ex / a_T;
 		t_remain = tau*(1.0 - exp(-dVnow / v_ex));
-		dt = min(dt_max, t_remain);
+		dt = std::min(dt_max, t_remain);
 		dvdt = U_TD*f_T / mnow*dt;
 
 		Rnow = Rnow + (Vnow + gp*dt*0.5 + dvdt*0.5)*dt;
@@ -6768,7 +6769,7 @@ OrbMech_DROOTS_C:
 		double z1, z2;
 		z1 = 2.0*power(-b/2.0, 1.0 / 3.0);
 		z2 = power(b / 2.0, 1.0 / 3.0);
-		z = max(z1, z2);
+		z = std::max(z1, z2);
 	}
 	else if (delta > 0.0)
 	{
@@ -6782,7 +6783,7 @@ OrbMech_DROOTS_C:
 		z1 = 2.0*sqrt(-a / 3.0)*cos(phi / 3.0) - p / 3.0;
 		z2 = 2.0*sqrt(-a / 3.0)*cos(phi / 3.0 + PI2 / 3.0) - p / 3.0;
 		z3 = 2.0*sqrt(-a / 3.0)*cos(phi / 3.0 + PI2 * 2.0 / 3.0) - p / 3.0;
-		z = max(z1, max(z2, z3));
+		z = std::max(z1, std::max(z2, z3));
 	}
 
 	double ra, xi, beta, delta1, delta2;
@@ -6879,6 +6880,7 @@ PMMAEG::PMMAEG()
 void PMMAEG::CALL(AEGHeader &header, AEGDataBlock &in, AEGDataBlock &out)
 {
 	AEGDataBlock tempblock;
+	bool firstpass;
 
 	if (abs(in.TE - in.TS) > 96.0*3600.0)
 	{
@@ -6943,7 +6945,7 @@ void PMMAEG::CALL(AEGHeader &header, AEGDataBlock &in, AEGDataBlock &out)
 	CurrentBlock = in;
 
 	double dt, theta_R;
-	bool firstpass = true;
+	firstpass = true;
 
 	if (in.TIMA == 0 || in.TIMA >= 4)
 	{
@@ -7151,6 +7153,7 @@ void PMMLAEG::CALL(AEGHeader &header, AEGDataBlock &in, AEGDataBlock &out)
 	CELEMENTS coe_osc0, coe_osc1, coe_mean1;
 	MATRIX3 Rot;
 	VECTOR3 P, W;
+	bool firstpass;
 
 	if (in.coe_osc.a<0.27*OrbMech::R_Earth || in.coe_osc.a > 5.0*OrbMech::R_Earth)
 	{
@@ -7232,7 +7235,7 @@ void PMMLAEG::CALL(AEGHeader &header, AEGDataBlock &in, AEGDataBlock &out)
 	coe_mean1 = in.coe_mean;
 
 	double dt, theta_R;
-	bool firstpass = true;
+	firstpass = true;
 
 	if (in.TIMA == 0 || in.TIMA >= 4)
 	{
@@ -7557,9 +7560,9 @@ bool CoastIntegrator::iteration(bool allow_stop)
 	{
 		M = 1;
 	}
-	dt_max = 0.3*min(dt_lim, min(K*OrbMech::power(rr, 1.5) / sqrt(mu), (M == 0 ? 10e10 : K * OrbMech::power(r_qc, 1.5) / sqrt(mu_Q))));
+	dt_max = 0.3*std::min(dt_lim, std::min(K*OrbMech::power(rr, 1.5) / sqrt(mu), (M == 0 ? 10e10 : K * OrbMech::power(r_qc, 1.5) / sqrt(mu_Q))));
 	Y = OrbMech::sign(t_F - t);
-	dt = Y*min(abs(t_F - t), dt_max);
+	dt = Y*std::min(abs(t_F - t), dt_max);
 
 	if (M == 1)
 	{
@@ -7860,12 +7863,12 @@ MATRIX3 MatrixRH_LH(MATRIX3 A)
 
 double acos2(double _X)
 {
-	return acos(min(1.0, max(-1.0, _X)));
+	return acos(std::min(1.0, std::max(-1.0, _X)));
 }
 
 double asin2(double _X)
 {
-	return asin(min(1.0, max(-1.0, _X)));
+	return asin(std::min(1.0, std::max(-1.0, _X)));
 }
 
 double factorial(unsigned n)
