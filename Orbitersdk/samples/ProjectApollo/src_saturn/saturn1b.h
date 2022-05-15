@@ -53,7 +53,7 @@ public:
 	/// \param cfg File to load configuration defaults from.
 	///
 	void clbkSetClassCaps (FILEHANDLE cfg);
-	int  clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int  clbkConsumeBufferedKey(int key, bool down, char *kstate);
 
 	///
 	/// \brief Orbiter timestep function.

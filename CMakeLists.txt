@@ -190,3 +190,59 @@ set_target_properties(FloatBag
 install(TARGETS FloatBag
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+
+####### FloodLight #######
+add_library(FloodLight SHARED
+    ${SRC_DIR}/src_launch/Floodlight.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(FloodLight PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(FloodLight
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME FloodLight
+)
+
+install(TARGETS FloodLight
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### LC34 #######
+add_library(LC34 SHARED
+    ${SRC_DIR}/src_launch/IUUmbilical.cpp
+    ${SRC_DIR}/src_launch/IUUmbilicalInterface.cpp
+    ${SRC_DIR}/src_launch/IU_ESE.cpp
+    ${SRC_DIR}/src_launch/LC34.cpp
+    ${SRC_DIR}/src_launch/RCA110A.cpp
+    ${SRC_DIR}/src_launch/SCMUmbilical.cpp
+    ${SRC_DIR}/src_launch/SIB_ESE.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(LC34 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+)
+
+set_target_properties(LC34
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LC34
+)
+
+install(TARGETS LC34
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)

@@ -378,7 +378,7 @@ int Floodlight::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int Floodlight::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int Floodlight::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (KEYMOD_SHIFT(kstate) || KEYMOD_CONTROL(kstate)) {
 		return 0;
