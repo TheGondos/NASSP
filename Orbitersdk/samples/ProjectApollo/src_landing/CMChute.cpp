@@ -163,13 +163,13 @@ void CMChute::clbkPreStep(double simt,double simdt,double mjd)
    for(int i=0;i<3;i++)if(i==state)SetMeshVisibilityMode(meshindex[i],MESHVIS_ALWAYS);
                               else SetMeshVisibilityMode(meshindex[i],MESHVIS_NEVER);
    if(proc[state]>0){
-    proc[state]=max(proc[state]-simdt/timprc[state],0);
+    proc[state]=std::max(proc[state]-simdt/timprc[state],0.0);
     SetAnimation(anim[state],proc[state]);
    }else state++;
   }else if(state==STATE_DEPLOYED){
    if(GetAltitude(ALTMODE_GROUND)<2.3){
     if(procLanding<1){
-     procLanding=min(procLanding+simdt/20,1);
+     procLanding=std::min(procLanding+simdt/20.0,1.0);
      SetAnimation(animLanding,procLanding);
     }else state=STATE_LANDED;
    }
@@ -179,7 +179,7 @@ void CMChute::clbkPreStep(double simt,double simdt,double mjd)
   }
  }else{
   if(proc[3]>0){
-   proc[3]=max(proc[3]-simdt/3.0,0);
+   proc[3]=std::max(proc[3]-simdt/3.0,0.0);
    SetAnimation(anim[3],proc[3]);
   }
  }

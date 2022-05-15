@@ -98,3 +98,25 @@ install(TARGETS ASTP
 #	RUNTIME
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+
+####### CMChute #######
+add_library(CMChute SHARED
+${SRC_DIR}/src_landing/CMChute.cpp
+${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(CMChute PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(CMChute
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME CMChute
+)
+
+install(TARGETS CMChute
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
