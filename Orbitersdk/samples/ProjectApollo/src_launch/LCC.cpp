@@ -28,6 +28,7 @@
 #include "ML.h"
 #include "LC34.h"
 #include "LC37.h"
+#include <cstring>
 
 #define ORBITER_MODULE
 

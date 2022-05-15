@@ -24,7 +24,7 @@
 
 #include "LCC_MFD.h"
 
-LCC_MFD::LCC_MFD(DWORD w, DWORD h, VESSEL *v) :MFD2(w, h, v)
+LCC_MFD::LCC_MFD(int w, int h, VESSEL *v) :MFD2(w, h, v)
 {
 	pLCC = (LCC*)v;
 	screen = 0;
@@ -38,12 +38,12 @@ LCC_MFD::~LCC_MFD(void)
 	return;
 }
 
-int LCC_MFD::MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam)
+OAPI_MSGTYPE LCC_MFD::MsgProc(MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *param, VESSEL*vessel)
 {
 	switch (msg)
 	{
-	case OAPI_MSG_MFD_OPENED:
-		return (int)(new LCC_MFD(LOWORD(wparam), HIWORD(wparam), (VESSEL*)lparam));
+	case OAPI_MSG_MFD_OPENEDEX:
+		return (OAPI_MSGTYPE)(new LCC_MFD(param->w, param->h, vessel));
 	}
 	return 0;
 }
@@ -72,7 +72,7 @@ int LCC_MFD::ButtonMenu(const MFDBUTTONMENU** menu) const
 {
 	return m_buttonPages.ButtonMenu(menu);
 }
-bool LCC_MFD::ConsumeKeyBuffered(DWORD key)
+bool LCC_MFD::ConsumeKeyBuffered(int key)
 {
 	return m_buttonPages.ConsumeKeyBuffered(this, key);
 }

@@ -538,7 +538,7 @@ int LC37::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int LC37::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int LC37::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (KEYMOD_SHIFT(kstate) || KEYMOD_CONTROL(kstate)) {
 		return 0;

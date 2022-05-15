@@ -246,3 +246,59 @@ set_target_properties(LC34
 install(TARGETS LC34
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+
+####### LC37 #######
+add_library(LC37 SHARED
+    ${SRC_DIR}/src_launch/IUUmbilical.cpp
+    ${SRC_DIR}/src_launch/IUUmbilicalInterface.cpp
+    ${SRC_DIR}/src_launch/IU_ESE.cpp
+    ${SRC_DIR}/src_launch/LC37.cpp
+    ${SRC_DIR}/src_launch/RCA110A.cpp
+    ${SRC_DIR}/src_launch/SCMUmbilical.cpp
+    ${SRC_DIR}/src_launch/SIB_ESE.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+)
+
+target_include_directories(LC37 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_csm
+)
+
+set_target_properties(LC37
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LC37
+)
+
+install(TARGETS LC37
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### LCC #######
+add_library(LCC SHARED
+    ${SRC_DIR}/src_launch/LCC.cpp
+    ${SRC_DIR}/src_launch/LCCMFDButtons.cpp
+    ${SRC_DIR}/src_launch/LCC_MFD.cpp
+    ${SRC_DIR}/src_launch/RCA110A.cpp
+)
+
+target_include_directories(LCC PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_rtccmfd
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(LCC
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LCC
+)
+
+install(TARGETS LCC
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)

@@ -34,13 +34,13 @@ private:
 	LCC* pLCC;
 
 public:
-	LCC_MFD(DWORD w, DWORD h, VESSEL* v);
+	LCC_MFD(int w, int h, VESSEL* v);
 	~LCC_MFD(void);
 
 	bool Update(oapi::Sketchpad* skp);
 	char* ButtonLabel(int bt);
 	int ButtonMenu(const MFDBUTTONMENU** menu) const;
-	bool ConsumeKeyBuffered(DWORD key);
+	bool ConsumeKeyBuffered(int key);
 	bool ConsumeButton(int bt, int event);
 
 	void menuVoid() {}
@@ -50,7 +50,7 @@ public:
 	void set_SLCCDiscreteInput(int n, bool set);
 	void LoadCheckoutProgram(const char *str);
 
-	static int MsgProc(UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam);
+	static OAPI_MSGTYPE MsgProc(MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *, VESSEL*vessel);
 protected:
 	const LCCMFDButtons m_buttonPages;
 
