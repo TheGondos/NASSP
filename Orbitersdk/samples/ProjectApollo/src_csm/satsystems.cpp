@@ -1489,8 +1489,8 @@ void Saturn::SystemsInternalTimestep(double simdt)
 {
 	TRACESETUP("Saturn::SystemsInternalTimestep");
 
-	double mintFactor = __max(simdt / 100.0, 0.5);
-	double tFactor = __min(mintFactor, simdt);
+	double mintFactor = std::max(simdt / 100.0, 0.5);
+	double tFactor = std::min(mintFactor, simdt);
 	while (simdt > 0) {
 
 		// Each timestep is passed to the SPSDK
@@ -1551,7 +1551,7 @@ void Saturn::SystemsInternalTimestep(double simdt)
 		EventTimer306Display.SystemTimestep(tFactor);
 
 		simdt -= tFactor;
-		tFactor = __min(mintFactor, simdt);
+		tFactor = std::min(mintFactor, simdt);
 		TRACE("Internal timestep done");
 	}
 
@@ -1609,7 +1609,6 @@ void Saturn::JoystickTimestep()
 			sprintf(oapiDebugString(),"DX8JS: Joystick selected as RHC does not exist.");
 		}
 
-		HRESULT hr;
 		ChannelValue val31;
 		e_object *direct_power1, *direct_power2;
 		val31 = agc.GetInputChannel(031); // Get current data
@@ -1687,6 +1686,7 @@ void Saturn::JoystickTimestep()
 			}
 			//sprintf(oapiDebugString(), "RHC: X/Y/Z = %d / %d / %d | rzx_id %d rot_id %d", rhc_x_pos, rhc_y_pos, rhc_rot_pos, rhc_rzx_id, rhc_rot_id);
 		}
+		/*
 		else if (rhc_id != -1 && rhc_id < js_enabled) {	
 			hr = dx8_joystick[rhc_id]->Poll();
 			if (FAILED(hr)) { // Did that work?
@@ -1731,7 +1731,7 @@ void Saturn::JoystickTimestep()
 				}
 			}
 		// Use Orbiter's attitude control as RHC
-		} else {
+		}*/ else {
 			// Roll
 			if (GetManualControlLevel(THGROUP_ATT_BANKLEFT) > 0) {
 				rhc_x_pos = (int) ((1. - GetManualControlLevel(THGROUP_ATT_BANKLEFT)) * 32768.);
@@ -2137,6 +2137,7 @@ void Saturn::JoystickTimestep()
 				thc_rot_pos = vesim.getInputValue(CSM_AXIS_INPUT_RHC_Y);
 			}
 		}
+		/*
 		else if (thc_id != -1 && thc_id < js_enabled){
 			hr = dx8_joystick[thc_id]->Poll();
 			if (FAILED(hr)) { // Did that work?
@@ -2194,7 +2195,7 @@ void Saturn::JoystickTimestep()
 			}
 
 		// Use Orbiter's attitude control as THC
-		} else {
+		}*/ else {
 			// Up/down
 			if (GetManualControlLevel(THGROUP_ATT_DOWN) > 0) {
 				thc_y_pos = (int) ((1. - GetManualControlLevel(THGROUP_ATT_DOWN)) * 32768.);

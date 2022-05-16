@@ -26,13 +26,13 @@
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
 #include "IMFD_Client.h"
-
+#include <cstring>
 
 IMFD_Client::IMFD_Client() {
 
-	IMFD_MemoryMapping = NULL;
+	//IMFD_MemoryMapping = NULL;
 	IMFD_MemoryMapped = NULL;
-	ZeroMemory(&ConstantConfiguration, sizeof(IMFDConstantConfiguration));
+	memset(&ConstantConfiguration, 0, sizeof(IMFDConstantConfiguration));
 	VariableConfiguration.DataTimeStamp = 0;
 	VariableConfiguration.GET = -1;
 	Vessel = NULL;
@@ -50,7 +50,7 @@ IMFD_Client::~IMFD_Client() {
 }
 	
 bool IMFD_Client::Connect() {
-
+/*
 	IMFD_MemoryMapping = OpenFileMapping(FILE_MAP_WRITE, FALSE, IMFD_COM_AREA_NAME);
 	if(IMFD_MemoryMapping) {
 		IMFD_MemoryMapped = (IMFDCOMSET*)MapViewOfFile(IMFD_MemoryMapping, FILE_MAP_WRITE, 0, 0, 0);
@@ -58,7 +58,7 @@ bool IMFD_Client::Connect() {
 			CloseHandle(IMFD_MemoryMapping);
 			IMFD_MemoryMapping = NULL;
 		}
-	}
+	}*/
 	return (IMFD_MemoryMapped != NULL);
 }
 
@@ -67,13 +67,13 @@ void IMFD_Client::Disconnect() {
 	//
 	// IMFD5 communication support
 	//
-
+/*
 	if (IMFD_MemoryMapping) {
 		UnmapViewOfFile(IMFD_MemoryMapped);
 		CloseHandle(IMFD_MemoryMapping);
 		IMFD_MemoryMapping = NULL;
 		IMFD_MemoryMapped = NULL;
-	}
+	}*/
 }
 
 void IMFD_Client::SetConstantConfiguration(IMFDConstantConfiguration c) {
@@ -144,7 +144,7 @@ void IMFD_Client::TimeStep() {
 				memcpy(&LastBurnData, &IMFD_MemoryMapped->Burn, sizeof(IMFD_BURN_DATA));
 				BurnDataValid = true;
 				IMFD_MemoryMapped->RequestFromVessel = NULL;
-				LastBurnReadTime = GetTickCount();
+				LastBurnReadTime = glfwGetTime();
 				BurnRequestState++;
 			}
 			if (!BurnFlags) {
@@ -154,7 +154,7 @@ void IMFD_Client::TimeStep() {
 			break;
 
 		case 3:	// wait before to do a further request
-			if (GetTickCount() > LastBurnReadTime + 500)		// wait 0.5 sec
+			if (glfwGetTime() > LastBurnReadTime + 0.5)		// wait 0.5 sec
 				BurnRequestState = 1;				// and reamorce
 			break;
 
@@ -181,6 +181,6 @@ bool IMFD_Client::StartBurnDataRequests() {
 
 void IMFD_Client::StopBurnDataRequests() {
 
-	BurnFlags = NULL;
+	BurnFlags = 0;
 }
 

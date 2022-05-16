@@ -50,12 +50,10 @@
 #include "iu.h"
 #include "Mission.h"
 
-#include <crtdbg.h>
-
 extern "C" {
-#include <lua\lua.h>
-#include <lua\lualib.h>
-#include <lua\lauxlib.h>
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
 
 //
@@ -293,7 +291,7 @@ void cbCSMVesim(int inputID, int eventType, int newValue, void *pdata) {
 		}
 	}
 }
-
+/*
 // DX8 callback for enumerating joysticks
 BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pSaturn)
 {
@@ -343,7 +341,7 @@ BOOL CALLBACK EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pSat
 	}
     return DIENUM_CONTINUE;
 }
-
+*/
 //
 // CAUTION: This disables the warning, which is triggered by the use of the "this" pointer in the 
 // initializations of iuCommandConnector, sivbControlConnector and sivbCommandConnector below. 
@@ -525,13 +523,14 @@ Saturn::Saturn(OBJHANDLE hObj, int fmodel) : ProjectApolloConnectorVessel (hObj,
 	//Initialize the link to the MFD's debug function.
 	debugString = 0;
 	debugConnected = false;
-	HMODULE hdbg = GetModuleHandle("modules//plugin//ProjectApolloMFD.dll");
+	/*
+	HMODULE hdbg = GetModuleHandle("modules/plugin/ProjectApolloMFD.dll");
 	if (hdbg)
 	{
 		debugString = (char *(__cdecl *)()) GetProcAddress(hdbg,"pacMFDGetDebugString");
 		if (debugString != 0)
 			debugConnected = true;
-	}
+	}*/
 	if (!debugConnected)
 	{
 		debugString = &oapiDebugString;
@@ -575,7 +574,7 @@ Saturn::~Saturn()
 	}
 
 	ClearMissionManagementMemory();
-
+/*
 	// Release DirectX joystick stuff
 	if(enableVESIM || js_enabled > 0){
 		// Release joysticks
@@ -587,7 +586,7 @@ Saturn::~Saturn()
 		dx8ppv->Release();
 		dx8ppv = NULL;
 	}
-
+*/
 	for (int i = 0; i < 2; i++) {
 		delete[] ReticleLineLen[i];
 		for (int k = 0; k < 2; k++)
@@ -3252,7 +3251,7 @@ int Saturn::clbkConsumeDirectKey(char *kstate)
 	return 0;
 }
 
-int Saturn::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int Saturn::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (FirstTimestep) return 0;
 
@@ -3844,7 +3843,18 @@ void Saturn::FireSeperationThrusters(THRUSTER_HANDLE *pth)
 // ==============================================================
 // DLL entry point
 // ==============================================================
+__attribute__((constructor))
+static void initialize_saturn() {
+	printf("initialize_saturn\n");
+	SetupgParam();
+}
 
+__attribute__((destructor))
+static void destroy_saturn() {
+	printf("destroy_saturn\n");
+	DeletegParam();
+}
+/*
 BOOL WINAPI DllMain (HINSTANCE hModule,
 					 DWORD ul_reason_for_call,
 					 LPVOID lpReserved)
@@ -3860,7 +3870,7 @@ BOOL WINAPI DllMain (HINSTANCE hModule,
 	}
 	return TRUE;
 }
-
+*/
 void Saturn::GenericTimestepStage(double simt, double simdt)
 
 {
@@ -4265,7 +4275,7 @@ void Saturn::GenericLoadStateSetup()
 	//
 	// Set up joysticks.
 	//
-
+/*
 	HRESULT hr;
 	// Having read the configuration file, set up DirectX...	
 	hr = DirectInput8Create(dllhandle, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dx8ppv, NULL); // Give us a DirectInput context
@@ -4306,7 +4316,7 @@ void Saturn::GenericLoadStateSetup()
 	else {
 		// We can't print an error message this early in initialization, so save this reason for later investigation.
 		dx8_failure = hr;
-	}
+	}*/
 }
 
 void Saturn::SetGenericStageState()

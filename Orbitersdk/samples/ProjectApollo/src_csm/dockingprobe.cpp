@@ -261,14 +261,14 @@ void DockingProbe::TimeStep(double simt, double simdt)
 
 		// Search the complete vessel list for a grappling candidate.
 		// Not very scalable ...
-		for (DWORD i = 0; i < oapiGetVesselCount(); i++) {
+		for (int i = 0; i < oapiGetVesselCount(); i++) {
 			OBJHANDLE hV = oapiGetVesselByIndex (i);
 			if (hV == OurVessel->GetHandle()) continue; // we don't want to grapple ourselves ...
 			oapiGetGlobalPos (hV, &gvslPos);
 			if (dist (gvslPos, gprbPos) < oapiGetSize (hV)) { // in range
 				VESSEL *v = oapiGetVesselInterface (hV);
-				DWORD nAttach = v->AttachmentCount (true);
-				for (DWORD j = 0; j < nAttach; j++) { // now scan all attachment points of the candidate
+				int nAttach = v->AttachmentCount (true);
+				for (int j = 0; j < nAttach; j++) { // now scan all attachment points of the candidate
 					ATTACHMENTHANDLE hAtt = v->GetAttachmentHandle (true, j);
 					const char *id = v->GetAttachmentId (hAtt);
 					if (strncmp (id, "PADROGUE", 8)) continue; // attachment point not compatible

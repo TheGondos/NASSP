@@ -101,9 +101,6 @@ Saturn1b::~Saturn1b()
 void Saturn1b::initSaturn1b()
 
 {
-	// Save DLL instance handle for later abuse
-	dllhandle = g_Param.hDLL;
-	
 	//
 	// Do the basic initialisation from the
 	// generic Saturn class first.
@@ -661,7 +658,7 @@ void Saturn1b::CalculateStageMass()
 	Stage1Mass = Stage2Mass + SI_EmptyMass + SII_FuelMass + (LESAttached ? Abort_Mass : 0.0);
 }
 
-int Saturn1b::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int Saturn1b::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (FirstTimestep) return 0;
 

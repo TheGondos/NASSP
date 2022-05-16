@@ -32,8 +32,6 @@
 
 #include "resource.h"
 
-#define LOADBMP(id) (LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (id)))
-
 #include "nasspdefs.h"
 #include "nasspsound.h"
 
@@ -215,30 +213,28 @@ void Saturn::InitReticle() {
 		ReticleLine[1][1][i] = std::get<1>(line[i]);
 	}
 
-	ReticlePoint = new POINT[ReticleLineMaxLen];
+	ReticlePoint = new oapi::IVECTOR2[ReticleLineMaxLen];
 	//printf("RetMaxlen:%d\n", ReticleLineMaxLen);
 }
 
-void drawReticle(SURFHANDLE surf, double shaft, double panelPixelHeight, int reticleLineCnt, int reticleLineLen[], double **reticleLine, POINT ptbuf[]) {
-	HGDIOBJ oldObj;
-	HDC hDC = oapiGetDC(surf);
-	oapi::Pen *pen = CreatePen(PS_SOLID, 1, RGB(211, 171, 23));
-	oldObj = SelectObject(hDC, pen);
+void drawReticle(SURFHANDLE surf, double shaft, double panelPixelHeight, int reticleLineCnt, int reticleLineLen[], double **reticleLine, oapi::IVECTOR2 ptbuf[]) {
+	oapi::Sketchpad *skp = oapiGetSketchpad(surf);
+	oapi::Pen *pen = oapiCreatePen(1, 1, oapiGetColour(211, 171, 23));
+	skp->SetPen(pen);
 	double reticleMul = 0.5*panelPixelHeight / tan(oapiCameraAperture());
 	double cosShaft = cos(shaft), sinShaft = sin(shaft);
 	int idx = 0;
 	for (int i = 0; i < reticleLineCnt; i++) {
 		for (int k = 0; k < reticleLineLen[i]; k++) {
 			double xorig = reticleLine[0][idx], yorig = reticleLine[1][idx];
-			ptbuf[k].x = 268L + (LONG (reticleMul*(cosShaft*xorig + sinShaft*yorig)));
-			ptbuf[k].y = 268L - (LONG (reticleMul*(-sinShaft*xorig + cosShaft*yorig)));
+			ptbuf[k].x = 268L + (int (reticleMul*(cosShaft*xorig + sinShaft*yorig)));
+			ptbuf[k].y = 268L - (int (reticleMul*(-sinShaft*xorig + cosShaft*yorig)));
 			idx++;
 		}
-		Polyline(hDC, ptbuf, reticleLineLen[i]);
+		skp->Polyline(ptbuf, reticleLineLen[i]);
 	}
-	SelectObject(hDC, oldObj);
-	DeleteObject(pen);
-	oapiReleaseDC(surf, hDC);
+	oapiReleasePen(pen);
+	oapiReleaseSketchpad(skp);
 }
 
 void setCameraLOS(double shaft, double trunnion) {
@@ -254,18 +250,18 @@ void setCameraLOS(double shaft, double trunnion) {
 
 void Saturn::RedrawPanel_MFDButton(SURFHANDLE surf, int mfd, int side, int xoffset, int yoffset, int ydist) {
 
-	HDC hDC = oapiGetDC (surf);
-	SelectObject (hDC, g_Param.font[2]);
-	SetTextColor (hDC, RGB(196, 196, 196));
-	SetTextAlign (hDC, TA_CENTER);
-	SetBkMode (hDC, TRANSPARENT);
+	oapi::Sketchpad *skp = oapiGetSketchpad(surf);
+	skp->SetFont(g_Param.font[2]);
+	skp->SetTextColor (oapiGetColour(196, 196, 196));
+	skp->SetTextAlign(oapi::Sketchpad::CENTER);
+	skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
 	const char *label;
 	for (int bt = 0; bt < 6; bt++) {
 		if (label = oapiMFDButtonLabel (mfd, bt+side*6))
-			TextOut (hDC, 10 + xoffset, 3 + ydist * bt + yoffset, label, strlen(label));
+			skp->Text (10 + xoffset, 3 + ydist * bt + yoffset, label, strlen(label));
 		else break;
 	}
-	oapiReleaseDC (surf, hDC);
+	oapiReleaseSketchpad (skp);
 }
 
 
@@ -297,205 +293,205 @@ void Saturn::InitPanel (int panel)
 	// bloat the DLL.
 	//
 
-	srf[SRF_INDICATOR]								= oapiCreateSurface (LOADBMP (IDB_INDICATOR));
-	srf[SRF_NEEDLE]									= oapiCreateSurface (LOADBMP (IDB_NEEDLE));
-	srf[SRF_DIGITAL]								= oapiCreateSurface (LOADBMP (IDB_DIGITAL));
-	srf[SRF_DIGITAL2]								= oapiCreateSurface (LOADBMP (IDB_DIGITAL2));
-	srf[SRF_SWITCHUP]								= oapiCreateSurface (LOADBMP (IDB_SWITCHUP));
-	srf[SRF_SWITCHLEVER]							= oapiCreateSurface (LOADBMP (IDB_SWLEVER));
-	srf[SRF_SWITCHGUARDS]							= oapiCreateSurface (LOADBMP (IDB_SWITCHGUARDS));
-	srf[SRF_SWITCHGUARDPANEL15]						= oapiCreateSurface (LOADBMP (IDB_SWITCHGUARDPANEL15));
-	srf[SRF_ABORT]									= oapiCreateSurface (LOADBMP (IDB_ABORT));
-	srf[SRF_LV_ENG]									= oapiCreateSurface (LOADBMP (IDB_LV_ENG));
-	srf[SRF_ALTIMETER]								= oapiCreateSurface (LOADBMP (IDB_ALTIMETER));
-	srf[SRF_THRUSTMETER]							= oapiCreateSurface (LOADBMP (IDB_THRUST));
-	srf[SRF_DCVOLTS]								= oapiCreateSurface (LOADBMP (IDB_DCVOLTS));
-	srf[SRF_DCVOLTS_PANEL101]						= oapiCreateSurface (LOADBMP (IDB_DCVOLTS_PANEL101));
-	srf[SRF_DCAMPS]									= oapiCreateSurface (LOADBMP (IDB_DCAMPS));
-	srf[SRF_ACVOLTS]								= oapiCreateSurface (LOADBMP (IDB_ACVOLTS));
-	srf[SRF_SEQUENCERSWITCHES]						= oapiCreateSurface (LOADBMP (IDB_SEQUENCERSWITCHES));
-	srf[SRF_MASTERALARM_BRIGHT]						= oapiCreateSurface (LOADBMP (IDB_MASTER_ALARM_BRIGHT));
-	srf[SRF_DSKY]									= oapiCreateSurface (LOADBMP (IDB_DSKY_LIGHTS));
-	srf[SRF_THREEPOSSWITCH]							= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH));
-	srf[SRF_MFDFRAME]								= oapiCreateSurface (LOADBMP (IDB_MFDFRAME));
-	srf[SRF_MFDPOWER]								= oapiCreateSurface (LOADBMP (IDB_MFDPOWER));
-	srf[SRF_SM_RCS_MODE]							= oapiCreateSurface (LOADBMP (IDB_DOCKINGSWITCHES));
-	srf[SRF_ROTATIONALSWITCH]						= oapiCreateSurface (LOADBMP (IDB_ROTATIONALSWITCH));
-	srf[SRF_SUITCABINDELTAPMETER]					= oapiCreateSurface (LOADBMP (IDB_SUITCABINDELTAPMETER));
-	srf[SRF_THREEPOSSWITCH305]						= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH305));
-	srf[SRF_THREEPOSSWITCH305LEFT]					= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH305LEFT));
-	srf[SRF_SWITCH305LEFT]							= oapiCreateSurface (LOADBMP (IDB_SWITCH305LEFT));
-	srf[SRF_DSKYDISP]       						= oapiCreateSurface (LOADBMP (IDB_DSKY_DISP));
-	srf[SRF_FDAI]	        						= oapiCreateSurface (LOADBMP (IDB_FDAI));
-	srf[SRF_FDAIROLL]       						= oapiCreateSurface (LOADBMP (IDB_FDAI_ROLL));
-	srf[SRF_CWSLIGHTS]       						= oapiCreateSurface (LOADBMP (IDB_CWS_LIGHTS));
-	srf[SRF_EVENT_TIMER_DIGITS]    					= oapiCreateSurface (LOADBMP (IDB_EVENT_TIMER));
-	srf[SRF_DSKYKEY]		    					= oapiCreateSurface (LOADBMP (IDB_DSKY_KEY));
-	srf[SRF_ECSINDICATOR]							= oapiCreateSurface (LOADBMP (IDB_ECSINDICATOR));
-	srf[SRF_SWITCHUPSMALL]							= oapiCreateSurface (LOADBMP (IDB_SWITCHUPSMALL));
-	srf[SRF_CMMFDFRAME]								= oapiCreateSurface (LOADBMP (IDB_CMMFDFRAME));
-	srf[SRF_COAS]									= oapiCreateSurface (LOADBMP (IDB_COAS));
-	srf[SRF_THUMBWHEEL_SMALLFONTS]					= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_SMALLFONTS));
-	srf[SRF_THUMBWHEEL_SMALLFONTS_DIAGONAL]			= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_SMALLFONTS_DIAGONAL));
-	srf[SRF_THUMBWHEEL_SMALLFONTS_DIAGONAL_LEFT]	= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_SMALLFONTS_DIAGONAL_LEFT));
-	srf[SRF_CIRCUITBRAKER]          				= oapiCreateSurface (LOADBMP (IDB_CIRCUITBRAKER));
-	srf[SRF_CIRCUITBRAKER_YELLOW]          			= oapiCreateSurface (LOADBMP (IDB_CIRCUITBRAKER_YELLOW));
-	srf[SRF_THREEPOSSWITCH20]						= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH20));
-	srf[SRF_THREEPOSSWITCH30]						= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH30));
-	srf[SRF_THREEPOSSWITCH30LEFT]					= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH30LEFT));
-	srf[SRF_SWITCH20]								= oapiCreateSurface (LOADBMP (IDB_SWITCH20));
-	srf[SRF_SWITCH30]								= oapiCreateSurface (LOADBMP (IDB_SWITCH30));
-	srf[SRF_SWITCH30LEFT]							= oapiCreateSurface (LOADBMP (IDB_SWITCH30LEFT));
-	srf[SRF_SWITCH20LEFT]							= oapiCreateSurface (LOADBMP (IDB_SWITCH20LEFT));
-	srf[SRF_THREEPOSSWITCH20LEFT]					= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH20LEFT));
-	srf[SRF_GUARDEDSWITCH20]						= oapiCreateSurface (LOADBMP (IDB_GUARDEDSWITCH20));
-	srf[SRF_FDAIPOWERROTARY]						= oapiCreateSurface (LOADBMP (IDB_FDAIPOWERROTARY));
-	srf[SRF_DIRECTO2ROTARY]							= oapiCreateSurface (LOADBMP (IDB_DIRECTO2ROTARY));
-	srf[SRF_ECSGLYCOLPUMPROTARY]					= oapiCreateSurface (LOADBMP (IDB_ECSGLYCOLPUMPROTARY));
-	srf[SRF_GTACOVER]								= oapiCreateSurface (LOADBMP (IDB_GTACOVER));
-	srf[SRF_POSTLDGVENTVLVLEVER]					= oapiCreateSurface (LOADBMP (IDB_POSTLDGVENTVLVLEVER));
-	srf[SRF_SPSMAXINDICATOR]						= oapiCreateSurface (LOADBMP (IDB_SPSMAXINDICATOR));
-	srf[SRF_SPSMININDICATOR]						= oapiCreateSurface (LOADBMP (IDB_SPSMININDICATOR));
-	srf[SRF_ECSROTARY]								= oapiCreateSurface (LOADBMP (IDB_ECSROTARY));
-	srf[SRF_CSM_MNPNL_WDW_LES]						= oapiCreateSurface (LOADBMP (IDB_CSM_MNPNL_WDW_LES));
-	srf[SRF_CSM_RNDZ_WDW_LES]						= oapiCreateSurface (LOADBMP (IDB_CSM_RNDZ_WDW_LES));
-	srf[SRF_CSM_RIGHT_WDW_LES]						= oapiCreateSurface (LOADBMP (IDB_CSM_RIGHT_WDW_LES));
-	srf[SRF_CSM_LEFT_WDW_LES]						= oapiCreateSurface (LOADBMP (IDB_CSM_LEFT_WDW_LES));
-	srf[SRF_GLYCOLLEVER]							= oapiCreateSurface (LOADBMP (IDB_GLYCOLLEVER));
-	srf[SRF_FDAIOFFFLAG]       						= oapiCreateSurface (LOADBMP (IDB_FDAIOFFFLAG));
-	srf[SRF_FDAINEEDLES]							= oapiCreateSurface (LOADBMP (IDB_FDAINEEDLES));
-	srf[SRF_THUMBWHEEL_LARGEFONTS]					= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_LARGEFONTS));
-	srf[SRF_SPS_FONT_WHITE]							= oapiCreateSurface (LOADBMP (IDB_SPS_FUEL_FONT_WHITE));
-	srf[SRF_SPS_FONT_BLACK]							= oapiCreateSurface (LOADBMP (IDB_SPS_FUEL_FONT_BLACK));
-	srf[SRF_THUMBWHEEL_SMALL]						= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_SMALL));
-	srf[SRF_THUMBWHEEL_LARGEFONTSINV] 				= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_LARGEFONTSINV));
-	srf[SRF_SWLEVERTHREEPOS] 						= oapiCreateSurface (LOADBMP (IDB_SWLEVERTHREEPOS));
-	srf[SRF_ORDEAL_ROTARY] 							= oapiCreateSurface (LOADBMP (IDB_ORDEAL_ROTARY));
-	srf[SRF_LV_ENG_S1B]								= oapiCreateSurface (LOADBMP (IDB_LV_ENGINE_LIGHTS_S1B));
-	srf[SRF_SPS_INJ_VLV]						    = oapiCreateSurface (LOADBMP (IDB_SPS_INJ_VLV));
-	srf[SRF_THUMBWHEEL_GPI_PITCH]  					= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_GPI_PITCH));
-	srf[SRF_THUMBWHEEL_GPI_YAW]  					= oapiCreateSurface (LOADBMP (IDB_THUMBWHEEL_GPI_YAW));
-	srf[SRF_THC]				  					= oapiCreateSurface (LOADBMP (IDB_THC));
-	srf[SRF_EMS_LIGHTS]			  					= oapiCreateSurface (LOADBMP (IDB_EMS_LIGHTS));
-	srf[SRF_SUITRETURN_LEVER]	 					= oapiCreateSurface (LOADBMP (IDB_SUITRETURN_LEVER));
-	srf[SRF_CABINRELIEFUPPERLEVER]	 				= oapiCreateSurface (LOADBMP (IDB_CABINRELIEFUPPERLEVER));
-	srf[SRF_CABINRELIEFLOWERLEVER]	 				= oapiCreateSurface (LOADBMP (IDB_CABINRELIEFLOWERLEVER));
-	srf[SRF_CABINRELIEFGUARDLEVER]	 				= oapiCreateSurface (LOADBMP (IDB_CABINRELIEFGUARDLEVER));
-	srf[SRF_OPTICS_HANDCONTROLLER]	 				= oapiCreateSurface (LOADBMP (IDB_OPTICS_HANDCONTROLLER));
-	srf[SRF_MARK_BUTTONS]	 						= oapiCreateSurface (LOADBMP (IDB_MARK_BUTTONS));
-	srf[SRF_THREEPOSSWITCHSMALL]	 				= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCHSMALL));
-	srf[SRF_OPTICS_DSKY]	 						= oapiCreateSurface (LOADBMP (IDB_OPTICS_DSKY));
-	srf[SRF_MINIMPULSE_HANDCONTROLLER] 				= oapiCreateSurface (LOADBMP (IDB_MINIMPULSE_HANDCONTROLLER));
-	srf[SRF_EMS_SCROLL_LEO]							= oapiCreateSurface (LOADBMP (IDB_EMS_SCROLL_LEO));
-	srf[SRF_EMS_SCROLL_BORDER]						= oapiCreateSurface (LOADBMP (IDB_EMS_SCROLL_BORDER));
-	srf[SRF_EMS_RSI_BKGRND]                         = oapiCreateSurface (LOADBMP (IDB_EMS_RSI_BKGRND));
-	srf[SRF_EMSDVSETSWITCH]							= oapiCreateSurface (LOADBMP (IDB_EMSDVSETSWITCH));
-	srf[SRF_ALTIMETER2]								= oapiCreateSurface (LOADBMP (IDB_ALTIMETER2));
-	srf[SRF_OXYGEN_SURGE_TANK_VALVE]				= oapiCreateSurface (LOADBMP (IDB_OXYGEN_SURGE_TANK_VALVE));
-	srf[SRF_GLYCOL_TO_RADIATORS_KNOB]				= oapiCreateSurface (LOADBMP (IDB_GLYCOL_TO_RADIATORS_KNOB));
-	srf[SRF_ACCUM_ROTARY]							= oapiCreateSurface (LOADBMP (IDB_ACCUM_ROTARY));
-	srf[SRF_GLYCOL_ROTARY]							= oapiCreateSurface (LOADBMP (IDB_GLYCOL_ROTARY));
-	srf[SRF_PRESS_RELIEF_VALVE]						= oapiCreateSurface (LOADBMP (IDB_PRESS_RELIEF_VALVE));
-	srf[SRF_CABIN_REPRESS_VALVE]					= oapiCreateSurface (LOADBMP (IDB_CABIN_REPRESS_VALVE));
-	srf[SRF_SELECTOR_INLET_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_SELECTOR_INLET_ROTARY));							
-	srf[SRF_SELECTOR_OUTLET_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_SELECTOR_OUTLET_ROTARY));
-	srf[SRF_EMERGENCY_PRESS_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_EMERGENCY_PRESS_ROTARY));
-	srf[SRF_SUIT_FLOW_CONTROL_LEVER]				= oapiCreateSurface (LOADBMP (IDB_CSM_SUIT_FLOW_CONTROL_LEVER));
-	srf[SRF_CSM_SEC_CABIN_TEMP_VALVE]				= oapiCreateSurface (LOADBMP (IDB_CSM_SEC_CABIN_TEMP_VALVE));
-	srf[SRF_CSM_FOOT_PREP_WATER_LEVER]				= oapiCreateSurface (LOADBMP (IDB_CSM_FOOT_PREP_WATER_LEVER));
-	srf[SRF_CSM_LM_TUNNEL_VENT_VALVE]				= oapiCreateSurface (LOADBMP (IDB_CSM_LM_TUNNEL_VENT_VALVE));
-	srf[SRF_CSM_WASTE_MGMT_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_CSM_WASTE_MGMT_ROTARY));
-	srf[SRF_CSM_DEMAND_REG_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_CSM_DEMAND_REG_ROTARY));
-	srf[SRF_CSM_SUIT_TEST_LEVER]					= oapiCreateSurface (LOADBMP (IDB_CSM_SUIT_TEST_LEVER));
-	srf[SRF_CSM_GEAR_BOX_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_CSM_GEAR_BOX_ROTARY));
-	srf[SRF_CSM_PUMP_HANDLE_ROTARY]					= oapiCreateSurface (LOADBMP (IDB_CSM_PUMP_HANDLE_ROTARY));
-	srf[SRF_CSM_VENT_VALVE_HANDLE]					= oapiCreateSurface (LOADBMP (IDB_CSM_VENT_VALVE_HANDLE));
-	srf[SRF_CSM_PUMP_HANDLE_ROTARY_OPEN]			= oapiCreateSurface (LOADBMP (IDB_CSM_PUMP_HANDLE_ROTARY_OPEN));
-	srf[SRF_CSM_PANEL_351_SWITCH]					= oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_351_SWITCH));
-	srf[SRF_CSM_PANEL_600]							= oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_600));
-	srf[SRF_CSM_PANEL_600_SWITCH]					= oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_600_SWITCH));
-	srf[SRF_CSM_PANEL_382_COVER]					= oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_382_COVER));
-	srf[SRF_CSM_WASTE_DISPOSAL_ROTARY]				= oapiCreateSurface (LOADBMP (IDB_CSM_WASTE_DISPOSAL_ROTARY));
-	srf[SRF_THREEPOSSWITCH90_LEFT]					= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH90_LEFT));
-	srf[SRF_EMS_SCROLL_BUG]							= oapiCreateSurface (LOADBMP (IDB_EMS_SCROLL_BUG));
-	srf[SRF_SWITCH90]								= oapiCreateSurface (LOADBMP (IDB_SWITCH90));
-	srf[SRF_CSM_CABINPRESSTESTSWITCH]				= oapiCreateSurface (LOADBMP (IDB_CSM_CABINPRESSTESTSWITCH));
-	srf[SRF_ORDEAL_PANEL]							= oapiCreateSurface (LOADBMP (IDB_ORDEAL_PANEL));
-	srf[SRF_CSM_TELESCOPECOVER]						= oapiCreateSurface (LOADBMP (IDB_CSM_TELESCOPECOVER));	
-	srf[SRF_CSM_SEXTANTCOVER]						= oapiCreateSurface (LOADBMP (IDB_CSM_SEXTANTCOVER));
-	srf[SRF_CWS_GNLIGHTS]      						= oapiCreateSurface (LOADBMP (IDB_CWS_GNLIGHTS));
-	srf[SRF_EVENT_TIMER_DIGITS90]					= oapiCreateSurface (LOADBMP (IDB_EVENT_TIMER90));
-	srf[SRF_DIGITAL90]								= oapiCreateSurface (LOADBMP (IDB_DIGITAL90));
-	srf[SRF_CSM_PRESS_EQUAL_HANDLE]                 = oapiCreateSurface (LOADBMP (IDB_CSM_PRESS_EQUAL_HANDLE));
-	srf[SRF_CSM_PANEL_181]                          = oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_181));
-	srf[SRF_CSM_PANEL_277]                          = oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_277));
-	srf[SRF_CSM_PANEL_278_CSM112]                   = oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_278_CSM112));
-	srf[SRF_CSM_PANEL_278_CSM114]                   = oapiCreateSurface (LOADBMP (IDB_CSM_PANEL_278_CSM114));
-	srf[SRF_INDICATOR90]                            = oapiCreateSurface (LOADBMP (IDB_INDICATOR90));
-	srf[SRF_THREEPOSSWITCH90_RIGHT]					= oapiCreateSurface (LOADBMP (IDB_THREEPOSSWITCH90_RIGHT));
-	srf[SRF_CRYO_SWITCHES_J]                        = oapiCreateSurface (LOADBMP (IDB_CRYO_SWITCHES_J));
-	srf[SRF_CRYO_IND_J]                             = oapiCreateSurface (LOADBMP (IDB_CRYO_IND_J));
-	srf[SRF_SWITCHGUARDS90_RIGHT]                   = oapiCreateSurface (LOADBMP (IDB_SWITCHGUARDS90_RIGHT));
+	srf[SRF_INDICATOR]								= oapiLoadTexture(IDB_INDICATOR);
+	srf[SRF_NEEDLE]									= oapiLoadTexture(IDB_NEEDLE);
+	srf[SRF_DIGITAL]								= oapiLoadTexture(IDB_DIGITAL);
+	srf[SRF_DIGITAL2]								= oapiLoadTexture(IDB_DIGITAL2);
+	srf[SRF_SWITCHUP]								= oapiLoadTexture(IDB_SWITCHUP);
+	srf[SRF_SWITCHLEVER]							= oapiLoadTexture(IDB_SWLEVER);
+	srf[SRF_SWITCHGUARDS]							= oapiLoadTexture(IDB_SWITCHGUARDS);
+	srf[SRF_SWITCHGUARDPANEL15]						= oapiLoadTexture(IDB_SWITCHGUARDPANEL15);
+	srf[SRF_ABORT]									= oapiLoadTexture(IDB_ABORT);
+	srf[SRF_LV_ENG]									= oapiLoadTexture(IDB_LV_ENG);
+	srf[SRF_ALTIMETER]								= oapiLoadTexture(IDB_ALTIMETER);
+	srf[SRF_THRUSTMETER]							= oapiLoadTexture(IDB_THRUST);
+	srf[SRF_DCVOLTS]								= oapiLoadTexture(IDB_DCVOLTS);
+	srf[SRF_DCVOLTS_PANEL101]						= oapiLoadTexture(IDB_DCVOLTS_PANEL101);
+	srf[SRF_DCAMPS]									= oapiLoadTexture(IDB_DCAMPS);
+	srf[SRF_ACVOLTS]								= oapiLoadTexture(IDB_ACVOLTS);
+	srf[SRF_SEQUENCERSWITCHES]						= oapiLoadTexture(IDB_SEQUENCERSWITCHES);
+	srf[SRF_MASTERALARM_BRIGHT]						= oapiLoadTexture(IDB_MASTER_ALARM_BRIGHT);
+	srf[SRF_DSKY]									= oapiLoadTexture(IDB_DSKY_LIGHTS);
+	srf[SRF_THREEPOSSWITCH]							= oapiLoadTexture(IDB_THREEPOSSWITCH);
+	srf[SRF_MFDFRAME]								= oapiLoadTexture(IDB_MFDFRAME);
+	srf[SRF_MFDPOWER]								= oapiLoadTexture(IDB_MFDPOWER);
+	srf[SRF_SM_RCS_MODE]							= oapiLoadTexture(IDB_DOCKINGSWITCHES);
+	srf[SRF_ROTATIONALSWITCH]						= oapiLoadTexture(IDB_ROTATIONALSWITCH);
+	srf[SRF_SUITCABINDELTAPMETER]					= oapiLoadTexture(IDB_SUITCABINDELTAPMETER);
+	srf[SRF_THREEPOSSWITCH305]						= oapiLoadTexture(IDB_THREEPOSSWITCH305);
+	srf[SRF_THREEPOSSWITCH305LEFT]					= oapiLoadTexture(IDB_THREEPOSSWITCH305LEFT);
+	srf[SRF_SWITCH305LEFT]							= oapiLoadTexture(IDB_SWITCH305LEFT);
+	srf[SRF_DSKYDISP]       						= oapiLoadTexture(IDB_DSKY_DISP);
+	srf[SRF_FDAI]	        						= oapiLoadTexture(IDB_FDAI);
+	srf[SRF_FDAIROLL]       						= oapiLoadTexture(IDB_FDAI_ROLL);
+	srf[SRF_CWSLIGHTS]       						= oapiLoadTexture(IDB_CWS_LIGHTS);
+	srf[SRF_EVENT_TIMER_DIGITS]    					= oapiLoadTexture(IDB_EVENT_TIMER);
+	srf[SRF_DSKYKEY]		    					= oapiLoadTexture(IDB_DSKY_KEY);
+	srf[SRF_ECSINDICATOR]							= oapiLoadTexture(IDB_ECSINDICATOR);
+	srf[SRF_SWITCHUPSMALL]							= oapiLoadTexture(IDB_SWITCHUPSMALL);
+	srf[SRF_CMMFDFRAME]								= oapiLoadTexture(IDB_CMMFDFRAME);
+	srf[SRF_COAS]									= oapiLoadTexture(IDB_COAS);
+	srf[SRF_THUMBWHEEL_SMALLFONTS]					= oapiLoadTexture(IDB_THUMBWHEEL_SMALLFONTS);
+	srf[SRF_THUMBWHEEL_SMALLFONTS_DIAGONAL]			= oapiLoadTexture(IDB_THUMBWHEEL_SMALLFONTS_DIAGONAL);
+	srf[SRF_THUMBWHEEL_SMALLFONTS_DIAGONAL_LEFT]	= oapiLoadTexture(IDB_THUMBWHEEL_SMALLFONTS_DIAGONAL_LEFT);
+	srf[SRF_CIRCUITBRAKER]          				= oapiLoadTexture(IDB_CIRCUITBRAKER);
+	srf[SRF_CIRCUITBRAKER_YELLOW]          			= oapiLoadTexture(IDB_CIRCUITBRAKER_YELLOW);
+	srf[SRF_THREEPOSSWITCH20]						= oapiLoadTexture(IDB_THREEPOSSWITCH20);
+	srf[SRF_THREEPOSSWITCH30]						= oapiLoadTexture(IDB_THREEPOSSWITCH30);
+	srf[SRF_THREEPOSSWITCH30LEFT]					= oapiLoadTexture(IDB_THREEPOSSWITCH30LEFT);
+	srf[SRF_SWITCH20]								= oapiLoadTexture(IDB_SWITCH20);
+	srf[SRF_SWITCH30]								= oapiLoadTexture(IDB_SWITCH30);
+	srf[SRF_SWITCH30LEFT]							= oapiLoadTexture(IDB_SWITCH30LEFT);
+	srf[SRF_SWITCH20LEFT]							= oapiLoadTexture(IDB_SWITCH20LEFT);
+	srf[SRF_THREEPOSSWITCH20LEFT]					= oapiLoadTexture(IDB_THREEPOSSWITCH20LEFT);
+	srf[SRF_GUARDEDSWITCH20]						= oapiLoadTexture(IDB_GUARDEDSWITCH20);
+	srf[SRF_FDAIPOWERROTARY]						= oapiLoadTexture(IDB_FDAIPOWERROTARY);
+	srf[SRF_DIRECTO2ROTARY]							= oapiLoadTexture(IDB_DIRECTO2ROTARY);
+	srf[SRF_ECSGLYCOLPUMPROTARY]					= oapiLoadTexture(IDB_ECSGLYCOLPUMPROTARY);
+	srf[SRF_GTACOVER]								= oapiLoadTexture(IDB_GTACOVER);
+	srf[SRF_POSTLDGVENTVLVLEVER]					= oapiLoadTexture(IDB_POSTLDGVENTVLVLEVER);
+	srf[SRF_SPSMAXINDICATOR]						= oapiLoadTexture(IDB_SPSMAXINDICATOR);
+	srf[SRF_SPSMININDICATOR]						= oapiLoadTexture(IDB_SPSMININDICATOR);
+	srf[SRF_ECSROTARY]								= oapiLoadTexture(IDB_ECSROTARY);
+	srf[SRF_CSM_MNPNL_WDW_LES]						= oapiLoadTexture(IDB_CSM_MNPNL_WDW_LES);
+	srf[SRF_CSM_RNDZ_WDW_LES]						= oapiLoadTexture(IDB_CSM_RNDZ_WDW_LES);
+	srf[SRF_CSM_RIGHT_WDW_LES]						= oapiLoadTexture(IDB_CSM_RIGHT_WDW_LES);
+	srf[SRF_CSM_LEFT_WDW_LES]						= oapiLoadTexture(IDB_CSM_LEFT_WDW_LES);
+	srf[SRF_GLYCOLLEVER]							= oapiLoadTexture(IDB_GLYCOLLEVER);
+	srf[SRF_FDAIOFFFLAG]       						= oapiLoadTexture(IDB_FDAIOFFFLAG);
+	srf[SRF_FDAINEEDLES]							= oapiLoadTexture(IDB_FDAINEEDLES);
+	srf[SRF_THUMBWHEEL_LARGEFONTS]					= oapiLoadTexture(IDB_THUMBWHEEL_LARGEFONTS);
+	srf[SRF_SPS_FONT_WHITE]							= oapiLoadTexture(IDB_SPS_FUEL_FONT_WHITE);
+	srf[SRF_SPS_FONT_BLACK]							= oapiLoadTexture(IDB_SPS_FUEL_FONT_BLACK);
+	srf[SRF_THUMBWHEEL_SMALL]						= oapiLoadTexture(IDB_THUMBWHEEL_SMALL);
+	srf[SRF_THUMBWHEEL_LARGEFONTSINV] 				= oapiLoadTexture(IDB_THUMBWHEEL_LARGEFONTSINV);
+	srf[SRF_SWLEVERTHREEPOS] 						= oapiLoadTexture(IDB_SWLEVERTHREEPOS);
+	srf[SRF_ORDEAL_ROTARY] 							= oapiLoadTexture(IDB_ORDEAL_ROTARY);
+	srf[SRF_LV_ENG_S1B]								= oapiLoadTexture(IDB_LV_ENGINE_LIGHTS_S1B);
+	srf[SRF_SPS_INJ_VLV]						    = oapiLoadTexture(IDB_SPS_INJ_VLV);
+	srf[SRF_THUMBWHEEL_GPI_PITCH]  					= oapiLoadTexture(IDB_THUMBWHEEL_GPI_PITCH);
+	srf[SRF_THUMBWHEEL_GPI_YAW]  					= oapiLoadTexture(IDB_THUMBWHEEL_GPI_YAW);
+	srf[SRF_THC]				  					= oapiLoadTexture(IDB_THC);
+	srf[SRF_EMS_LIGHTS]			  					= oapiLoadTexture(IDB_EMS_LIGHTS);
+	srf[SRF_SUITRETURN_LEVER]	 					= oapiLoadTexture(IDB_SUITRETURN_LEVER);
+	srf[SRF_CABINRELIEFUPPERLEVER]	 				= oapiLoadTexture(IDB_CABINRELIEFUPPERLEVER);
+	srf[SRF_CABINRELIEFLOWERLEVER]	 				= oapiLoadTexture(IDB_CABINRELIEFLOWERLEVER);
+	srf[SRF_CABINRELIEFGUARDLEVER]	 				= oapiLoadTexture(IDB_CABINRELIEFGUARDLEVER);
+	srf[SRF_OPTICS_HANDCONTROLLER]	 				= oapiLoadTexture(IDB_OPTICS_HANDCONTROLLER);
+	srf[SRF_MARK_BUTTONS]	 						= oapiLoadTexture(IDB_MARK_BUTTONS);
+	srf[SRF_THREEPOSSWITCHSMALL]	 				= oapiLoadTexture(IDB_THREEPOSSWITCHSMALL);
+	srf[SRF_OPTICS_DSKY]	 						= oapiLoadTexture(IDB_OPTICS_DSKY);
+	srf[SRF_MINIMPULSE_HANDCONTROLLER] 				= oapiLoadTexture(IDB_MINIMPULSE_HANDCONTROLLER);
+	srf[SRF_EMS_SCROLL_LEO]							= oapiLoadTexture(IDB_EMS_SCROLL_LEO);
+	srf[SRF_EMS_SCROLL_BORDER]						= oapiLoadTexture(IDB_EMS_SCROLL_BORDER);
+	srf[SRF_EMS_RSI_BKGRND]                         = oapiLoadTexture(IDB_EMS_RSI_BKGRND);
+	srf[SRF_EMSDVSETSWITCH]							= oapiLoadTexture(IDB_EMSDVSETSWITCH);
+	srf[SRF_ALTIMETER2]								= oapiLoadTexture(IDB_ALTIMETER2);
+	srf[SRF_OXYGEN_SURGE_TANK_VALVE]				= oapiLoadTexture(IDB_OXYGEN_SURGE_TANK_VALVE);
+	srf[SRF_GLYCOL_TO_RADIATORS_KNOB]				= oapiLoadTexture(IDB_GLYCOL_TO_RADIATORS_KNOB);
+	srf[SRF_ACCUM_ROTARY]							= oapiLoadTexture(IDB_ACCUM_ROTARY);
+	srf[SRF_GLYCOL_ROTARY]							= oapiLoadTexture(IDB_GLYCOL_ROTARY);
+	srf[SRF_PRESS_RELIEF_VALVE]						= oapiLoadTexture(IDB_PRESS_RELIEF_VALVE);
+	srf[SRF_CABIN_REPRESS_VALVE]					= oapiLoadTexture(IDB_CABIN_REPRESS_VALVE);
+	srf[SRF_SELECTOR_INLET_ROTARY]					= oapiLoadTexture(IDB_SELECTOR_INLET_ROTARY);							
+	srf[SRF_SELECTOR_OUTLET_ROTARY]					= oapiLoadTexture(IDB_SELECTOR_OUTLET_ROTARY);
+	srf[SRF_EMERGENCY_PRESS_ROTARY]					= oapiLoadTexture(IDB_EMERGENCY_PRESS_ROTARY);
+	srf[SRF_SUIT_FLOW_CONTROL_LEVER]				= oapiLoadTexture(IDB_CSM_SUIT_FLOW_CONTROL_LEVER);
+	srf[SRF_CSM_SEC_CABIN_TEMP_VALVE]				= oapiLoadTexture(IDB_CSM_SEC_CABIN_TEMP_VALVE);
+	srf[SRF_CSM_FOOT_PREP_WATER_LEVER]				= oapiLoadTexture(IDB_CSM_FOOT_PREP_WATER_LEVER);
+	srf[SRF_CSM_LM_TUNNEL_VENT_VALVE]				= oapiLoadTexture(IDB_CSM_LM_TUNNEL_VENT_VALVE);
+	srf[SRF_CSM_WASTE_MGMT_ROTARY]					= oapiLoadTexture(IDB_CSM_WASTE_MGMT_ROTARY);
+	srf[SRF_CSM_DEMAND_REG_ROTARY]					= oapiLoadTexture(IDB_CSM_DEMAND_REG_ROTARY);
+	srf[SRF_CSM_SUIT_TEST_LEVER]					= oapiLoadTexture(IDB_CSM_SUIT_TEST_LEVER);
+	srf[SRF_CSM_GEAR_BOX_ROTARY]					= oapiLoadTexture(IDB_CSM_GEAR_BOX_ROTARY);
+	srf[SRF_CSM_PUMP_HANDLE_ROTARY]					= oapiLoadTexture(IDB_CSM_PUMP_HANDLE_ROTARY);
+	srf[SRF_CSM_VENT_VALVE_HANDLE]					= oapiLoadTexture(IDB_CSM_VENT_VALVE_HANDLE);
+	srf[SRF_CSM_PUMP_HANDLE_ROTARY_OPEN]			= oapiLoadTexture(IDB_CSM_PUMP_HANDLE_ROTARY_OPEN);
+	srf[SRF_CSM_PANEL_351_SWITCH]					= oapiLoadTexture(IDB_CSM_PANEL_351_SWITCH);
+	srf[SRF_CSM_PANEL_600]							= oapiLoadTexture(IDB_CSM_PANEL_600);
+	srf[SRF_CSM_PANEL_600_SWITCH]					= oapiLoadTexture(IDB_CSM_PANEL_600_SWITCH);
+	srf[SRF_CSM_PANEL_382_COVER]					= oapiLoadTexture(IDB_CSM_PANEL_382_COVER);
+	srf[SRF_CSM_WASTE_DISPOSAL_ROTARY]				= oapiLoadTexture(IDB_CSM_WASTE_DISPOSAL_ROTARY);
+	srf[SRF_THREEPOSSWITCH90_LEFT]					= oapiLoadTexture(IDB_THREEPOSSWITCH90_LEFT);
+	srf[SRF_EMS_SCROLL_BUG]							= oapiLoadTexture(IDB_EMS_SCROLL_BUG);
+	srf[SRF_SWITCH90]								= oapiLoadTexture(IDB_SWITCH90);
+	srf[SRF_CSM_CABINPRESSTESTSWITCH]				= oapiLoadTexture(IDB_CSM_CABINPRESSTESTSWITCH);
+	srf[SRF_ORDEAL_PANEL]							= oapiLoadTexture(IDB_ORDEAL_PANEL);
+	srf[SRF_CSM_TELESCOPECOVER]						= oapiLoadTexture(IDB_CSM_TELESCOPECOVER);	
+	srf[SRF_CSM_SEXTANTCOVER]						= oapiLoadTexture(IDB_CSM_SEXTANTCOVER);
+	srf[SRF_CWS_GNLIGHTS]      						= oapiLoadTexture(IDB_CWS_GNLIGHTS);
+	srf[SRF_EVENT_TIMER_DIGITS90]					= oapiLoadTexture(IDB_EVENT_TIMER90);
+	srf[SRF_DIGITAL90]								= oapiLoadTexture(IDB_DIGITAL90);
+	srf[SRF_CSM_PRESS_EQUAL_HANDLE]                 = oapiLoadTexture(IDB_CSM_PRESS_EQUAL_HANDLE);
+	srf[SRF_CSM_PANEL_181]                          = oapiLoadTexture(IDB_CSM_PANEL_181);
+	srf[SRF_CSM_PANEL_277]                          = oapiLoadTexture(IDB_CSM_PANEL_277);
+	srf[SRF_CSM_PANEL_278_CSM112]                   = oapiLoadTexture(IDB_CSM_PANEL_278_CSM112);
+	srf[SRF_CSM_PANEL_278_CSM114]                   = oapiLoadTexture(IDB_CSM_PANEL_278_CSM114);
+	srf[SRF_INDICATOR90]                            = oapiLoadTexture(IDB_INDICATOR90);
+	srf[SRF_THREEPOSSWITCH90_RIGHT]					= oapiLoadTexture(IDB_THREEPOSSWITCH90_RIGHT);
+	srf[SRF_CRYO_SWITCHES_J]                        = oapiLoadTexture(IDB_CRYO_SWITCHES_J);
+	srf[SRF_CRYO_IND_J]                             = oapiLoadTexture(IDB_CRYO_IND_J);
+	srf[SRF_SWITCHGUARDS90_RIGHT]                   = oapiLoadTexture(IDB_SWITCHGUARDS90_RIGHT);
 
 
 	//
 	// Flashing borders.
 	//
 
-	srf[SRF_BORDER_31x31]			= oapiCreateSurface (LOADBMP (IDB_BORDER_31x31));
-	srf[SRF_BORDER_34x29]			= oapiCreateSurface (LOADBMP (IDB_BORDER_34x29));
-	srf[SRF_BORDER_34x61]			= oapiCreateSurface (LOADBMP (IDB_BORDER_34x61));
-	srf[SRF_BORDER_55x111]			= oapiCreateSurface (LOADBMP (IDB_BORDER_55x111));
-	srf[SRF_BORDER_46x75]			= oapiCreateSurface (LOADBMP (IDB_BORDER_46x75));
-	srf[SRF_BORDER_39x38]			= oapiCreateSurface (LOADBMP (IDB_BORDER_39x38));
-	srf[SRF_BORDER_92x40]			= oapiCreateSurface (LOADBMP (IDB_BORDER_92x40));
-	srf[SRF_BORDER_34x33]			= oapiCreateSurface (LOADBMP (IDB_BORDER_34x33));
-	srf[SRF_BORDER_29x29]			= oapiCreateSurface (LOADBMP (IDB_BORDER_29x29));
-	srf[SRF_BORDER_34x31]			= oapiCreateSurface (LOADBMP (IDB_BORDER_34x31));
-	srf[SRF_BORDER_50x158]			= oapiCreateSurface (LOADBMP (IDB_BORDER_50x158));
-	srf[SRF_BORDER_38x52]			= oapiCreateSurface (LOADBMP (IDB_BORDER_38x52));
-	srf[SRF_BORDER_34x34]			= oapiCreateSurface (LOADBMP (IDB_BORDER_34x34));
-	srf[SRF_BORDER_90x90]			= oapiCreateSurface (LOADBMP (IDB_BORDER_90x90));
-	srf[SRF_BORDER_84x84]			= oapiCreateSurface (LOADBMP (IDB_BORDER_84x84));
-	srf[SRF_BORDER_70x70]			= oapiCreateSurface (LOADBMP (IDB_BORDER_70x70));
-	srf[SRF_BORDER_23x20]			= oapiCreateSurface (LOADBMP (IDB_BORDER_23x20));
-	srf[SRF_BORDER_78x78]			= oapiCreateSurface (LOADBMP (IDB_BORDER_78x78));
-	srf[SRF_BORDER_32x160]			= oapiCreateSurface (LOADBMP (IDB_BORDER_32x160));
-	srf[SRF_BORDER_72x72]			= oapiCreateSurface (LOADBMP (IDB_BORDER_72x72));
-	srf[SRF_BORDER_75x64]			= oapiCreateSurface (LOADBMP (IDB_BORDER_75x64));
-	srf[SRF_BORDER_58x58]			= oapiCreateSurface (LOADBMP (IDB_BORDER_58x58));
-	srf[SRF_BORDER_160x32]			= oapiCreateSurface (LOADBMP (IDB_BORDER_160x32));
-	srf[SRF_BORDER_57x57]			= oapiCreateSurface (LOADBMP (IDB_BORDER_57x57));
-	srf[SRF_BORDER_47x47]			= oapiCreateSurface (LOADBMP (IDB_BORDER_47x47));
-	srf[SRF_BORDER_48x48]			= oapiCreateSurface (LOADBMP (IDB_BORDER_48x48));
-	srf[SRF_BORDER_65x65]			= oapiCreateSurface (LOADBMP (IDB_BORDER_65x65));
-	srf[SRF_BORDER_87x111]			= oapiCreateSurface (LOADBMP (IDB_BORDER_87x111));
-	srf[SRF_BORDER_23x23]			= oapiCreateSurface (LOADBMP (IDB_BORDER_23x23));
-	srf[SRF_BORDER_118x118]			= oapiCreateSurface (LOADBMP (IDB_BORDER_118x118));
-	srf[SRF_BORDER_38x38]			= oapiCreateSurface (LOADBMP (IDB_BORDER_38x38));
-	srf[SRF_BORDER_116x116]			= oapiCreateSurface (LOADBMP (IDB_BORDER_116x116));
-	srf[SRF_BORDER_45x36]			= oapiCreateSurface (LOADBMP (IDB_BORDER_45x36));
-	srf[SRF_BORDER_17x36]			= oapiCreateSurface (LOADBMP (IDB_BORDER_17x36));
-	srf[SRF_BORDER_33x43]			= oapiCreateSurface (LOADBMP (IDB_BORDER_33x43));
-	srf[SRF_BORDER_36x17]			= oapiCreateSurface (LOADBMP (IDB_BORDER_36x17));
-	srf[SRF_BORDER_38x37]			= oapiCreateSurface (LOADBMP (IDB_BORDER_38x37));
-	srf[SRF_BORDER_150x80]			= oapiCreateSurface (LOADBMP (IDB_BORDER_150x80));
-	srf[SRF_BORDER_200x80]			= oapiCreateSurface (LOADBMP (IDB_BORDER_200x80));
-	srf[SRF_BORDER_72x109]			= oapiCreateSurface (LOADBMP (IDB_BORDER_72x109));
-	srf[SRF_BORDER_200x300]			= oapiCreateSurface (LOADBMP (IDB_BORDER_200x300));
-	srf[SRF_BORDER_150x200]			= oapiCreateSurface (LOADBMP (IDB_BORDER_150x200));
-	srf[SRF_BORDER_240x240]			= oapiCreateSurface (LOADBMP (IDB_BORDER_240x240));
-	srf[SRF_BORDER_55x91]			= oapiCreateSurface (LOADBMP (IDB_BORDER_55x91));
-	srf[SRF_BORDER_673x369]			= oapiCreateSurface (LOADBMP (IDB_BORDER_673x369));
-	srf[SRF_BORDER_673x80]			= oapiCreateSurface (LOADBMP (IDB_BORDER_673x80));
-	srf[SRF_BORDER_110x29]			= oapiCreateSurface (LOADBMP (IDB_BORDER_110x29));
-	srf[SRF_BORDER_29x30]			= oapiCreateSurface (LOADBMP (IDB_BORDER_29x30));
-	srf[SRF_BORDER_62x129]			= oapiCreateSurface (LOADBMP (IDB_BORDER_62x129));
-	srf[SRF_BORDER_194x324]			= oapiCreateSurface (LOADBMP (IDB_BORDER_194x324));
-	srf[SRF_BORDER_36x69]			= oapiCreateSurface (LOADBMP (IDB_BORDER_36x69));
-	srf[SRF_BORDER_62x31]			= oapiCreateSurface (LOADBMP (IDB_BORDER_62x31));
-	srf[SRF_BORDER_45x49]			= oapiCreateSurface (LOADBMP (IDB_BORDER_45x49));
-	srf[SRF_BORDER_28x32]			= oapiCreateSurface (LOADBMP (IDB_BORDER_28x32));
+	srf[SRF_BORDER_31x31]			= oapiLoadTexture(IDB_BORDER_31x31);
+	srf[SRF_BORDER_34x29]			= oapiLoadTexture(IDB_BORDER_34x29);
+	srf[SRF_BORDER_34x61]			= oapiLoadTexture(IDB_BORDER_34x61);
+	srf[SRF_BORDER_55x111]			= oapiLoadTexture(IDB_BORDER_55x111);
+	srf[SRF_BORDER_46x75]			= oapiLoadTexture(IDB_BORDER_46x75);
+	srf[SRF_BORDER_39x38]			= oapiLoadTexture(IDB_BORDER_39x38);
+	srf[SRF_BORDER_92x40]			= oapiLoadTexture(IDB_BORDER_92x40);
+	srf[SRF_BORDER_34x33]			= oapiLoadTexture(IDB_BORDER_34x33);
+	srf[SRF_BORDER_29x29]			= oapiLoadTexture(IDB_BORDER_29x29);
+	srf[SRF_BORDER_34x31]			= oapiLoadTexture(IDB_BORDER_34x31);
+	srf[SRF_BORDER_50x158]			= oapiLoadTexture(IDB_BORDER_50x158);
+	srf[SRF_BORDER_38x52]			= oapiLoadTexture(IDB_BORDER_38x52);
+	srf[SRF_BORDER_34x34]			= oapiLoadTexture(IDB_BORDER_34x34);
+	srf[SRF_BORDER_90x90]			= oapiLoadTexture(IDB_BORDER_90x90);
+	srf[SRF_BORDER_84x84]			= oapiLoadTexture(IDB_BORDER_84x84);
+	srf[SRF_BORDER_70x70]			= oapiLoadTexture(IDB_BORDER_70x70);
+	srf[SRF_BORDER_23x20]			= oapiLoadTexture(IDB_BORDER_23x20);
+	srf[SRF_BORDER_78x78]			= oapiLoadTexture(IDB_BORDER_78x78);
+	srf[SRF_BORDER_32x160]			= oapiLoadTexture(IDB_BORDER_32x160);
+	srf[SRF_BORDER_72x72]			= oapiLoadTexture(IDB_BORDER_72x72);
+	srf[SRF_BORDER_75x64]			= oapiLoadTexture(IDB_BORDER_75x64);
+	srf[SRF_BORDER_58x58]			= oapiLoadTexture(IDB_BORDER_58x58);
+	srf[SRF_BORDER_160x32]			= oapiLoadTexture(IDB_BORDER_160x32);
+	srf[SRF_BORDER_57x57]			= oapiLoadTexture(IDB_BORDER_57x57);
+	srf[SRF_BORDER_47x47]			= oapiLoadTexture(IDB_BORDER_47x47);
+	srf[SRF_BORDER_48x48]			= oapiLoadTexture(IDB_BORDER_48x48);
+	srf[SRF_BORDER_65x65]			= oapiLoadTexture(IDB_BORDER_65x65);
+	srf[SRF_BORDER_87x111]			= oapiLoadTexture(IDB_BORDER_87x111);
+	srf[SRF_BORDER_23x23]			= oapiLoadTexture(IDB_BORDER_23x23);
+	srf[SRF_BORDER_118x118]			= oapiLoadTexture(IDB_BORDER_118x118);
+	srf[SRF_BORDER_38x38]			= oapiLoadTexture(IDB_BORDER_38x38);
+	srf[SRF_BORDER_116x116]			= oapiLoadTexture(IDB_BORDER_116x116);
+	srf[SRF_BORDER_45x36]			= oapiLoadTexture(IDB_BORDER_45x36);
+	srf[SRF_BORDER_17x36]			= oapiLoadTexture(IDB_BORDER_17x36);
+	srf[SRF_BORDER_33x43]			= oapiLoadTexture(IDB_BORDER_33x43);
+	srf[SRF_BORDER_36x17]			= oapiLoadTexture(IDB_BORDER_36x17);
+	srf[SRF_BORDER_38x37]			= oapiLoadTexture(IDB_BORDER_38x37);
+	srf[SRF_BORDER_150x80]			= oapiLoadTexture(IDB_BORDER_150x80);
+	srf[SRF_BORDER_200x80]			= oapiLoadTexture(IDB_BORDER_200x80);
+	srf[SRF_BORDER_72x109]			= oapiLoadTexture(IDB_BORDER_72x109);
+	srf[SRF_BORDER_200x300]			= oapiLoadTexture(IDB_BORDER_200x300);
+	srf[SRF_BORDER_150x200]			= oapiLoadTexture(IDB_BORDER_150x200);
+	srf[SRF_BORDER_240x240]			= oapiLoadTexture(IDB_BORDER_240x240);
+	srf[SRF_BORDER_55x91]			= oapiLoadTexture(IDB_BORDER_55x91);
+	srf[SRF_BORDER_673x369]			= oapiLoadTexture(IDB_BORDER_673x369);
+	srf[SRF_BORDER_673x80]			= oapiLoadTexture(IDB_BORDER_673x80);
+	srf[SRF_BORDER_110x29]			= oapiLoadTexture(IDB_BORDER_110x29);
+	srf[SRF_BORDER_29x30]			= oapiLoadTexture(IDB_BORDER_29x30);
+	srf[SRF_BORDER_62x129]			= oapiLoadTexture(IDB_BORDER_62x129);
+	srf[SRF_BORDER_194x324]			= oapiLoadTexture(IDB_BORDER_194x324);
+	srf[SRF_BORDER_36x69]			= oapiLoadTexture(IDB_BORDER_36x69);
+	srf[SRF_BORDER_62x31]			= oapiLoadTexture(IDB_BORDER_62x31);
+	srf[SRF_BORDER_45x49]			= oapiLoadTexture(IDB_BORDER_45x49);
+	srf[SRF_BORDER_28x32]			= oapiLoadTexture(IDB_BORDER_28x32);
 
 	//
 	// Set color keys where appropriate.
@@ -675,7 +671,7 @@ void Saturn::InitPanel (int panel)
 }
 
 int Saturn::GetRenderViewportIsWideScreen() {
-
+/*
 	HMODULE hpac = GetModuleHandle("Modules\\Startup\\ProjectApolloConfigurator.dll");
 	if (hpac) {
 		int (*pacRenderViewportIsWideScreen)();
@@ -683,7 +679,7 @@ int Saturn::GetRenderViewportIsWideScreen() {
 		if (pacRenderViewportIsWideScreen) {
 			return pacRenderViewportIsWideScreen();
 		}
-	}
+	}*/
 	return 0;
 }
 
@@ -716,17 +712,17 @@ bool Saturn::clbkLoadPanel (int id) {
 	//
 	// Load panel background image
 	//
-	HBITMAP hBmp;
+	SURFHANDLE hBmp;
 
 	if ((id == SATPANEL_GN && !GNSplit) || (id == SATPANEL_GN_LEFT && !GNSplit) || (id == SATPANEL_GN_RIGHT && !GNSplit)) { // guidance & navigation lower equipment bay (unsplit)
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LOWER_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_LOWER_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_CABIN_PRESS_PANEL, SATPANEL_RIGHT_CB, SATPANEL_TUNNEL, SATPANEL_TELESCOPE);
 
@@ -741,14 +737,14 @@ bool Saturn::clbkLoadPanel (int id) {
 		SetCameraRotationRange(0.0, 0.0, 0.0, 0.0);
 	}
 	if (id == SATPANEL_GN_LEFT && GNSplit) { // guidance & navigation lower equipment bay Left third (split)
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LOWER_PANEL_LEFT));
+		hBmp = oapiLoadTexture(IDB_CSM_LOWER_PANEL_LEFT);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(-1, SATPANEL_GN_CENTER, SATPANEL_LOWER_LEFT, SATPANEL_TELESCOPE);
 
@@ -761,14 +757,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_GN_CENTER && GNSplit) { // guidance & navigation lower equipment bay Center third (split)
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LOWER_PANEL_CENTER));
+		hBmp = oapiLoadTexture(IDB_CSM_LOWER_PANEL_CENTER);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_GN_LEFT, SATPANEL_GN_RIGHT, SATPANEL_TUNNEL, SATPANEL_TELESCOPE);
 
@@ -783,14 +779,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_GN_RIGHT && GNSplit) { // guidance & navigation lower equipment bay Right third (split)
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LOWER_PANEL_RIGHT));
+		hBmp = oapiLoadTexture(IDB_CSM_LOWER_PANEL_RIGHT);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_GN_CENTER, -1, SATPANEL_RIGHT_CB, SATPANEL_TELESCOPE);
 
@@ -803,14 +799,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (MainPanelSplit && id == SATPANEL_MAIN_LEFT) {
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_MAIN_LEFT_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_MAIN_LEFT_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_LEFT, SATPANEL_MAIN_MIDDLE, SATPANEL_LEFT_RNDZ_WINDOW, SATPANEL_LOWER_LEFT);
 
@@ -831,14 +827,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (MainPanelSplit && id == SATPANEL_MAIN_MIDDLE) {
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_MAIN_MIDDLE_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_MAIN_MIDDLE_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_MAIN_LEFT, SATPANEL_MAIN_RIGHT, SATPANEL_HATCH_WINDOW, SATPANEL_LOWER_MAIN);
 
@@ -852,14 +848,14 @@ bool Saturn::clbkLoadPanel (int id) {
 
 	if (MainPanelSplit && id == SATPANEL_MAIN_RIGHT) {
 
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_MAIN_RIGHT_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_MAIN_RIGHT_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_MAIN_MIDDLE, SATPANEL_RIGHT, SATPANEL_RIGHT_RNDZ_WINDOW, SATPANEL_RIGHT_CB);
 		
@@ -872,14 +868,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (!MainPanelSplit && id == SATPANEL_MAIN) { // main instrument panel
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_MAIN_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_MAIN_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		oapiSetPanelNeighbours(SATPANEL_LEFT, SATPANEL_RIGHT, SATPANEL_HATCH_WINDOW, SATPANEL_LOWER_MAIN);
 		
@@ -900,14 +896,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_LEFT) { // left instrument panel
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LEFT_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_LEFT_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (MainPanelSplit) 
 			oapiSetPanelNeighbours(SATPANEL_CABIN_PRESS_PANEL, SATPANEL_MAIN_LEFT, -1, SATPANEL_LOWER_LEFT);
@@ -972,14 +968,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_RIGHT) { // right instrument panel
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_RIGHT_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_RIGHT_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (MainPanelSplit) 
 			oapiSetPanelNeighbours(SATPANEL_MAIN_RIGHT, -1, -1, SATPANEL_RIGHT_CB);
@@ -1073,22 +1069,22 @@ bool Saturn::clbkLoadPanel (int id) {
 			xoffset1 = 400;
 			yoffset1 = 26;
 			yoffset2 = 19;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LEFT_RNDZ_WINDOW_WIDE));
+			hBmp = oapiLoadTexture(IDB_CSM_LEFT_RNDZ_WINDOW_WIDE);
 		} else if (renderViewportIsWideScreen == 2) {
 			xoffset = 293;
 			yoffset = 5;
 			xoffset1 = 586;
 			yoffset1 = 26;
 			yoffset2 = 19;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LEFT_RNDZ_WINDOW_16_9));
+			hBmp = oapiLoadTexture(IDB_CSM_LEFT_RNDZ_WINDOW_16_9);
 		} else {
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LEFT_RNDZ_WINDOW));
+			hBmp = oapiLoadTexture(IDB_CSM_LEFT_RNDZ_WINDOW);
 		}
 		if (!hBmp) {
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (MainPanelSplit) 
 			oapiSetPanelNeighbours(SATPANEL_LEFT_317_WINDOW, SATPANEL_HATCH_WINDOW, -1, SATPANEL_MAIN_LEFT);
@@ -1111,13 +1107,13 @@ bool Saturn::clbkLoadPanel (int id) {
 
 	if (id == SATPANEL_LEFT_317_WINDOW) { // left 31.7 degree line window
 
-		hBmp = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE(IDB_CSM_LEFT_317_WINDOW));
+		hBmp = oapiLoadTexture(IDB_CSM_LEFT_317_WINDOW);
 
 		if (!hBmp) {
 			return false;
 		}
 
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 		oapiSetPanelNeighbours(-1, SATPANEL_LEFT_RNDZ_WINDOW, -1, SATPANEL_MAIN);
 
 		//If a panel has no panel area at all then Orbiter doesn't get rid of the panel areas from the previous panel when the new one is loaded. Orbiter bug?
@@ -1133,19 +1129,19 @@ bool Saturn::clbkLoadPanel (int id) {
 		if (renderViewportIsWideScreen == 1) {			
 			xoffset = 200;
 			yoffset = 13;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_RIGHT_RNDZ_WINDOW_WIDE));
+			hBmp = oapiLoadTexture(IDB_CSM_RIGHT_RNDZ_WINDOW_WIDE);
 		} else if (renderViewportIsWideScreen == 2) {
 			xoffset = 293;
 			yoffset = 13;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_RIGHT_RNDZ_WINDOW_16_9));
+			hBmp = oapiLoadTexture(IDB_CSM_RIGHT_RNDZ_WINDOW_16_9);
 		} else {
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_RIGHT_RNDZ_WINDOW));
+			hBmp = oapiLoadTexture(IDB_CSM_RIGHT_RNDZ_WINDOW);
 		}
 		if (!hBmp) {
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (MainPanelSplit) 
 			oapiSetPanelNeighbours(SATPANEL_HATCH_WINDOW, -1, -1, SATPANEL_MAIN_RIGHT);
@@ -1164,22 +1160,22 @@ bool Saturn::clbkLoadPanel (int id) {
 		if (SideHatch.IsOpen()) {
 			if (renderViewportIsWideScreen == 1) {			
 				xoffset = 205;
-				hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_HATCH_WINDOW_OPEN_WIDE));
+				hBmp = oapiLoadTexture(IDB_CSM_HATCH_WINDOW_OPEN_WIDE);
 			} else if (renderViewportIsWideScreen == 2) {
 				xoffset = 205 + 137;
-				hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_HATCH_WINDOW_OPEN_16_9));
+				hBmp = oapiLoadTexture(IDB_CSM_HATCH_WINDOW_OPEN_16_9);
 			} else {
-				hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_HATCH_WINDOW_OPEN));
+				hBmp = oapiLoadTexture(IDB_CSM_HATCH_WINDOW_OPEN);
 			}
 		} else {
 			xoffset = 360;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_HATCH_WINDOW));
+			hBmp = oapiLoadTexture(IDB_CSM_HATCH_WINDOW);
 		}
 		if (!hBmp) {
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_LEFT|PANEL_ATTACH_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_LEFT|PANEL_ATTACH_RIGHT);//,  g_Param.col[4]);
 
 		if (MainPanelSplit) 
 			oapiSetPanelNeighbours(SATPANEL_LEFT_RNDZ_WINDOW, SATPANEL_RIGHT_RNDZ_WINDOW, -1, SATPANEL_MAIN_MIDDLE);
@@ -1208,13 +1204,13 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_CABIN_PRESS_PANEL) { // cabin pressurization controls panel
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_CABIN_PRESS_PANEL));
+		hBmp = oapiLoadTexture (IDB_CSM_CABIN_PRESS_PANEL);
 		if (!hBmp) {
 			return false;
 		}
 
 		oapiSetPanelNeighbours(-1, SATPANEL_LEFT, -1, SATPANEL_GN);
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		oapiRegisterPanelArea (AID_GLYCOLTORADIATORSLEVER,			_R(1488,   46, 1520,  206), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,										PANEL_MAP_BACKGROUND);
 		oapiRegisterPanelArea (AID_CABINPRESSURERELIEFLEVER1,		_R(1544,  412, 1695,  492), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,										PANEL_MAP_BACKGROUND);
@@ -1244,14 +1240,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_LOWER_LEFT) { 
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_LOWER_LEFT_PANEL));
+		hBmp = oapiLoadTexture (IDB_CSM_LOWER_LEFT_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (GNSplit) 
 			oapiSetPanelNeighbours(SATPANEL_CABIN_PRESS_PANEL, SATPANEL_TUNNEL, SATPANEL_LEFT, SATPANEL_GN_LEFT);
@@ -1279,14 +1275,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_LOWER_MAIN) {
-		hBmp = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE(IDB_CSM_LOWER_MAIN_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_LOWER_MAIN_PANEL);
 
 		if (!hBmp)
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		int top;
 
@@ -1317,11 +1313,11 @@ bool Saturn::clbkLoadPanel (int id) {
 	if (id == SATPANEL_TUNNEL) {
 		if (ForwardHatch.IsOpen())
 		{
-			hBmp = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE(IDB_CSM_TUNNEL_OPEN));
+			hBmp = oapiLoadTexture(IDB_CSM_TUNNEL_OPEN);
 		}
 		else
 		{
-			hBmp = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE(IDB_CSM_TUNNEL));
+			hBmp = oapiLoadTexture(IDB_CSM_TUNNEL);
 		}
 
 		if (!hBmp)
@@ -1329,7 +1325,7 @@ bool Saturn::clbkLoadPanel (int id) {
 			return false;
 		}
 
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
 
 		int bottom;
 		if (GNSplit)
@@ -1352,14 +1348,14 @@ bool Saturn::clbkLoadPanel (int id) {
 	}
 
 	if (id == SATPANEL_RIGHT_CB) { 
-		hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_CSM_RIGHT_CB_PANEL));
+		hBmp = oapiLoadTexture(IDB_CSM_RIGHT_CB_PANEL);
 
 		if ( !hBmp )
 		{
 			return false;
 		}
 
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		if (GNSplit) 
 			oapiSetPanelNeighbours(SATPANEL_TUNNEL, -1, SATPANEL_RIGHT, SATPANEL_GN_RIGHT);
@@ -1388,15 +1384,15 @@ bool Saturn::clbkLoadPanel (int id) {
 		if (renderViewportIsWideScreen == 1) {
 			offset1 = 103;
 			offset2 = 205;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_SEXTANT_WIDE));
+			hBmp = oapiLoadTexture (IDB_SEXTANT_WIDE);
 			panelw = 1229;
 		} else if (renderViewportIsWideScreen == 2) {
 			offset1 = 171;
 			offset2 = 342;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_SEXTANT_16_9));
+			hBmp = oapiLoadTexture (IDB_SEXTANT_16_9);
 			panelw = 1366;
 		} else {
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_SEXTANT));
+			hBmp = oapiLoadTexture (IDB_SEXTANT);
 			panelw = 1024;
 		}
 		if ( !hBmp ) {
@@ -1404,14 +1400,14 @@ bool Saturn::clbkLoadPanel (int id) {
 		}
 
 		double panelscale = oapiGetPanelScale(), hscale = panelscale, vscale = panelscale;
-		DWORD screenw, screenh;
+		int screenw, screenh;
 		oapiGetViewportSize(&screenw, &screenh);
 		if (screenw > panelw*panelscale) hscale = ((double)screenw) / panelw;
 		if (screenh > panelh*panelscale) vscale = ((double)screenh) / panelh;
 		PanelPixelHeight = ((double)screenh) / (min(hscale, vscale));
 
 		oapiSetPanelNeighbours(-1, SATPANEL_TELESCOPE, SATPANEL_GN, SATPANEL_GN);
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		oapiRegisterPanelArea (AID_CSM_SEXTANTCOVER,			_R( 244 + offset1,  115,  780 + offset1,  650), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN|PANEL_MOUSE_UP,	PANEL_MAP_BACKGROUND);
 
@@ -1437,15 +1433,15 @@ bool Saturn::clbkLoadPanel (int id) {
 		if (renderViewportIsWideScreen == 1) {
 			offset1 = 103;
 			offset2 = 205;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_TELESCOPE_WIDE));
+			hBmp = oapiLoadTexture (IDB_TELESCOPE_WIDE);
 			panelw = 1229;
 		} else if (renderViewportIsWideScreen == 2) {
 			offset1 = 171;
 			offset2 = 342;
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_TELESCOPE_16_9));
+			hBmp = oapiLoadTexture (IDB_TELESCOPE_16_9);
 			panelw = 1366;
 		} else {
-			hBmp = LoadBitmap (g_Param.hDLL, MAKEINTRESOURCE (IDB_TELESCOPE));
+			hBmp = oapiLoadTexture (IDB_TELESCOPE);
 			panelw = 1024;
 		}
 		if ( !hBmp ) {
@@ -1453,14 +1449,14 @@ bool Saturn::clbkLoadPanel (int id) {
 		}
 
 		double panelscale = oapiGetPanelScale(), hscale = panelscale, vscale = panelscale;
-		DWORD screenw, screenh;
+		int screenw, screenh;
 		oapiGetViewportSize(&screenw, &screenh);
 		if (screenw > panelw*panelscale) hscale = ((double)screenw) / panelw;
 		if (screenh > panelh*panelscale) vscale = ((double)screenh) / panelh;
 		PanelPixelHeight = ((double)screenh) / (min(hscale, vscale));
 
 		oapiSetPanelNeighbours(SATPANEL_SEXTANT, -1, SATPANEL_GN, SATPANEL_GN);
-		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);
+		oapiRegisterPanelBackground (hBmp, PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);
 
 		oapiRegisterPanelArea (AID_CSM_TELESCOPECOVER,			_R( 244 + offset1,  115,  780 + offset1,  650), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN|PANEL_MOUSE_UP,	PANEL_MAP_BACKGROUND);
 
@@ -1557,7 +1553,7 @@ void Saturn::AddLeftMainPanelAreas() {
 	oapiRegisterPanelArea (AID_SPSGIMBALYAWTHUMBWHEEL,						_R( 739, 1067,  775, 1084), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,					PANEL_MAP_BACKGROUND);
 	// FDAI
 	fdaiLeft.RegisterMe(AID_FDAI_LEFT, 533, 612);
-	if (!hBmpFDAIRollIndicator)	hBmpFDAIRollIndicator = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE (IDB_FDAI_ROLLINDICATOR));
+	if (!hBmpFDAIRollIndicator)	hBmpFDAIRollIndicator = oapiLoadTexture(IDB_FDAI_ROLLINDICATOR);
 	// ORDEAL
 	oapiRegisterPanelArea (AID_ORDEALSWITCHES,								_R( 359,   28,  836,  230), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN|PANEL_MOUSE_LBPRESSED|PANEL_MOUSE_UP,	PANEL_MAP_BACKGROUND);
 }
@@ -1591,7 +1587,7 @@ void Saturn::AddLeftMiddleMainPanelAreas(int offset) {
 
 	// FDAI
 	fdaiRight.RegisterMe(AID_FDAI_RIGHT, 1090 + offset, 284);
-	if (!hBmpFDAIRollIndicator)	hBmpFDAIRollIndicator = LoadBitmap(g_Param.hDLL, MAKEINTRESOURCE (IDB_FDAI_ROLLINDICATOR));
+	if (!hBmpFDAIRollIndicator)	hBmpFDAIRollIndicator = oapiLoadTexture(IDB_FDAI_ROLLINDICATOR);
 
 	// MFDs
 	MFDSPEC mfds_mainleft = {{1405 + offset, 1019, 1715 + offset, 1328}, 6, 6, 55, 44 };
@@ -3567,20 +3563,20 @@ void SetupgParam() {
 	// allocate GDI resources
 	//
 
-	g_Param.font[0]  = CreateFont (-13, 0, 0, 0, 700, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
-	g_Param.font[1]  = CreateFont (-10, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
-	g_Param.font[2]  = CreateFont (-8, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
-	g_Param.brush[0] = CreateSolidBrush (RGB(0,255,0));    // green
-	g_Param.brush[1] = CreateSolidBrush (RGB(255,0,0));    // red
-	g_Param.brush[2] = CreateSolidBrush (RGB(154,154,154));  // Grey
-	g_Param.brush[3] = CreateSolidBrush (RGB(3,3,3));  // Black
-	g_Param.pen[0] = CreatePen (PS_SOLID, 3, RGB(224, 224, 224));
-	g_Param.pen[1] = CreatePen (PS_SOLID, 4, RGB(  0,   0,   0));
-	g_Param.pen[2] = CreatePen (PS_SOLID, 1, RGB(  0,   0,   0));
-	g_Param.pen[3] = CreatePen (PS_SOLID, 3, RGB( 77,  77,  77));
-	g_Param.pen[4] = CreatePen (PS_SOLID, 3, RGB(  0,   0,   0));
-	g_Param.pen[5] = CreatePen (PS_SOLID, 1, RGB(255,   0,   0));
-	g_Param.pen[6] = CreatePen (PS_SOLID, 3, RGB(255, 255, 255));
+	g_Param.font[0]  = oapiCreateFont (-13, true, "Arial");
+	g_Param.font[1]  = oapiCreateFont (-10, true, "Arial");
+	g_Param.font[2]  = oapiCreateFont (-8, true, "Arial");
+	g_Param.brush[0] = oapiCreateBrush (oapiGetColour(0,255,0));    // green
+	g_Param.brush[1] = oapiCreateBrush (oapiGetColour(255,0,0));    // red
+	g_Param.brush[2] = oapiCreateBrush (oapiGetColour(154,154,154));  // Grey
+	g_Param.brush[3] = oapiCreateBrush (oapiGetColour(3,3,3));  // Black
+	g_Param.pen[0] = oapiCreatePen (1, 3, oapiGetColour(224, 224, 224));
+	g_Param.pen[1] = oapiCreatePen (1, 4, oapiGetColour(  0,   0,   0));
+	g_Param.pen[2] = oapiCreatePen (1, 1, oapiGetColour(  0,   0,   0));
+	g_Param.pen[3] = oapiCreatePen (1, 3, oapiGetColour( 77,  77,  77));
+	g_Param.pen[4] = oapiCreatePen (1, 3, oapiGetColour(  0,   0,   0));
+	g_Param.pen[5] = oapiCreatePen (1, 1, oapiGetColour(255,   0,   0));
+	g_Param.pen[6] = oapiCreatePen (1, 3, oapiGetColour(255, 255, 255));
 }
 
 void DeletegParam() {
@@ -3591,9 +3587,9 @@ void DeletegParam() {
 	// deallocate GDI resources
 	//
 
-	for (i = 0; i < 3; i++) DeleteObject (g_Param.font[i]);
-	for (i = 0; i < 4; i++) DeleteObject (g_Param.brush[i]);
-	for (i = 0; i < 6; i++) DeleteObject (g_Param.pen[i]);
+	for (i = 0; i < 3; i++) oapiReleaseFont (g_Param.font[i]);
+	for (i = 0; i < 4; i++) oapiReleaseBrush (g_Param.brush[i]);
+	for (i = 0; i < 6; i++) oapiReleasePen (g_Param.pen[i]);
 }
 
 bool Saturn::clbkPanelMouseEvent (int id, int event, int mx, int my)
@@ -4933,18 +4929,14 @@ bool Saturn::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 
 	case AID_EMS_SCROLL_LEO:
 	{
+		oapi::Sketchpad *skp = oapiGetSketchpad(srf[SRF_EMS_SCROLL_LEO]);
 
-		HDC hDC;
+		skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
+		skp->SetPen(g_Param.pen[2]);
 
-		hDC = oapiGetDC(srf[SRF_EMS_SCROLL_LEO]);
-
-		SetBkMode(hDC, TRANSPARENT);
-		HGDIOBJ oldObj = SelectObject(hDC, g_Param.pen[2]);
-
-		Polyline(hDC, ems.ScribePntArray, ems.ScribePntCnt);
+		skp->Polyline(ems.ScribePntArray, ems.ScribePntCnt);
 	
-		SelectObject(hDC, oldObj);
-		oapiReleaseDC(srf[SRF_EMS_SCROLL_LEO], hDC);
+		oapiReleaseSketchpad(skp);
 
 		oapiBlt(surf, srf[SRF_EMS_SCROLL_LEO], 5, 4, ems.GetScrollOffset(), 0, 132, 143);
 		oapiBlt(surf, srf[SRF_EMS_SCROLL_BUG], 42, ems.GetGScribe() + 2, 0, 0, 5, 5, SURF_PREDEF_CK);
@@ -4953,10 +4945,6 @@ bool Saturn::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 	}
 	case AID_EMS_RSI_BKGRND:
 	{
-		HDC hDC;
-		HGDIOBJ brush = NULL;
-		HGDIOBJ pen = NULL;
-
 		oapiBlt(surf, srf[SRF_EMS_RSI_BKGRND], 0, 0, 0, 0, 86, 84);
 		switch (ems.LiftVectLight()) {
 		case 1:
@@ -4971,15 +4959,13 @@ bool Saturn::clbkPanelRedrawEvent(int id, int event, SURFHANDLE surf)
 			break;
 		}
 
-		hDC = oapiGetDC(srf[SRF_EMS_RSI_BKGRND]);
-		SetBkMode(hDC, TRANSPARENT);
-		pen = SelectObject(hDC, GetStockObject(WHITE_PEN));
-		Ellipse(hDC, 14, 14, 71, 68);
-		brush = SelectObject(hDC, GetStockObject(BLACK_BRUSH));
-		Polygon(hDC, ems.RSITriangle, 3);
-		SelectObject(hDC, pen);
-		SelectObject(hDC, brush);
-		oapiReleaseDC(srf[SRF_EMS_RSI_BKGRND], hDC);
+		oapi::Sketchpad *skp = oapiGetSketchpad(srf[SRF_EMS_RSI_BKGRND]);
+		skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
+		skp->SetPen(g_Param.pen[6]);
+		skp->Ellipse(14, 14, 71, 68);
+		skp->SetBrush(g_Param.brush[3]);
+		skp->Polygon(ems.RSITriangle, 3);
+		oapiReleaseSketchpad(skp);
 		return true;
 	}
 	case AID_EMSDVSETSWITCH:		

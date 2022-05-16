@@ -341,7 +341,7 @@ const double BMAG::GYRO_OUTPUT_LIMIT = 16.0*RAD;
 BMAG::BMAG() {
 
 	sat = NULL;
-	powered = FALSE;
+	powered = false;
 	dc_source = NULL;
 	ac_source = NULL;
 	dc_bus = NULL;
@@ -4048,10 +4048,10 @@ void ECA::TimeStep(double simdt) {
 			} else {
 				if (pseudorate.x > 0) {
 					pseudorate.x -= 0.02 * simdt; 
-					pseudorate.x = max(0, pseudorate.x);
+					pseudorate.x = max(0.0, pseudorate.x);
 				} else {
 					pseudorate.x += 0.02 * simdt; 
-					pseudorate.x = min(0, pseudorate.x);
+					pseudorate.x = min(0.0, pseudorate.x);
 				}
 			}
 		} else {
@@ -4065,10 +4065,10 @@ void ECA::TimeStep(double simdt) {
 			} else {
 				if (pseudorate.y > 0) {
 					pseudorate.y -= 0.02 * simdt; 
-					pseudorate.y = max(0, pseudorate.y);
+					pseudorate.y = max(0.0, pseudorate.y);
 				} else {
 					pseudorate.y += 0.02 * simdt; 
-					pseudorate.y = min(0, pseudorate.y);
+					pseudorate.y = min(0.0, pseudorate.y);
 				}
 			}
 		} else {
@@ -4082,10 +4082,10 @@ void ECA::TimeStep(double simdt) {
 			} else {
 				if (pseudorate.z > 0) {
 					pseudorate.z -= 0.02 * simdt; 
-					pseudorate.z = max(0, pseudorate.z);
+					pseudorate.z = max(0.0, pseudorate.z);
 				} else {
 					pseudorate.z += 0.02 * simdt; 
-					pseudorate.z = min(0, pseudorate.z);
+					pseudorate.z = min(0.0, pseudorate.z);
 				}
 			}
 		} else {
@@ -5570,6 +5570,8 @@ void EMS::LoadState(FILEHANDLE scn) {
 }
 
 bool EMS::WriteScrollToFile() {
+	return false;
+	/*
 	char sdate[9];
 	char stime[9];
 	char buffer[100];
@@ -5610,7 +5612,7 @@ bool EMS::WriteScrollToFile() {
 
 	DeleteObject(hBitmap);
 	DeleteDC(hMemDC);
-	return ret;
+	return ret;*/
 }
 
 void EMS::SetReference(const VECTOR3& ref, const VECTOR3& _dir)
@@ -5645,7 +5647,7 @@ void EMS::DrawSwitchVC(int id, int event, SURFHANDLE surf)
 {
 	if (anim_RSI_indicator != -1) sat->SetAnimation(anim_RSI_indicator, RSIRotation / PI2);
 }
-
+/*
 // The following code was found and supplied by computerex at orbiter-forum.  The code is from the MSDN sample code library.
 PBITMAPINFO CreateBitmapInfoStruct(HBITMAP hBmp)
 { 
@@ -5771,4 +5773,4 @@ bool CreateBMPFile(LPTSTR pszFile, PBITMAPINFO pbi, HBITMAP hBMP, HDC hDC) {
 	// Free memory. 
 	GlobalFree((HGLOBAL)lpBits);
 	return true;
-}
+}*/
