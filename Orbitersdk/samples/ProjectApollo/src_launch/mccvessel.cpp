@@ -24,6 +24,7 @@
 #include "mccvessel.h"
 #include "rtcc.h"
 #include "mcc.h"
+#include <cstring>
 
 #define ORBITER_MODULE
 

@@ -31,6 +31,7 @@
 #include "nasspdefs.h"
 
 #include "mccvessel.h"
+#include <cstring>
 
 MESHHANDLE hMCCVC;
 
@@ -318,18 +319,18 @@ bool MCCVessel::clbkVCMouseEvent(int id, int event, VECTOR3 &p)
 
 void MCCVessel::RedrawPanel_MFDButton(SURFHANDLE surf, int mfd, int side, int xoffset, int yoffset, int xdist) {
 
-	HDC hDC = oapiGetDC(surf);
-	SelectObject(hDC, g_Param.font[2]);
-	SetTextColor(hDC, RGB(196, 196, 196));
-	SetTextAlign(hDC, TA_CENTER);
-	SetBkMode(hDC, TRANSPARENT);
+	oapi::Sketchpad *skp = oapiGetSketchpad(surf);
+	skp->SetFont(g_Param.font[2]);
+	skp->SetTextColor(oapiGetColour(196, 196, 196));
+	skp->SetTextAlign(oapi::Sketchpad::CENTER);
+	skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
 	const char *label;
 	for (int bt = 0; bt < 6; bt++) {
 		if (label = oapiMFDButtonLabel(mfd, bt + side * 6))
-			TextOut(hDC, 16 + (xdist * bt) + xoffset, 7 + yoffset, label, strlen(label));
+			skp->Text(16 + (xdist * bt) + xoffset, 7 + yoffset, label, strlen(label));
 		else break;
 	}
-	oapiReleaseDC(surf, hDC);
+	oapiReleaseSketchpad(skp);
 }
 
 void MCCVessel::clbkMFDMode(int mfd, int mode)

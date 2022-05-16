@@ -472,6 +472,68 @@ install(TARGETS LRV
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
+####### MCC #######
+add_library(MCC SHARED
+    ${SRC_DIR}/src_launch/mccvessel.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_B.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_C.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_C_PRIME.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_D.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_F.cpp
+    ${SRC_DIR}/src_launch/MCC_Mission_G.cpp
+    ${SRC_DIR}/src_launch/rtcc.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_B.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_C.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_Calculations.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_C_PRIME.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_D.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_F.cpp
+    ${SRC_DIR}/src_launch/RTCC_Mission_G.cpp
+    ${SRC_DIR}/src_rtccmfd/CoastNumericalIntegrator.cpp
+    ${SRC_DIR}/src_rtccmfd/CSMLMGuidanceSim.cpp
+    ${SRC_DIR}/src_rtccmfd/EnckeIntegrator.cpp
+    ${SRC_DIR}/src_rtccmfd/EntryCalculations.cpp
+    ${SRC_DIR}/src_rtccmfd/GeneralizedIterator.cpp
+    ${SRC_DIR}/src_rtccmfd/GeneralPurposeManeuver.cpp
+    ${SRC_DIR}/src_rtccmfd/LDPP.cpp
+    ${SRC_DIR}/src_rtccmfd/LMGuidanceSim.cpp
+    ${SRC_DIR}/src_rtccmfd/LOITargeting.cpp
+    ${SRC_DIR}/src_rtccmfd/LunarTargetingProgram.cpp
+    ${SRC_DIR}/src_rtccmfd/LWP.cpp
+    ${SRC_DIR}/src_rtccmfd/OrbMech.cpp
+    ${SRC_DIR}/src_launch/mcc.cpp
+    ${SRC_DIR}/src_rtccmfd/ReentryNumericalIntegrator.cpp
+    ${SRC_DIR}/src_rtccmfd/RTCCModule.cpp
+    ${SRC_DIR}/src_rtccmfd/RTCC_EMSMISS.cpp
+    ${SRC_DIR}/src_rtccmfd/rtcc_intermediate_library_programs.cpp
+    ${SRC_DIR}/src_rtccmfd/rtcc_library_programs.cpp
+    ${SRC_DIR}/src_rtccmfd/TLIGuidanceSim.cpp
+    ${SRC_DIR}/src_rtccmfd/TLMCC.cpp
+    ${SRC_DIR}/src_sys/thread.cpp
+    ${SRC_DIR}/src_launch/mccvc.cpp
+)
+
+target_include_directories(MCC PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_launch
+)
+
+set_target_properties(MCC
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME MCC
+)
+
+install(TARGETS MCC
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/

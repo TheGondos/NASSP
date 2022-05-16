@@ -44,13 +44,15 @@
 #include "rtcc.h"
 #include "LVDC.h"
 #include "iu.h"
+#include <unistd.h>
 
+/*
 // This is a threadenwerfer. It werfs threaden.
 static DWORD WINAPI MCC_Trampoline(LPVOID ptr){	
 	MCC *mcc = (MCC *)ptr;
 	return(mcc->subThread());
 }
-
+*/
 // SCENARIO FILE MACROLOGY
 #define SAVE_BOOL(KEY,VALUE) oapiWriteScenario_int(scn, KEY, VALUE)
 #define SAVE_INT(KEY,VALUE) oapiWriteScenario_int(scn, KEY, VALUE)
@@ -1178,7 +1180,7 @@ int MCC::subThread(){
 	
 	if (subThreadMode == 0)
 	{
-		Sleep(5000); // Waste 5 seconds
+		sleep(5); // Waste 5 seconds
 		Result = 0;  // Success (negative = error)
 	}
 	else if (MissionType == MTP_B)
@@ -1234,9 +1236,8 @@ int MCC::startSubthread(int fcn, int type){
 		subThreadMode = fcn;
 		subThreadType = type;
 		subThreadStatus = 1; // Busy
-		DWORD id = 0;
-		HANDLE h = CreateThread(NULL, 0, MCC_Trampoline, this, 0, &id);
-		if(h != NULL){ CloseHandle(h); }
+		std::thread t(&MCC::subThread, this);
+		t.detach();
 		addMessage("Thread Started");
 	}else{
 		addMessage("Thread Busy");
@@ -3269,7 +3270,7 @@ void MCC::freePad(){
 }
 
 // Keypress handler
-void MCC::keyDown(DWORD key){
+void MCC::keyDown(int key){
 	char buf[MAX_MSGSIZE];
 	char menubuf[300];
 	

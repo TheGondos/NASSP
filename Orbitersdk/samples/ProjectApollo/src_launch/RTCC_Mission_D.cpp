@@ -328,7 +328,7 @@ bool RTCC::CalculationMTP_D(int fcn, LPVOID &pad, char * upString, char * upDesc
 		AP7ManeuverPAD(&opt, *form);
 		sprintf(form->purpose, "SPS-2");
 
-		//Bias pitch trim gimbal angle by 0.5° to induce transient at ignition. Gets mentioned in pre-mission documents, but wasn't actually done during the mission?!
+		//Bias pitch trim gimbal angle by 0.5ï¿½ to induce transient at ignition. Gets mentioned in pre-mission documents, but wasn't actually done during the mission?!
 		form->pTrim += 0.5;
 
 		AGCStateVectorUpdate(buffer1, sv0, true, GETbase, true);
@@ -668,7 +668,7 @@ bool RTCC::CalculationMTP_D(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		//ensure 40+ seconds burntime
 		dv_T = OrbMech::DVFromBurnTime(41.4, SPS_THRUST, SPS_ISP, calcParams.src->GetMass() + calcParams.tgt->GetMass());
-		dV_LVLH.y = -sqrt(max(0, dv_T * dv_T - dV_LVLH.x*dV_LVLH.x - dV_LVLH.z*dV_LVLH.z));
+		dV_LVLH.y = -sqrt(max(0.0, dv_T * dv_T - dV_LVLH.x*dV_LVLH.x - dV_LVLH.z*dV_LVLH.z));
 
 		refsopt.csmlmdocked = true;
 		refsopt.dV_LVLH = dV_LVLH;
@@ -2236,7 +2236,7 @@ void RTCC::DMissionRendezvousPlan(SV sv_A0, double GETbase, double &t_TPI0)
 	//Step 3: Insertion is 111:42 minutes after Phasing
 	calcParams.Insertion = calcParams.Phasing + 111.0*60.0 + 42.0;
 
-	//Step 4: CSI is two minutes (rounded) into after 5° AOS of the TAN pass
+	//Step 4: CSI is two minutes (rounded) into after 5ï¿½ AOS of the TAN pass
 	double CSI_guess, lat_TAN, lng_TAN, AOS_TAN, LOS_TAN;
 	lat_TAN = groundstations[13][0];
 	lng_TAN = groundstations[13][1];
