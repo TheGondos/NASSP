@@ -624,6 +624,54 @@ install(TARGETS PanelSDK
 )
 
 ####### Template #######
+add_library(s1b SHARED
+    ${SRC_DIR}/src_saturn/s1bsystems.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_sys/pyro.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+)
+
+target_include_directories(s1b PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_launch
+)
+
+set_target_properties(s1b
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME s1b
+)
+
+install(TARGETS s1b
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### s1c #######
+add_library(s1c SHARED
+    ${SRC_DIR}/src_saturn/s1c.cpp
+)
+
+target_include_directories(s1c PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(s1c
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME s1c
+)
+
+install(TARGETS s1c
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/
 #)
