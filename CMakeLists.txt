@@ -776,6 +776,25 @@ install(TARGETS Sat5Abort3
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
+####### Sat5LMDSC #######
+add_library(Sat5LMDSC SHARED
+    ${SRC_DIR}/src_lm/Sat5LMDSC.cpp
+)
+
+target_include_directories(Sat5LMDSC PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+)
+
+set_target_properties(Sat5LMDSC
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat5LMDSC
+)
+
+install(TARGETS Sat5LMDSC
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/

@@ -28,6 +28,7 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include "stdio.h"
 #include "Sat5LMDSC.h"
 #include "LM_DescentStageResource.h"
+#include <cstring>
 
 static int refcount = 0;
 static MESHHANDLE LM_Descent;
