@@ -702,7 +702,7 @@ void LEM::DefineTouchdownPoints(int s)
 
 void LEM::ConfigTouchdownPoints(double mass, double ro1, double ro2, double tdph, double probeh, double height, double x_target) {
 
-	static DWORD ntdvtx = 12;
+	static int ntdvtx = 12;
 	static TOUCHDOWNVTX tdv[12];
 
 	double stiffness = (-1)*(mass*9.80655) / (3 * x_target);

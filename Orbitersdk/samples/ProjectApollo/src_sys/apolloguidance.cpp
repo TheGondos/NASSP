@@ -182,13 +182,13 @@ bool ApolloGuidance::OutOfReset()
 bool ApolloGuidance::SingleTimestepPrep(double simt, double simdt){
 	LastTimestep = CurrentTimestep;
 	CurrentTimestep = simt;
-	return TRUE;
+	return true;
 }
 
 bool ApolloGuidance::SingleTimestep() {
 
 	agc_engine(&vagc);
-	return TRUE;
+	return true;
 }
 
 void ApolloGuidance::VirtualAGCCoreDump(const char *fileName) {

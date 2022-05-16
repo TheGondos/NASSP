@@ -57,7 +57,7 @@ CSMcomputer::CSMcomputer(SoundLib &s, DSKY &display, DSKY &display2, IMU &im, CD
 	LastOut6 = 0;
 	LastOut11 = 0;
 
-	thread.Resume ();
+	Start();
 }
 
 CSMcomputer::~CSMcomputer()
@@ -112,7 +112,9 @@ void CSMcomputer::Run ()
 		while(true)
 		{
 			timeStepEvent.Wait();
-			{
+			if(m_stop.load()) {
+				return;
+			} else {
 				std::lock_guard<std::mutex> guard(agcCycleMutex);
 				agcTimestep(thread_simt,thread_simdt);
 			}

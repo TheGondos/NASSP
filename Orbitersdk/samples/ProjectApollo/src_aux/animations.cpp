@@ -24,6 +24,7 @@ See http://nassp.sourceforge.net/license/ for more details.
 
 #include "Orbitersdk.h"
 #include "animations.h"
+#include <cstring>
 
 AnimState2::AnimState2()
 {

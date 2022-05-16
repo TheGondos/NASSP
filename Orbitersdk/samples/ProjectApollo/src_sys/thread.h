@@ -89,16 +89,7 @@ protected:
 };
 */
 #include <thread>
-class Runnable
-{
-public:
-    Runnable ();
-    virtual ~Runnable () {}
-    void Kill ();
-protected:
-    virtual void Run () = 0;
-    std::thread m_thread;
-};
+#include <atomic>
 #include <semaphore.h>
 class Event final {
 public:
@@ -108,5 +99,25 @@ public:
     void Wait() { sem_wait(&m_semid); }
 private:
     sem_t m_semid;
+};
+
+class Runnable
+{
+public:
+    Runnable () { m_stop.store(false); }
+    virtual ~Runnable () {}
+    void Kill () {
+        m_stop.store(true);
+        timeStepEvent.Raise();
+    }
+protected:
+    virtual void Run () = 0;
+    void Start() {
+        m_thread = std::thread(&Runnable::Run, this);
+        m_thread.detach();
+    }
+    std::thread m_thread;
+    std::atomic<bool> m_stop;
+    Event timeStepEvent;
 };
 #endif

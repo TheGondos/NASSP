@@ -97,7 +97,7 @@ void LEM_RR::Init(LEM *s, e_object *dc_src, e_object *ac_src, h_Radiator *ant, B
 		antheater->WireTo(&lem->HTR_RR_OPR_CB);
 	}
 
-	hpbw_factor = acos(sqrt(sqrt(0.5))) / (3.5*RAD / 4.0);	//3.5° beamwidth
+	hpbw_factor = acos(sqrt(sqrt(0.5))) / (3.5*RAD / 4.0);	//3.5ï¿½ beamwidth
 	SignalStrengthRCVD = 0.0;
 	AutoTrackEnabled = false;
 	ShaftErrorSignal = 0.0;
@@ -268,10 +268,10 @@ void LEM_RR::Timestep(double simdt) {
 	}
 
 	if (!IsPowered()) {
-		bool clobber = FALSE;
-		if (val33[RRPowerOnAuto]) { clobber = TRUE; val33[RRPowerOnAuto] = 0; }
-		if (val33[RRDataGood]) { clobber = TRUE; val33[RRDataGood] = 0; }
-		if (clobber == TRUE) { lem->agc.SetInputChannel(033, val33); }
+		bool clobber = false;
+		if (val33[RRPowerOnAuto]) { clobber = true; val33[RRPowerOnAuto] = 0; }
+		if (val33[RRDataGood]) { clobber = true; val33[RRDataGood] = 0; }
+		if (clobber == true) { lem->agc.SetInputChannel(033, val33); }
 		SignalStrengthRCVD = 0.0;
 		radarDataGood = false;
 		FrequencyLock = false;
@@ -437,7 +437,7 @@ void LEM_RR::Timestep(double simdt) {
 				internalrangerate = dotp(CSMVel - LMVel, U_R);
 			}
 
-			//sprintf(oapiDebugString(), "Shaft: %f, Trunnion: %f, Relative Angle: %f°, SignalStrengthRCVD %f %f %f %f", shaftAngle*DEG, trunnionAngle*DEG, relang*DEG, SignalStrengthQuadrant[0], SignalStrengthQuadrant[1], SignalStrengthQuadrant[2], SignalStrengthQuadrant[3]);
+			//sprintf(oapiDebugString(), "Shaft: %f, Trunnion: %f, Relative Angle: %fï¿½, SignalStrengthRCVD %f %f %f %f", shaftAngle*DEG, trunnionAngle*DEG, relang*DEG, SignalStrengthQuadrant[0], SignalStrengthQuadrant[1], SignalStrengthQuadrant[2], SignalStrengthQuadrant[3]);
 
 		}
 	}

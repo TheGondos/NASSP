@@ -55,7 +55,7 @@ LEMcomputer::LEMcomputer(SoundLib &s, DSKY &display, IMU &im, CDU &sc, CDU &tc, 
 	/* FIXME REMOVE THIS LATER, THIS IS TEMPORARY FOR TESTING ONLY AND SHOULD BE IN THE SCENARIO LATER */
 	/* LM PAD LOAD FOR LUMINARY 099 AND APOLLO 11  - OFFICIAL VERSION */
 
-	thread.Resume();
+	Start();
 }
 
 LEMcomputer::~LEMcomputer()
@@ -108,7 +108,9 @@ void LEMcomputer::Run ()
 	while(true)
 	{
 		timeStepEvent.Wait();
-		{
+		if(m_stop.load()) {
+			return;
+		} else {
 			std::lock_guard<std::mutex> guard(agcCycleMutex);
 			agcTimestep(thread_simt,thread_simdt);
 		}

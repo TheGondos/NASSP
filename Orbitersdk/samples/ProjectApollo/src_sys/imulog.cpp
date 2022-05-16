@@ -28,7 +28,6 @@
 #include <string.h>
 #include <time.h>
 #include <sys/timeb.h>
-#include <windows.h>
 #include <stdio.h>
 #include <math.h>
 #include "soundlib.h"

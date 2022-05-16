@@ -58,7 +58,7 @@ public:
 	/// \param kstate Key state.
 	///
 	int clbkConsumeDirectKey(char *kstate);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 
 	///
 	/// \brief Orbiter class configuration function.

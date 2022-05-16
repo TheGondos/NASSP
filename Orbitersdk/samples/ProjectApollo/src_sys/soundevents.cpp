@@ -64,7 +64,7 @@ SoundEvent::SoundEvent()
 	lastplayed=-1;
     SoundEventLoaded =false;
 
-	apDSBuffer = 0;
+	//apDSBuffer = 0;
 }
 
 SoundEvent::~SoundEvent()
@@ -358,7 +358,7 @@ int SoundEvent::LoadMissionLandingSoundArray(SoundLib soundlib,char *soundname)
 
 
 
-	_snprintf(SoundPath, 255, "%s\\%s\\%s", soundlib.basepath,
+	_snprintf(SoundPath, 255, "%s/%s/%s", soundlib.basepath,
 		                                    soundlib.missionpath, soundname);
 TRACE(SoundPath);
 
@@ -385,7 +385,7 @@ TRACE(SoundPath);
 
 
 
- 	_snprintf(rootfilenames, 255, "%s\\%s\\%s", soundlib.basepath,soundlib.missionpath, buffers);
+ 	_snprintf(rootfilenames, 255, "%s/%s/%s", soundlib.basepath,soundlib.missionpath, buffers);
 
 	fgets(lines,255,fp);
 
@@ -743,7 +743,7 @@ int SoundEvent::LoadMissionTimeSoundArray(SoundLib soundlib, char *soundname, do
     SoundEventLoaded = true;
 	return true;
 }
-
+/*
 int SoundEvent::InitDirectSound(SoundLib soundlib)
 {
 
@@ -798,9 +798,11 @@ int SoundEvent::InitDirectSound(SoundLib soundlib)
 
     return(true);
 }
-
+*/
 int SoundEvent::PlaySound(char *filenames,int newbuffer, double offset)
 {
+	printf("[NASSP]SoundEvent::PlaySound %s\n", filenames);
+#if 0
     HMMIO m_hmmio;
     HRESULT hr;
 
@@ -1130,24 +1132,29 @@ TRACE ("APPEL CREATE SOUND BUFFER");
 //    if (newbuffer)
         apDSBuffer[0]->Play( 0, 0, 0L );
 
-
+#endif
     return(true);  
 }
 
 int SoundEvent::IsPlaying()
 {
+	printf("[NASSP]SoundEvent::IsPlaying\n");
+	return 0;
+	/*
     DWORD dwStatus = 0;
 
 	if (apDSBuffer == NULL)
 		return (false);
     apDSBuffer[0]->GetStatus( &dwStatus );
     return( ( dwStatus & DSBSTATUS_PLAYING ) != 0 );
-
+*/
 }
 
 int SoundEvent::Finish(double offsetfinish)
 {
-
+	printf("[NASSP]SoundEvent::Finish\n");
+	return 0;
+/*
 TRACESETUP("FINISH");
 
     DWORD curplay,curwrite;
@@ -1170,23 +1177,32 @@ TRACESETUP("FINISH");
 	}
 
 	return(false);
+	*/
 }
 
 
 
 int SoundEvent::Stop()
 {
+	printf("[NASSP]SoundEvent::Stop\n");
+	return 0;
+	/*
 	if (apDSBuffer == NULL)
 		return (false);
     apDSBuffer[0]->Stop();
     return(true);
+	*/
 }
 
 int SoundEvent::Done()
 {
+	printf("[NASSP]SoundEvent::Done\n");
+	return 0;
+	/*
 	if (apDSBuffer == NULL)
 		return (false);
     // Unlock the buffer, we don't need it anymore.
     apDSBuffer[0]->Unlock( pDSLockedBuffer, dwDSLockedBufferSize, NULL, 0 );
     return(true);
+	*/
 }

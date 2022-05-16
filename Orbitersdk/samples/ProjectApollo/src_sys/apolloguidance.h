@@ -462,7 +462,7 @@ public:
 	///
 	agc_t vagc;
 	std::mutex agcCycleMutex;
-	Event timeStepEvent;
+	//Event timeStepEvent;
 	double thread_simt;
 	double thread_simdt;
 

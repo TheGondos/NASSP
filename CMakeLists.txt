@@ -1,5 +1,5 @@
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Orbitersdk/samples/ProjectApollo)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive -Wno-write-strings -Wno-format-overflow -Wno-format-zero-length")
 
 
 
@@ -300,5 +300,98 @@ set_target_properties(LCC
 )
 
 install(TARGETS LCC
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### LEM #######
+add_library(LEM SHARED
+    ${SRC_DIR}/src_aux/animations.cpp
+    ${SRC_DIR}/src_aux/CDK.cpp
+    ${SRC_DIR}/src_aux/Mission.cpp
+    ${SRC_DIR}/src_aux/OrbiterMath.cpp
+    ${SRC_DIR}/src_aux/vesim.cpp
+    ${SRC_DIR}/src_lm/CWEA_FlipFlop.cpp
+    ${SRC_DIR}/src_lm/lemconnector.cpp
+    ${SRC_DIR}/src_lm/lm_aca.cpp
+    ${SRC_DIR}/src_lm/lm_aeaa.cpp
+    ${SRC_DIR}/src_lm/lm_aps.cpp
+    ${SRC_DIR}/src_lm/lm_cwea.cpp
+    ${SRC_DIR}/src_lm/lm_dps.cpp
+    ${SRC_DIR}/src_lm/lm_ecs.cpp
+    ${SRC_DIR}/src_lm/lm_eds.cpp
+    ${SRC_DIR}/src_lm/lm_eps.cpp
+    ${SRC_DIR}/src_lm/lm_programer.cpp
+    ${SRC_DIR}/src_lm/lm_rcs.cpp
+    ${SRC_DIR}/src_lm/lm_rr.cpp
+    ${SRC_DIR}/src_lm/lm_scea.cpp
+    ${SRC_DIR}/src_lm/lm_ttca.cpp
+    ${SRC_DIR}/src_rtccmfd/OrbMech.cpp
+    ${SRC_DIR}/src_sys/apolloguidance.cpp
+    ${SRC_DIR}/src_aux/BasicExcelVC6.cpp
+    ${SRC_DIR}/src_sys/cautionwarning.cpp
+    ${SRC_DIR}/src_sys/cdu.cpp
+    ${SRC_DIR}/src_sys/checklistController.cpp
+    ${SRC_DIR}/src_sys/checklistControllerHelpers.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_sys/DelayTimer.cpp
+    ${SRC_DIR}/src_sys/dsky.cpp
+    ${SRC_DIR}/src_sys/dskyinterface.cpp
+    ${SRC_DIR}/src_sys/FDAI.cpp
+    ${SRC_DIR}/src_sys/imu.cpp
+    ${SRC_DIR}/src_sys/imulog.cpp
+    ${SRC_DIR}/src_sys/imumath.cpp
+    ${SRC_DIR}/src_lm/LEM.cpp
+    ${SRC_DIR}/src_lm/LEMcomputer.cpp
+    ${SRC_DIR}/src_lm/lemmesh.cpp
+    ${SRC_DIR}/src_lm/lempanel.cpp
+    ${SRC_DIR}/src_lm/lemswitches.cpp
+    ${SRC_DIR}/src_lm/lemsystems.cpp
+    ${SRC_DIR}/src_lm/lemvc.cpp
+    ${SRC_DIR}/src_lm/lm_ags.cpp
+    ${SRC_DIR}/src_lm/lm_telecom.cpp
+    ${SRC_DIR}/src_lm/lmscs.cpp
+    ${SRC_DIR}/src_mfd/MFDconnector.cpp
+    ${SRC_DIR}/src_sys/MechanicalAccelerometer.cpp
+    ${SRC_DIR}/src_sys/missiontimer.cpp
+    ${SRC_DIR}/src_sys/ORDEAL.cpp
+    ${SRC_DIR}/src_sys/payload.cpp
+    ${SRC_DIR}/src_sys/powersource.cpp
+    ${SRC_DIR}/src_sys/pyro.cpp
+    ${SRC_DIR}/src_sys/soundevents.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_sys/thread.cpp
+    ${SRC_DIR}/src_sys/toggleswitch.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+    ${SRC_DIR}/src_sys/yaAGC/agc_engine.c
+    ${SRC_DIR}/src_sys/yaAGC/agc_engine_init.c
+    ${SRC_DIR}/src_sys/yaAGC/agc_utilities.c
+    ${SRC_DIR}/src_sys/yaAGC/Backtrace.c
+    ${SRC_DIR}/src_sys/yaAGC/random.c
+    ${SRC_DIR}/src_sys/yaAGC/rfopen.c
+    ${SRC_DIR}/src_lm/yaAGS/aea_engine.c
+    ${SRC_DIR}/src_lm/yaAGS/aea_engine_init.c
+    ${SRC_DIR}/src_lm/yaAGS/OutputAPI_AGS.c
+)
+
+
+target_include_directories(LEM PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_launch
+    ${SRC_DIR}/src_moon
+)
+
+set_target_properties(LEM
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LEM
+)
+
+install(TARGETS LEM
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )

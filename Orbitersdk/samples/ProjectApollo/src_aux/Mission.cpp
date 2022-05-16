@@ -25,6 +25,7 @@
 #include "Mission.h"
 #include "OrbiterAPI.h"
 #include <map>
+#include "Orbitersdk.h"
 
 std::map<std::string, mission::Mission*> pa_mission_hashmap;
 
@@ -120,7 +121,7 @@ namespace mission {
 	{
 		char buffer[256];
 		std::string filename;
-		filename = "Missions\\ProjectApollo\\" + strMission + ".cfg";
+		filename = "Missions/ProjectApollo/" + strMission + ".cfg";
 		strFileName = strMission;
 
 		sprintf_s(buffer, 255, "(Mission) Loading mission %s from file %s",

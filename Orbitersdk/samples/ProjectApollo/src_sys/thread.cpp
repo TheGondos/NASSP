@@ -23,7 +23,7 @@
   **************************************************************************/
 
 #include "thread.h"
-
+#if 0
 void Runnable::Kill ()
 {
     thread.WaitForDeath ();
@@ -42,3 +42,4 @@ DWORD WINAPI Runnable::ThreadEntry (void* arg)
     pRunnable->Run();
     return 0;
 }
+#endif

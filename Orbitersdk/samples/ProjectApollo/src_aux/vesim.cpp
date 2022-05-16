@@ -28,9 +28,6 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include <sstream>
 #include "Orbitersdk.h"
 
-#define DIRECTINPUT_VERSION 0x0800
-#include "dinput.h"
-
 #include "vesim.h"
 
 #define VESIM_DEVICETYPE_KEYBOARD 1
@@ -218,29 +215,15 @@ VesimDevice::VesimDevice(Vesim *parent) : parent(parent), name("Keyboard") {
 	type = VESIM_DEVICETYPE_KEYBOARD; 
 };
 
-VesimDevice::VesimDevice(Vesim *parent, const char* deviceName, LPDIRECTINPUTDEVICE8 dx8_joystick) : 
-	parent(parent),  name(deviceName), dx8_joystick(dx8_joystick) {
+VesimDevice::VesimDevice(Vesim *parent, const char* deviceName, int glfw_joystick) : 
+	parent(parent),  name(deviceName), glfw_joystick(glfw_joystick) {
 	type = VESIM_DEVICETYPE_JOYSTICK;
-	dx8_joystick->SetDataFormat(&c_dfDIJoystick2);
 };
 
 void VesimDevice::poolDevice() {
 	if (type == VESIM_DEVICETYPE_JOYSTICK) {
-		HRESULT hr = dx8_joystick->Poll();
-		if (FAILED(hr)) { // Did that work?
-						  // Attempt to acquire the device
-			hr = dx8_joystick->Acquire();
-			if (FAILED(hr)) {
-#ifdef _DEBUG
-				fprintf(parent->out_file, "DX8JS: Cannot aquire %s\n", name.c_str());
-#endif
-			}
-			else {
-				hr = dx8_joystick->Poll();
-			}
-		}
 		// Read data
-		dx8_joystick->GetDeviceState(sizeof(dx8_jstate), &dx8_jstate);
+		glfwGetGamepadState(glfw_joystick, &glfw_jstate);
 	}
 }
 
@@ -264,43 +247,23 @@ Vesim::Vesim(CbInputChanged cbInputChanged, void *pCbData) : cbInputChanged(cbIn
 }
 
 Vesim::~Vesim() {
-	int ndev = vdev.size();
-	for (int i = 0; i < ndev; i++) {
-		VesimDevice *d = &vdev[i];
-		if (d->type == VESIM_DEVICETYPE_JOYSTICK) {
-			d->dx8_joystick->Unacquire();
-			d->dx8_joystick->Release();
-		}
-	}
 #ifdef _DEBUG
 	fclose(out_file);
 #endif
 }
 
-BOOL CALLBACK VesimEnumJoysticksCB(const DIDEVICEINSTANCE* pdidInstance, VOID* pVesim)
-{
-	class Vesim* ves = (Vesim*)pVesim; // Pointer to us
-	HRESULT hr;
-	LPDIRECTINPUTDEVICE8 dx8_joystick;
-
-#ifdef _DEBUG
-	fprintf(ves->out_file, "Found stick instance: %s Prod name: %s\n", &pdidInstance->tszInstanceName[0], &pdidInstance->tszProductName[0]);
-	fflush(ves->out_file);
-#endif
-	// Obtain an interface to the enumerated joystick.
-	hr = ves->dx8ppv->CreateDevice(pdidInstance->guidInstance, &dx8_joystick, NULL);
-
-	if (FAILED(hr)) {              // Did that work?
-		return DIENUM_CONTINUE;
-	} // No, keep enumerating (if there's more)
-
-	ves->vdev.emplace_back(ves, &pdidInstance->tszProductName[0], dx8_joystick);
-
-	return DIENUM_CONTINUE; // and keep enumerating
+void Vesim::VesimEnumJoysticks() {
+	for(int i = 0; i< GLFW_JOYSTICK_LAST; i++) {
+		int present = glfwJoystickPresent(i);
+		if(present) {
+			const char *name = glfwGetJoystickName(i);
+			vdev.emplace_back(this, name, i);
+		}
+	}
 }
 
 std::string getDeviceInputFileName(char* vesselStationName, std::string deviceName, bool isUserCfg) {
-	std::string ret("Config\\ProjectApollo\\Vesim\\");
+	std::string ret("Config/ProjectApollo/Vesim/");
 	ret.append(vesselStationName);
 	ret.append(" - ");
 	ret.append(deviceName);
@@ -308,14 +271,12 @@ std::string getDeviceInputFileName(char* vesselStationName, std::string deviceNa
 	return ret;
 }
 
-bool Vesim::setupDevices(char* vesselStationName, LPDIRECTINPUT8 dx8ppv){
+bool Vesim::setupDevices(char* vesselStationName){
 #ifdef _DEBUG
 	fprintf(out_file, "Setting up controller devices for vessel %s\n", vesselStationName);
 	fflush(out_file);
 #endif
 	this->vesselStationName = vesselStationName;
-	this->dx8ppv = dx8ppv;
-	dx8ppv->EnumDevices(DI8DEVCLASS_GAMECTRL, VesimEnumJoysticksCB, this, DIEDFL_ATTACHEDONLY);
 	int ndev = vdev.size();
 	for (int devid = 0; devid < ndev; devid++) {
 		std::string devicename = vdev[devid].name;
@@ -519,14 +480,14 @@ bool Vesim::connectDeviceToInput(int inputidx, int deviceID, int subdeviceType, 
 	return false;
 }
 
-int Vesim::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
+int Vesim::clbkConsumeBufferedKey(int key, bool down, char *keystate) {
 	if (key >= 0 && key < 256) {
 		int inpidx=key2conn[key][0];
 #ifdef _DEBUG
 		fprintf(out_file, "Key callback key:%d inpidx:%d \n", (int) key, inpidx);
 		fflush(out_file);
 #endif
-		boolean isSet = false;
+		bool isSet = false;
 		int newValue = 0;
 		if (inpidx >= 0) {
 			VesimInput *inp = &vinp[inpidx];
@@ -587,59 +548,59 @@ void  Vesim::poolDevices() {
 			if (pconn->subdeviceType == VESIM_SUBDEVTYPE_AXIS) {
 				switch (pconn->subdeviceID) {
 				case VESIM_DEVICE_AXIS_X:
-					newValue = pdev->dx8_jstate.lX;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_RIGHT_X];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_AXIS_Y:
-					newValue = pdev->dx8_jstate.lY;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_RIGHT_Y];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_AXIS_Z:
-					newValue = pdev->dx8_jstate.lZ;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_AXIS_RX:
-					newValue = pdev->dx8_jstate.lRx;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_LEFT_X];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_AXIS_RY:
-					newValue = pdev->dx8_jstate.lRy;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_LEFT_Y];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_AXIS_RZ:
-					newValue = pdev->dx8_jstate.lRz;
+					newValue = pdev->glfw_jstate.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_SLDR0:
-					newValue = pdev->dx8_jstate.rglSlider[0];
+					newValue = 0;//pdev->dx8_jstate.rglSlider[0];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				case VESIM_DEVICE_SLDR1:
-					newValue = pdev->dx8_jstate.rglSlider[1];
+					newValue = 0;//pdev->dx8_jstate.rglSlider[1];
 					pconn->value = newValue;
 					isSet = true;
 					break;
 				default: //It is a POV axis
 					int povidx = pconn->subdeviceID- VESIM_DEVICE_POV;
-					int povval = pdev->dx8_jstate.rgdwPOV[povidx>>1];					
+					int povval = 0;//pdev->dx8_jstate.rgdwPOV[povidx>>1];					
 					if ((povval & 0xFFFF) != 0xFFFF) {																
 						double povcos = cos(PI*povval / 18000.0);
 						double povsin = sin(PI*povval / 18000.0);
-						double maxnorm = max(abs(povcos), abs(povsin));
+						double maxnorm = std::max(abs(povcos), abs(povsin));
 						povcos = povcos / maxnorm;
 						povsin = povsin / maxnorm;
 						if (povidx & 1) {
-							newValue = min((int)round(32768 - 327678.0*povcos), 65535);
+							newValue = std::min((int)round(32768 - 327678.0*povcos), 65535);
 						}
 						else {
-							newValue = min((int)round(32768 + 327678.0*povsin), 65535);
+							newValue = std::min((int)round(32768 + 327678.0*povsin), 65535);
 						}
 						isSet = true;						
 					}
@@ -655,7 +616,7 @@ void  Vesim::poolDevices() {
 			}
 			else if (pconn->subdeviceType == VESIM_SUBDEVTYPE_BUTTON) {
 				int sdid = pconn->subdeviceID;
-				if (sdid >= 0 && sdid < 128 && pdev->dx8_jstate.rgbButtons[sdid] & 0x80) {
+				if (sdid >= 0 && sdid < 128 && pdev->glfw_jstate.buttons[sdid] != 0) {
 					pconn->value = 1;
 					isSet = true;
 					if (inp->type == VESIM_INPUTTYPE_BUTTON) {

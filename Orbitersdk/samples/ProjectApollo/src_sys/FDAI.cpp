@@ -35,8 +35,8 @@
 #include "FDAI.h"
 
 // helper functions
-HBITMAP RotateMemoryDC(HBITMAP hBmpSrc, HDC hdcSrc, int SrcX, int SrcY, float angle, HDC &hdcDst, int &dstX, int &dstY);
-void DrawTransparentBitmap(HDC hdc, HBITMAP hBitmap, short xStart, short yStart, COLORREF cTransparentColor);
+//HBITMAP RotateMemoryDC(HBITMAP hBmpSrc, HDC hdcSrc, int SrcX, int SrcY, float angle, HDC &hdcDst, int &dstX, int &dstY);
+//void DrawTransparentBitmap(HDC hdc, HBITMAP hBitmap, short xStart, short yStart, COLORREF cTransparentColor);
 
 FDAI::FDAI() {
 
@@ -64,7 +64,7 @@ void FDAI::Init(VESSEL *v)
 }
 
 void FDAI::InitGL() {
-
+/*
 	GLuint      PixelFormat;
 	BITMAPINFOHEADER BIH;
 	int iSize = sizeof(BITMAPINFOHEADER);
@@ -116,11 +116,11 @@ void FDAI::InitGL() {
 	int texture_index;
 	if (LM_FDAI)
 	{
-		texture_index = LoadOGLBitmap("Textures\\ProjectApollo\\FDAI_Ball_LM.dds");
+		texture_index = LoadOGLBitmap("Textures/ProjectApollo/FDAI_Ball_LM.dds");
 	}
 	else
 	{
-		texture_index = LoadOGLBitmap("Textures\\ProjectApollo\\FDAI_Ball.dds");
+		texture_index = LoadOGLBitmap("Textures/ProjectApollo/FDAI_Ball.dds");
 	}
 	if (texture_index > 0) glEnable(GL_TEXTURE_2D);
 
@@ -159,12 +159,12 @@ void FDAI::InitGL() {
 	gluQuadricTexture(quadObj, GL_TRUE);
 	gluSphere(quadObj, 12, 24, 24);
 	glEndList();
-
+*/
 	init = 1;		//that's it. If we made it so far, we can use OpenGL
 }
 
 FDAI::~FDAI() {
-
+/*
 	if (init) {
 		gluDeleteQuadric(quadObj);
 		wglMakeCurrent(NULL, NULL);	//standard OpenGL release
@@ -174,7 +174,7 @@ FDAI::~FDAI() {
 		DeleteObject(hBMP);
 		DeleteDC(hDC2);
 		hDC2 = 0;
-	}
+	}*/
 }
 
 void FDAI::RegisterMe(int index, int x, int y) {
@@ -268,6 +268,7 @@ void FDAI::RotateBall(double simdt) {
 
 void FDAI::MoveBall2D()
 {
+	/*
 	glLoadIdentity();
 	gluLookAt(0.0, -35.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
@@ -276,15 +277,15 @@ void FDAI::MoveBall2D()
 	glRotated(now.y / PI * 180.0, 0.0, 1.0, 0.0);	//attitude.x
 	glRotated(now.x / PI * 180.0, 1.0, 0.0, 0.0);	//attitude.z
 	glRotated(now.z / PI * 180.0, 0.0, 0.0, 1.0);	//attitude.y
-
+*/
 	lastPaintAtt = now;
 }
 
 void FDAI::PaintMe(VECTOR3 rates, VECTOR3 errors, SURFHANDLE surf, SURFHANDLE hFDAI,
-	SURFHANDLE hFDAIRoll, SURFHANDLE hFDAIOff, SURFHANDLE hFDAINeedles, HBITMAP hBmpRoll, int smooth) {
+	SURFHANDLE hFDAIRoll, SURFHANDLE hFDAIOff, SURFHANDLE hFDAINeedles, SURFHANDLE hBmpRoll, int smooth) {
 
 	if (!init) InitGL();
-
+/*
 	// Don't do the OpenGL calculations every timestep
 	if (smooth || lastPaintTime == -1 || ((length(lastPaintAtt - target) > 0.005 || oapiGetSysTime() > lastPaintTime + 2.0) && oapiGetSysTime() > lastPaintTime + 0.1)) {
 		int ret = wglMakeCurrent(hDC2, hRC);
@@ -301,22 +302,23 @@ void FDAI::PaintMe(VECTOR3 rates, VECTOR3 errors, SURFHANDLE surf, SURFHANDLE hF
 
 	// roll indicator
 	HDC hDCRotate;
+	*/
 	int rotateX, rotateY;
 	double angle = -target.y;
-
+/*
 	HDC hDCTemp = CreateCompatibleDC(hDC);
 	HBITMAP hBmpTemp = (HBITMAP)SelectObject(hDCTemp, hBmpRoll);
 
 	HBITMAP hBmpRotate = RotateMemoryDC(hBmpRoll, hDCTemp, 20, 20, (float)(PI - angle), hDCRotate, rotateX, rotateY);
 	HBITMAP hBmpXXX = CreateCompatibleBitmap(hDCRotate, rotateX, rotateY);
 	SelectObject(hDCRotate, hBmpXXX);
-
+*/
 	double radius = 62;
 	// Was + 93 and 92
 	int targetX = ((int)(sin(-angle) * radius)) + 123 - ((int)(rotateX / 2));
 	int targetY = ((int)(-cos(-angle) * radius)) + 122 - ((int)(rotateY / 2));
 	int targetZ = 0;
-
+/*
 	DrawTransparentBitmap(hDC, hBmpRotate, targetX, targetY, 0x00FF00FF);
 
 	DeleteObject(hBmpXXX);
@@ -326,7 +328,7 @@ void FDAI::PaintMe(VECTOR3 rates, VECTOR3 errors, SURFHANDLE surf, SURFHANDLE hF
 	DeleteDC(hDCRotate);
 
 	oapiReleaseDC(surf, hDC);
-
+*/
 	// frame-bitmaps
 	// Was 13,13
 	oapiBlt(surf, hFDAIRoll, 43, 43, 0, 0, 160, 160, SURF_PREDEF_CK);
@@ -458,53 +460,7 @@ void FDAI::SystemTimestep(double simdt) {
 			ACSource->DrawPower(3.3); // CSM Systems Handbook, Power distibution matrix
 	}
 }
-
-int FDAI::LoadOGLBitmap(char *filename) {
-
-	unsigned char *l_texture;
-	int l_index, l_index2 = 0;
-	FILE *file;
-	BITMAPFILEHEADER fileheader;
-	BITMAPINFOHEADER infoheader;
-	RGBTRIPLE rgb;
-	int num_texture = 1; //we only use one OGL texture ,so...
-
-
-	if ((file = fopen(filename, "rb")) == NULL) return (-1);
-	fread(&fileheader, sizeof(fileheader), 1, file);
-	fseek(file, sizeof(fileheader), SEEK_SET);
-	fread(&infoheader, sizeof(infoheader), 1, file);
-
-	l_texture = (byte *)malloc(infoheader.biWidth * infoheader.biHeight * 4);
-	memset(l_texture, 0, infoheader.biWidth * infoheader.biHeight * 4);
-
-	for (l_index = 0; l_index < infoheader.biWidth*infoheader.biHeight; l_index++)
-	{
-		fread(&rgb, sizeof(rgb), 1, file);
-
-		l_texture[l_index2 + 0] = rgb.rgbtRed; // Red component
-		l_texture[l_index2 + 1] = rgb.rgbtGreen; // Green component
-		l_texture[l_index2 + 2] = rgb.rgbtBlue; // Blue component
-		l_texture[l_index2 + 3] = 255; // Alpha value
-		l_index2 += 4; // Go to the next position
-	}
-
-	fclose(file); // Closes the file stream
-
-	glBindTexture(GL_TEXTURE_2D, num_texture);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexImage2D(GL_TEXTURE_2D, 0, 4, infoheader.biWidth, infoheader.biHeight,
-		0, GL_RGBA, GL_UNSIGNED_BYTE, l_texture);
-	free(l_texture);
-
-	return (num_texture);
-}
-
+/*
 void DrawTransparentBitmap(HDC hdc, HBITMAP hBitmap, short xStart,
 	short yStart, COLORREF cTransparentColor) {
 
@@ -605,7 +561,7 @@ void DrawTransparentBitmap(HDC hdc, HBITMAP hBitmap, short xStart,
 	DeleteDC(hdcSave);
 	DeleteDC(hdcTemp);
 }
-
+*/
 // Helper function for getting the minimum of 4 floats
 float min4(float a, float b, float c, float d)
 {
@@ -689,6 +645,7 @@ typedef sBGR *pBGR;
 // Returns the DI (Device Independent) bits of the Bitmap
 // Here I use 32 bit since it's easy to adress in memory and no
 // padding of the horizontal lines is required.
+/*
 pBGR MyGetDibBits(HDC hdcSrc, HBITMAP hBmpSrc, int nx, int ny)
 {
 	BITMAPINFO bi;
@@ -814,7 +771,7 @@ HBITMAP RotateMemoryDC(HBITMAP hBmpSrc, HDC hdcSrc, int SrcX, int SrcY, float an
 
 	return hBmpDst;
 }
-
+*/
 bool FDAI::IsPowered()
 
 {

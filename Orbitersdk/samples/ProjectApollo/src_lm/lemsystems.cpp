@@ -916,7 +916,7 @@ void LEM::JoystickTimestep(double simdt)
 		// Axes have 32768 points of travel for the 13 degrees to hard stop
 		// 2520 points per degree. It breaks out of detent at .5 degres, or 1260 pulses.
 		// 480 points per count.
-
+/*
 		// Read data
 		HRESULT hr;
 		// Handle RHC
@@ -982,7 +982,7 @@ void LEM::JoystickTimestep(double simdt)
 				}
 			}
 		}
-		else {
+		else*/ {
 
 			// No JS
 
@@ -1191,7 +1191,7 @@ void LEM::JoystickTimestep(double simdt)
 			SetRCSJet(11, true);
 			SetRCSJet(3, true);
 		}
-
+/*
 		// And now the THC...
 		if (enableVESIM) {
 			if (LeftTTCATranslSwitch.IsUp()) {
@@ -1282,7 +1282,7 @@ void LEM::JoystickTimestep(double simdt)
 				}
 			}
 		}
-		else {
+		else */{
 			// No JS
 
 			// Up/down
@@ -1371,8 +1371,8 @@ void LEM::JoystickTimestep(double simdt)
 
 void LEM::SystemsInternalTimestep(double simdt)
 {
-	double mintFactor = __max(simdt / 20.0, 0.02);
-	double tFactor = __min(mintFactor, simdt);
+	double mintFactor = std::max(simdt / 20.0, 0.02);
+	double tFactor = std::min(mintFactor, simdt);
 	while (simdt > 0) {
 
 		// Each Timestep is passed to the SPSDK
@@ -1448,7 +1448,7 @@ void LEM::SystemsInternalTimestep(double simdt)
 		INV_2.SystemTimestep(tFactor);
 
 		simdt -= tFactor;
-		tFactor = __min(mintFactor, simdt);
+		tFactor = std::min(mintFactor, simdt);
 	}
 }
 
@@ -2483,13 +2483,13 @@ void LEM_LR::Timestep(double simdt){
 
 	if (!IsPowered() ) { 
 		// Clobber data.
-		bool clobber = FALSE;
-		if(val33[LRDataGood]){ clobber = TRUE; val33[LRDataGood] = 0; }
-		if(val33[LRVelocityDataGood]){ clobber = TRUE; val33[LRVelocityDataGood] = 0; }
-		if(val33[LRPos1]){ clobber = TRUE; val33[LRPos1] = 0; }
-		if(val33[LRPos2]){ clobber = TRUE; val33[LRPos2] = 0; }
-		if(val33[LRRangeLowScale] == 0){ clobber = TRUE; val33[LRRangeLowScale] = 1; }
-		if(clobber == TRUE){ lem->agc.SetInputChannel(033, val33); }
+		bool clobber = false;
+		if(val33[LRDataGood]){ clobber = true; val33[LRDataGood] = 0; }
+		if(val33[LRVelocityDataGood]){ clobber = true; val33[LRVelocityDataGood] = 0; }
+		if(val33[LRPos1]){ clobber = true; val33[LRPos1] = 0; }
+		if(val33[LRPos2]){ clobber = true; val33[LRPos2] = 0; }
+		if(val33[LRRangeLowScale] == 0){ clobber = true; val33[LRRangeLowScale] = 1; }
+		if(clobber){ lem->agc.SetInputChannel(033, val33); }
 		rangeGood = 0;
 		velocityGood = 0;
 		if (val13[RadarActivity] == 1) {

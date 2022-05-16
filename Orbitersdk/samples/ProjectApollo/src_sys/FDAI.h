@@ -73,7 +73,6 @@ protected:
 	void InitGL();
 	void RotateBall(double simdt);
 	void MoveBall2D();
-	int LoadOGLBitmap(char *filename);
 
 	VESSEL *vessel;
 };

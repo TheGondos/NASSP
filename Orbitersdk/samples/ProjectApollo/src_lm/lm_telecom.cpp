@@ -27,7 +27,6 @@
 #include "Orbitersdk.h"
 #include <stdio.h>
 #include <math.h>
-#include <winsock.h> // TODO: Replace with winsock2 when yaAGC updates
 #include "lmresource.h"
 
 #include "nasspdefs.h"
@@ -373,15 +372,14 @@ LM_PCM::LM_PCM()
 	last_rx = 0;
 	frame_addr = 0;
 	frame_count = 0;
-	m_socket = INVALID_SOCKET;
+	m_socket = OAPI_INVALID_SOCKET;
 }
 
 LM_PCM::~LM_PCM()
 {
 	// Close telemetry socket
-	if (m_socket != INVALID_SOCKET) {
-		shutdown(m_socket, 2); // Shutdown both streams
-		closesocket(m_socket);
+	if (m_socket != OAPI_INVALID_SOCKET) {
+		oapiSocketClose(m_socket);
 	}
 }
 
@@ -396,46 +394,24 @@ void LM_PCM::Init(LEM *vessel, h_HeatLoad *pcmh)
 	last_update = 0;
 	last_rx = MINUS_INFINITY;
 	word_addr = 0;
-	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != NO_ERROR) {
-		sprintf(wsk_emsg, "LM-TELECOM: Error at WSAStartup()");
+	m_socket = oapiSocketCreate();
+	if (m_socket == OAPI_INVALID_SOCKET) {
+		sprintf(wsk_emsg, "LM-TELECOM: Error at oapiSocketCreate()");
 		wsk_error = 1;
-		return;
-	}
-	m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (m_socket == INVALID_SOCKET) {
-		sprintf(wsk_emsg, "LM-TELECOM: Error at socket(): %ld", WSAGetLastError());
-		WSACleanup();
-		wsk_error = 1;
-		return;
-	}
-	// Be nonblocking
-	int iMode = 1; // 0 = BLOCKING, 1 = NONBLOCKING
-	if (ioctlsocket(m_socket, FIONBIO, (u_long FAR*) &iMode) != 0) {
-		sprintf(wsk_emsg, "LM-TELECOM: ioctlsocket() failed: %ld", WSAGetLastError());
-		wsk_error = 1;
-		closesocket(m_socket);
-		WSACleanup();
 		return;
 	}
 
 	// Set up incoming options
-	service.sin_family = AF_INET;
-	service.sin_addr.s_addr = htonl(INADDR_ANY);
-	service.sin_port = htons(14243); // CM on 14242, LM on 14243
-
-	if (::bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
+	if (!oapiSocketBind(m_socket, "0.0.0.0", 14243)) {
 		sprintf(wsk_emsg, "Failed to start LM telemetry. Please completely exit Orbiter and restart. Please file a bug report if this message persists.");
 		wsk_error = 1;
-		closesocket(m_socket);
-		WSACleanup();
+		oapiSocketClose(m_socket);
 		return;
 	}
-	if (listen(m_socket, 1) == SOCKET_ERROR) {
+	if (!oapiSocketListen(m_socket, 1)) {
 		wsk_error = 1;
-		sprintf(wsk_emsg, "LM-TELECOM: listen() failed: %ld", WSAGetLastError());
-		closesocket(m_socket);
-		WSACleanup();
+		sprintf(wsk_emsg, "LM-TELECOM: oapiSocketListen() failed");
+		oapiSocketClose(m_socket);
 		return;
 	}
 	conn_state = 1; // INITIALIZED, LISTENING
@@ -569,8 +545,8 @@ void LM_PCM::perform_io(double simt){
 			}
 			else {
 				// Try to accept
-				AcceptSocket = accept(m_socket, NULL, NULL);
-				if (AcceptSocket != INVALID_SOCKET) {
+				AcceptSocket = oapiSocketAccept(m_socket);
+				if (AcceptSocket != OAPI_INVALID_SOCKET) {
 					conn_state = 2; // Accept this!
 					wsk_error = 0; // For now
 				}
@@ -580,62 +556,29 @@ void LM_PCM::perform_io(double simt){
 		case 2: // CONNECTED			
 			int bytesSent,bytesRecv;
 
-			bytesSent = send(AcceptSocket, (char *)tx_data, tx_size, 0 );
-			if(bytesSent == SOCKET_ERROR){
-				long errnumber = WSAGetLastError();
-				switch(errnumber){
-					// KNOWN CODES that we can ignore
-					case 10035: // Operation Would Block
-						// We can ignore this entirely. It's not an error.
-						break;
-
-					case 10038: // Socket isn't a socket
-					case 10053: // Software caused connection abort
-					case 10054: // Connection reset by peer
-						closesocket(AcceptSocket);
-						conn_state = 1; // Accept another
-						uplink_state = 0; rx_offset = 0;
-						break;
-
-					default:           // If unknown
-						wsk_error = 1; // do this
-						sprintf(wsk_emsg,"LM-TELECOM: send() failed: %ld",errnumber);
-						closesocket(AcceptSocket);
-						conn_state = 1; // Accept another
-						uplink_state = 0; rx_offset = 0;
-						break;					
-				}
+			bytesSent = oapiSocketSend(AcceptSocket, tx_data, tx_size);
+			if(bytesSent == OAPI_SOCKET_ERROR_RETRY) {
+			} else if(bytesSent == OAPI_SOCKET_ERROR) {
+				wsk_error = 1; // do this
+				sprintf(wsk_emsg,"LM-TELECOM: send() failed");
+				oapiSocketClose(AcceptSocket);
+				conn_state = 1; // Accept another
+				uplink_state = 0; rx_offset = 0;
 			}
+
 			// Should we receive?
 			if (((simt - last_rx) / 0.005) < 1 || lem->agc.InterruptPending(ApolloGuidance::Interrupt::UPRUPT)) {
 				return; // No
 			}
 			last_rx = simt;
-			bytesRecv = recv( AcceptSocket, (char *)(rx_data+rx_offset), 1, 0 );
-			if(bytesRecv == SOCKET_ERROR){
-				long errnumber = WSAGetLastError();
-				switch(errnumber){
-					// KNOWN CODES that we can ignore
-					case 10035: // Operation Would Block
-						// We can ignore this entirely. It's not an error.
-						break;
+			bytesRecv = oapiSocketRecv( AcceptSocket, (char *)(rx_data+rx_offset), 1 );
+			if(bytesSent == OAPI_SOCKET_ERROR_RETRY || bytesSent == OAPI_SOCKET_ERROR) {
+				wsk_error = 1; // do this
+				sprintf(wsk_emsg,"LM-TELECOM: recv() failed");
+				oapiSocketClose(AcceptSocket);
+				conn_state = 1; // Accept another
+				uplink_state = 0; rx_offset = 0;
 
-					case 10053: // Software caused connection abort
-					case 10038: // Socket isn't a socket
-					case 10054: // Connection reset by peer
-						closesocket(AcceptSocket);
-						conn_state = 1; // Accept another
-						uplink_state = 0; rx_offset = 0;
-						break;
-
-					default:           // If unknown
-						wsk_error = 1; // do this
-						sprintf(wsk_emsg,"LM-TELECOM: recv() failed: %ld",errnumber);
-						closesocket(AcceptSocket);
-						conn_state = 1; // Accept another
-						uplink_state = 0; rx_offset = 0;
-						break;					
-				}
 				// Do we have data from MCC instead?
 				if (mcc_size > 0) {
 					// Yes. Take a byte

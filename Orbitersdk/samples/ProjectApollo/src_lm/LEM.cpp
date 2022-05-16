@@ -82,15 +82,26 @@ static GDIParams g_Param;
 // ==============================================================
 // API interface
 // ==============================================================
+__attribute__((constructor))
+static void initialize_LEM() {
+	printf("initialize_LEM\n");
+	InitGParam();
+}
 
+__attribute__((destructor))
+static void destroy_LEM() {
+	printf("destroy_LEM\n");
+	FreeGParam();
+}
+
+/*
 BOOL WINAPI DllMain (HINSTANCE hModule,
 					 DWORD ul_reason_for_call,
 					 LPVOID lpReserved)
 {
 	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
-		InitGParam(hModule);
-		g_Param.hDLL = hModule; // DS20060413 Save for later
+		InitGParam();
 		break;
 
 	case DLL_PROCESS_DETACH:
@@ -99,7 +110,7 @@ BOOL WINAPI DllMain (HINSTANCE hModule,
 	}
 	return TRUE;
 }
-
+*/
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel)
 
 {
@@ -329,7 +340,7 @@ void cbLMVesim(int inputID, int eventType, int newValue, void *pdata) {
 	}
 }
 
-
+/*
 // DS20060302 DX8 callback for enumerating joysticks
 BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pLEM)
 {
@@ -379,7 +390,7 @@ BOOL CALLBACK EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pLEM
 	}
     return DIENUM_CONTINUE;
 }
-
+*/
 // Constructor
 LEM::LEM(OBJHANDLE hObj, int fmodel) : Payload (hObj, fmodel), 
 	
@@ -469,7 +480,6 @@ LEM::LEM(OBJHANDLE hObj, int fmodel) : Payload (hObj, fmodel),
 	AscentECAContFeeder("Ascent-ECA-Cont-Feeder", Panelsdk),
 	vesim(&cbLMVesim, this)
 {
-	dllhandle = g_Param.hDLL; // DS20060413 Save for later
 	InitLEMCalled = false;
 
 	//Mission File
@@ -509,18 +519,6 @@ LEM::~LEM()
     sevent.Stop();
 	sevent.Done();
 #endif
-
-	// DS20060413 release DirectX stuff
-	if (enableVESIM || js_enabled > 0) {
-		// Release joysticks
-		while(js_enabled > 0){
-			js_enabled--;
-			dx8_joystick[js_enabled]->Unacquire();
-			dx8_joystick[js_enabled]->Release();
-		}
-		dx8ppv->Release();
-		dx8ppv = NULL;
-	}
 
 	if (aeaa)
 	{
@@ -565,7 +563,7 @@ void LEM::Init()
 	SwitchFocusToLeva = 0;
 
 	agc.ControlVessel(this);
-	imu.SetVessel(this, TRUE);
+	imu.SetVessel(this, true);
 	
 	ph_Dsc = 0;
 	ph_Asc = 0;
@@ -776,7 +774,7 @@ void LEM::LoadDefaultSounds()
 	SoundsLoaded = true;
 }
 
-int LEM::clbkConsumeBufferedKey(DWORD key, bool down, char *keystate) {
+int LEM::clbkConsumeBufferedKey(int key, bool down, char *keystate) {
 
 	// rewrote to get key events rather than monitor key state - LazyD
 
@@ -1486,42 +1484,33 @@ void LEM::PostLoadSetup(bool define_anims)
 		break;                   // Handled later
 	}
 
-	HRESULT         hr;
-	// Having read the configuration file, set up DirectX...	
-	hr = DirectInput8Create(dllhandle, DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dx8ppv, NULL); // Give us a DirectInput context
-	if (!FAILED(hr)) {
-		if (enableVESIM) {
-			for (int i = 0; i<LM_AXIS_INPUT_CNT; i++)
-				vesim.addInput(&vesim_lm_inputs[i]);
-			vesim.setupDevices("LM", dx8ppv);
+	if (enableVESIM) {
+		for (int i = 0; i<LM_AXIS_INPUT_CNT; i++)
+			vesim.addInput(&vesim_lm_inputs[i]);
+		vesim.setupDevices("LM");
+	} else {
+		/*
+		int x = 0;
+		// Enumerate attached joysticks until we find 2 or run out.
+		dx8ppv->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, this, DIEDFL_ATTACHEDONLY);
+		if (js_enabled == 0) {   // Did we get anything?			
+			dx8ppv->Release(); // No. Close down DirectInput
+			dx8ppv = NULL;     // otherwise it won't get closed later
+			//sprintf(oapiDebugString(), "DX8JS: No joysticks found");
 		}
 		else {
-			int x = 0;
-			// Enumerate attached joysticks until we find 2 or run out.
-			dx8ppv->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumJoysticksCallback, this, DIEDFL_ATTACHEDONLY);
-			if (js_enabled == 0) {   // Did we get anything?			
-				dx8ppv->Release(); // No. Close down DirectInput
-				dx8ppv = NULL;     // otherwise it won't get closed later
-				//sprintf(oapiDebugString(), "DX8JS: No joysticks found");
-			}
-			else {
-				while (x < js_enabled) {                                // For each joystick
-					dx8_joystick[x]->SetDataFormat(&c_dfDIJoystick2); // Use DIJOYSTATE2 structure to report data
-					dx8_jscaps[x].dwSize = sizeof(dx8_jscaps[x]);     // Initialize size of capabilities data structure
-					dx8_joystick[x]->GetCapabilities(&dx8_jscaps[x]); // Get capabilities
-																	  // Z-axis detection
-					if ((rhc_id == x && rhc_auto) || (thc_id == x && thc_auto)) {
-						js_current = x;
-						dx8_joystick[x]->EnumObjects(EnumAxesCallback, this, DIDFT_AXIS | DIDFT_POV);
-					}
-					x++;                                              // Next!
+			while (x < js_enabled) {                                // For each joystick
+				dx8_joystick[x]->SetDataFormat(&c_dfDIJoystick2); // Use DIJOYSTATE2 structure to report data
+				dx8_jscaps[x].dwSize = sizeof(dx8_jscaps[x]);     // Initialize size of capabilities data structure
+				dx8_joystick[x]->GetCapabilities(&dx8_jscaps[x]); // Get capabilities
+																	// Z-axis detection
+				if ((rhc_id == x && rhc_auto) || (thc_id == x && thc_auto)) {
+					js_current = x;
+					dx8_joystick[x]->EnumObjects(EnumAxesCallback, this, DIDFT_AXIS | DIDFT_POV);
 				}
+				x++;                                              // Next!
 			}
-		}
-	}
-	else {
-		// We can't print an error message this early in initialization, so save this reason for later investigation.
-		dx8_failure = hr;
+		}*/
 	}
 }
 

@@ -26,6 +26,7 @@
 // To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "checklistController.h"
+#include <cstring>
 
 // Code to make the compiler shut up.
 #pragma warning ( push )

@@ -39,6 +39,7 @@
 #pragma warning ( disable:4715 )
 
 #include "BasicExcelVC6.hpp"
+#include <cstring>
 
 namespace YCompoundFiles
 {
@@ -3691,7 +3692,7 @@ size_t Worksheet::CellTable::RowBlock::CellBlock::Number::Read(const char* data)
 	LittleEndian::Read(data_, rowIndex_, 0, 2);
 	LittleEndian::Read(data_, colIndex_, 2, 2);
 	LittleEndian::Read(data_, XFRecordIndex_, 4, 2);
-	__int64 value;
+	int64_t value;
 	LittleEndian::Read(data_, value, 6, 8);
 	intdouble_.intvalue_ = value;
 	value_ = intdouble_.doublevalue_;
@@ -3704,7 +3705,7 @@ size_t Worksheet::CellTable::RowBlock::CellBlock::Number::Write(char* data)
 	LittleEndian::Write(data_, colIndex_, 2, 2);
 	LittleEndian::Write(data_, XFRecordIndex_, 4, 2);
 	intdouble_.doublevalue_ = value_;
-	__int64 value = intdouble_.intvalue_;
+	int64_t value = intdouble_.intvalue_;
 	LittleEndian::Write(data_, value, 6, 8);
 	return Record::Write(data);
 }
@@ -4443,7 +4444,7 @@ double GetDoubleFromRKValue(int rkValue)
 {
 	union 
 	{
-		__int64 intvalue_;
+		int64_t intvalue_;
 		double doublevalue_;
 	} intdouble;
 
@@ -4469,7 +4470,7 @@ int GetRKValueFromDouble(double value)
 {
 	union 
 	{
-		__int64 intvalue_;
+		int64_t intvalue_;
 		double doublevalue_;
 	} intdouble;
 

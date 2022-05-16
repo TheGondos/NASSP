@@ -117,7 +117,7 @@ static const int InstructionTiming[32] = {
 // own weird and wacky version.
 //
 
-#if _MSC_VER > 1200
+#if _MSC_VER > 1200 || defined(__linux)
 static const int64_t CONST64_1 = ~0377777777777LL;
 static const int64_t CONST64_2 = 0177777777777LL;
 static const int64_t CONST64_3 = 1LL;

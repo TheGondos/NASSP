@@ -599,9 +599,9 @@ void LEM::SetView() {
 			InFOV = false;
 		}
 		//set FOV to 60 degrees (except for lower resolutions)
-		DWORD w, h;
+		int w, h;
 		oapiGetViewportSize(&w, &h);
-		oapiCameraSetAperture(atan(tan(RAD*30.0)*min(h / 1080.0, 1.0)));
+		oapiCameraSetAperture(atan(tan(RAD*30.0)*std::min(h / 1080.0, 1.0)));
 	}
 	else if (InPanel && PanelId == LMPANEL_AOTZOOM) {
 		// if this is the first time we've been here, save the current FOV
@@ -610,9 +610,9 @@ void LEM::SetView() {
 			InFOV = false;
 		}
 		//set FOV to 60 degrees (except for lower resolutions)
-		DWORD w, h;
+		int w, h;
 		oapiGetViewportSize(&w, &h);
-		oapiCameraSetAperture(atan(tan(RAD*30.0)*min(h / 1050.0, 1.0)));
+		oapiCameraSetAperture(atan(tan(RAD*30.0)*std::min(h / 1050.0, 1.0)));
 	}
     else {
 		if(InFOV == false) {
@@ -820,7 +820,7 @@ bool LEM::clbkLoadVC (int id)
 
 void LEM::InitPanelVC() {
 
-	DWORD ck = oapiGetColour(255, 0, 255);
+	uint32_t ck = oapiGetColour(255, 0, 255);
 
 	// LM VC surfaces
 
