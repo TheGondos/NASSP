@@ -310,7 +310,7 @@ void Sat5Abort2::clbkPreStep(double simt, double simdt, double mjd) {
 				if (thg_sep)
 					SetThrusterGroupLevel(thg_sep, 1);
 
-				panelProc = min(RotationLimit, panelProc + simdt / 40.0);
+				panelProc = std::min(RotationLimit, panelProc + simdt / 40.0);
 				SetAnimation(panelAnim, panelProc);
 			}
 			else {

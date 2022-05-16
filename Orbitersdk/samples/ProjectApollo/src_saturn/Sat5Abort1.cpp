@@ -30,7 +30,7 @@
 #include "papi.h"
 #include "OrbiterMath.h"
 
-#include "sat5abort1.h"
+#include "Sat5Abort1.h"
 
 const VECTOR3 OFS_STAGE1 =  { 0, 0, -8.935};
 const VECTOR3 OFS_STAGE2 =  { 0, 0, 9.25-12.25};
@@ -298,7 +298,7 @@ void Sat5Abort1::clbkPreStep(double simt, double simdt, double mjd) {
 		}
 		else if (!PanelsOpened) {
 			if (panelProc < RotationLimit) {
-				panelProc = min(RotationLimit, panelProc + simdt / 5.0);
+				panelProc = std::min(RotationLimit, panelProc + simdt / 5.0);
 				SetAnimation(panelAnim, panelProc);
 			}
 			else {

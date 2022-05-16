@@ -28,7 +28,7 @@
 #include "stdio.h"
 #include "papi.h"
 #include "nasspdefs.h"
-#include "sat5abort3.h"
+#include "Sat5Abort3.h"
 
 const VECTOR3 OFS_STAGE1 =  { 0, 0, -8.935};
 const VECTOR3 OFS_STAGE2 =  { 0, 0, 9.25-12.25};

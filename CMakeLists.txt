@@ -672,6 +672,111 @@ install(TARGETS s1c
 )
 
 ####### Template #######
+add_library(Sat1Abort1 SHARED
+    ${SRC_DIR}/src_saturn/Saturn1Abort.cpp
+)
+
+target_include_directories(Sat1Abort1 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(Sat1Abort1
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat1Abort1
+)
+
+install(TARGETS Sat1Abort1
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Sat1Abort2 #######
+add_library(Sat1Abort2 SHARED
+    ${SRC_DIR}/src_saturn/Saturn1Abort2.cpp
+)
+
+target_include_directories(Sat1Abort2 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(Sat1Abort2
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat1Abort2
+)
+
+install(TARGETS Sat1Abort2
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Template #######
+add_library(Sat5Abort1 SHARED
+    ${SRC_DIR}/src_saturn/Sat5Abort1.cpp
+)
+
+target_include_directories(Sat5Abort1 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+)
+
+set_target_properties(Sat5Abort1
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat5Abort1
+)
+
+install(TARGETS Sat5Abort1
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Sat5Abort2 #######
+add_library(Sat5Abort2 SHARED
+    ${SRC_DIR}/src_saturn/Sat5Abort2.cpp
+)
+
+target_include_directories(Sat5Abort2 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+)
+
+set_target_properties(Sat5Abort2
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat5Abort2
+)
+
+install(TARGETS Sat5Abort2
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Sat5Abort3 #######
+add_library(Sat5Abort3 SHARED
+    ${SRC_DIR}/src_csm/smjc.cpp
+    ${SRC_DIR}/src_saturn/Sat5Abort3.cpp
+    ${SRC_DIR}/src_sys/DelayTimer.cpp
+)
+
+target_include_directories(Sat5Abort3 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_csm
+)
+
+set_target_properties(Sat5Abort3
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Sat5Abort3
+)
+
+install(TARGETS Sat5Abort3
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/
 #)
