@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "resource.h"
+//#include "resource.h"
 
 #include "soundlib.h"
 #include "tracer.h"

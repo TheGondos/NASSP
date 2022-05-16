@@ -395,3 +395,70 @@ set_target_properties(LEM
 install(TARGETS LEM
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+
+####### LES #######
+add_library(LES SHARED
+    ${SRC_DIR}/src_saturn/LES.cpp
+)
+
+target_include_directories(LES PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(LES
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LES
+)
+
+install(TARGETS LES
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### LEVA #######
+add_library(LEVA SHARED
+    ${SRC_DIR}/src_aux/CDK.cpp
+    ${SRC_DIR}/src_moon/leva.cpp
+    ${SRC_DIR}/src_aux/OrbiterMath.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(LEVA PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+)
+
+set_target_properties(LEVA
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LEVA
+)
+
+install(TARGETS LEVA
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+
+####### Template #######
+#add_library(ASTP SHARED
+#    ${SRC_DIR}/
+#)
+
+#target_include_directories(ASTP PUBLIC
+#	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+#)
+
+#set_target_properties(ASTP
+#	PROPERTIES
+#	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+#	OUTPUT_NAME ASTP
+#)
+
+#install(TARGETS ASTP
+#	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+#)

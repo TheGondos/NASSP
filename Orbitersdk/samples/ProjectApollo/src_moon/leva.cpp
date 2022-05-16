@@ -412,7 +412,7 @@ int LEVA::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int LEVA::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int LEVA::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	TRACESETUP("clbkConsumeBufferedKey");
 

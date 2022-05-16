@@ -59,7 +59,7 @@ public:
 	/// \param kstate Key state.
 	///
 	int clbkConsumeDirectKey(char *kstate);
-	int clbkConsumeBufferedKey(DWORD key, bool down, char *kstate);
+	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 
 	///
 	/// \brief Orbiter class configuration function.
@@ -187,8 +187,8 @@ protected:
 	double Bat2Cap;  // remaining capacity of battery 2 [Ah]
 	double Bat1Volt; // voltage of battery 1 [V]
 	double Bat2Volt; // voltage of battery 2 [V]
-	double Bat1Temp; // temperature of battery 1 [°F]
-	double Bat2Temp; // temperature of battery 2 [°F]
+	double Bat1Temp; // temperature of battery 1 [ï¿½F]
+	double Bat2Temp; // temperature of battery 2 [ï¿½F]
 
 	// VC console
 	int vccMeshIdx;
