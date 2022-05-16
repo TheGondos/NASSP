@@ -29,22 +29,22 @@ GDI_resources::~GDI_resources()
 {
 
 if (Panel_Resources_Loaded){
-  if (hPEN_NULL) {	DeleteObject(hPEN_NULL);hPEN_NULL=NULL;};
-  if (hPEN_Cyan) {	DeleteObject(hPEN_Cyan);hPEN_Cyan=NULL;};
-  if (hPEN_Green){	DeleteObject(hPEN_Green);hPEN_Green=NULL;};
-  if (hBRUSH_TotalBlack){ DeleteObject(hBRUSH_TotalBlack);hBRUSH_TotalBlack=NULL;};
-  if (hBRUSH_TotalWhite)   DeleteObject(hBRUSH_TotalWhite);
-  if (hBRUSH_Gray)			DeleteObject(hBRUSH_Gray);
+  if (hPEN_NULL) {	oapiReleasePen(hPEN_NULL);hPEN_NULL=NULL;};
+  if (hPEN_Cyan) {	oapiReleasePen(hPEN_Cyan);hPEN_Cyan=NULL;};
+  if (hPEN_Green){	oapiReleasePen(hPEN_Green);hPEN_Green=NULL;};
+  if (hBRUSH_TotalBlack){ oapiReleaseBrush(hBRUSH_TotalBlack);hBRUSH_TotalBlack=NULL;};
+  if (hBRUSH_TotalWhite)   oapiReleaseBrush(hBRUSH_TotalWhite);
+  if (hBRUSH_Gray)			oapiReleaseBrush(hBRUSH_Gray);
 //  if (hFNT_Panel)			DeleteObject(hFNT_Panel);
-  if (hPEN_Brown)			DeleteObject(hPEN_Brown);
+  if (hPEN_Brown)			oapiReleasePen(hPEN_Brown);
 }
 int i;
 for (i=1;i<num_surfaces;i++)
 	if (h_Surface[i]) oapiDestroySurface(h_Surface[i]);
 for (i=1;i<num_fonts;i++)
-	if (hFNT_Panel[i]) DeleteObject(hFNT_Panel[i]);
+	if (hFNT_Panel[i]) oapiReleaseFont(hFNT_Panel[i]);
 for (i=1;i<num_brush;i++)
-	if (hPEN[i]) DeleteObject(hPEN[i]);
+	if (hPEN[i]) oapiReleasePen(hPEN[i]);
 };
 
 Panel::Panel()
@@ -68,9 +68,10 @@ Panel::~Panel()
 				  delete gone;
   };
 };
-HBITMAP Panel::MakeYourBackground()
+SURFHANDLE Panel::MakeYourBackground()
 {
-	return (HBITMAP)LoadImage(NULL,BackgroundName,IMAGE_BITMAP,0,0,LR_LOADFROMFILE);
+  return oapiLoadTexture(BackgroundName);
+//	return (HBITMAP)LoadImage(NULL,BackgroundName,IMAGE_BITMAP,0,0,LR_LOADFROMFILE);
 
 }
 void Panel::SetNeighbours()
@@ -103,7 +104,7 @@ case 1:	//panel logic & lights switch
 	//we had some sort of a keyboard event maybe?
 }
 if (index>1) //anything BUT escape
-	parent->KeybEvent((DWORD)index,0);
+	parent->KeybEvent((int)index,0);
 
 };
 
@@ -195,13 +196,13 @@ void Panel::GDI_Init_Resources()
  //load the default resources first
   //GDI_res->hFNT_MFD=CreateFont(12,0,0,0,FW_NORMAL,0,0,0,ANSI_CHARSET,OUT_RASTER_PRECIS,
 	//		 CLIP_DEFAULT_PRECIS,PROOF_QUALITY,DEFAULT_PITCH,"Arial");
-  GDI_res->hPEN_NULL=CreatePen(PS_NULL,1,RGB(0,0,0));
-  GDI_res->hPEN_Cyan=CreatePen(PS_SOLID,1,RGB(0,95,235));
-  GDI_res->hPEN_Green=CreatePen(PS_SOLID,1,RGB(0,255,0));
-  GDI_res->hBRUSH_TotalBlack=CreateSolidBrush(RGB(0,0,0));
-  GDI_res->hBRUSH_TotalWhite=CreateSolidBrush(RGB(255,255,255));
-  GDI_res->hBRUSH_Gray=CreateSolidBrush(RGB(200,200,200));
-  GDI_res->hPEN_Brown=CreatePen(PS_SOLID,1,RGB(90,90,90));
+  GDI_res->hPEN_NULL=oapiCreatePen(0,1,oapiGetColour(0,0,0));
+  GDI_res->hPEN_Cyan=oapiCreatePen(1,1,oapiGetColour(0,95,235));
+  GDI_res->hPEN_Green=oapiCreatePen(1,1,oapiGetColour(0,255,0));
+  GDI_res->hBRUSH_TotalBlack=oapiCreateBrush(oapiGetColour(0,0,0));
+  GDI_res->hBRUSH_TotalWhite=oapiCreateBrush(oapiGetColour(255,255,255));
+  GDI_res->hBRUSH_Gray=oapiCreateBrush(oapiGetColour(200,200,200));
+  GDI_res->hPEN_Brown=oapiCreatePen(1,1,oapiGetColour(90,90,90));
 
   GDI_res->Panel_Resources_Loaded=1;
  }

@@ -336,7 +336,7 @@ void ML::clbkPreStep(double simt, double simdt, double mjd) {
 	case STATE_ROLLOUT:
 
 		if (craneProc > 0) {
-			craneProc = max(0, craneProc - simdt / 600.0);
+			craneProc = max(0.0, craneProc - simdt / 600.0);
 			SetAnimation(craneAnim, craneProc);
 		}
 		if (cmarmProc > 0.00001) {
@@ -1133,7 +1133,7 @@ int ML::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int ML::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int ML::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (KEYMOD_SHIFT(kstate) || KEYMOD_CONTROL(kstate)) {
 		return 0;

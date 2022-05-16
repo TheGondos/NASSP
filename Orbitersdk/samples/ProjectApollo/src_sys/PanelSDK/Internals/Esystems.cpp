@@ -22,7 +22,7 @@
 
   **************************************************************************/
 
-#include "esystems.h"
+#include "Esystems.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -343,13 +343,13 @@ void FCell::Reaction(double dt)
 	// purging
 	if (status == 3)
 	{
-		H2_flow += __min(0.67 / 7.93665 * dt, H2_maxflow - H2_flow);
+		H2_flow += std::min(0.67 / 7.93665 * dt, H2_maxflow - H2_flow);
 		H2_clogging -= H2_clogging * 0.05 * dt; //take approximately 2 minutes to purge
 	}
 
 	if (status == 4)
 	{
-		O2_flow += __min(0.67 / 7.93665 * dt, O2_maxflow - O2_flow);
+		O2_flow += std::min(0.67 / 7.93665 * dt, O2_maxflow - O2_flow);
 		O2_clogging -= O2_clogging * 0.05 * dt; //take approximately 2 minutes to purge
 	}
 

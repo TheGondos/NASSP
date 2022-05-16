@@ -22,10 +22,10 @@
 
   **************************************************************************/
 
-#include "vsmgmt.h"
+#include "VSMGMT.H"
 #include <stdio.h>
 #include "BUILD.H"
-
+#include <cstring>
 
 PARTICLESTREAMSPEC panelsdk_srb_contrail = {
 	0, 8.0, 5, 350.0, 0.3, 8.0, 4, 3.0, PARTICLESTREAMSPEC::DIFFUSE,

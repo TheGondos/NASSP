@@ -26,7 +26,6 @@
 #define __INSTRUMENTS_H_
 
 #include <stdlib.h>
-#include <windows.h>
 #include <stdio.h>
 // To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
@@ -297,12 +296,12 @@ class  GDI_resources //global holder of resources
 	oapi::Brush *hBRUSH_TotalWhite;
 	oapi::Brush *hBRUSH_Gray;
 
-	oapi::Pen * hPEN_NULL,hPEN_Cyan,hPEN_Brown;
-	oapi::Pen * hPEN_Green;
+	oapi::Pen *hPEN_NULL,*hPEN_Cyan,*hPEN_Brown;
+	oapi::Pen *hPEN_Green;
 
 	SURFHANDLE h_Surface[50]; //up to 50 resources can be defined
 	oapi::Font *hFNT_Panel[10];	//we can use up to 10 fonts on texts
-    oapi::Pen * hPEN[10];
+    oapi::Pen *hPEN[10];
 	bool Panel_Resources_Loaded;
 	int num_surfaces;
 	int num_fonts;
@@ -366,7 +365,7 @@ public:
    ~Panel();
 
    //some init functions
-   HBITMAP MakeYourBackground(); //return's one's background image
+   SURFHANDLE MakeYourBackground(); //return's one's background image
    char BackgroundName[85];
    void AddInstrument(instrument* new_inst);
    instrument* GetInstrumentByName(char *inst_name);

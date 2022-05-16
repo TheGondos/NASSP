@@ -25,8 +25,6 @@
 #include "instruments.h"
 #include <stdio.h>
 #include <math.h>
-#include < GL\gl.h >
-#include < GL\glu.h >
 
 instrument::instrument(int x, int y,Panel* i_parent) //basic constructor. Sets position and registers the instrument
 { ScrX=x;ScrY=y;parent=i_parent;
@@ -57,28 +55,28 @@ idx=index;
 
 void CText::PaintMe()
 {
-  HDC hDC=oapiGetDC(parent->surf);
-  SetBkMode(hDC,TRANSPARENT);
+	oapi::Sketchpad *skp = oapiGetSketchpad(parent->surf);
+	skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
 
-  if (parent->text_logic) {SetTextColor(hDC,RGB(color[0],color[1],color[2]));
-						   SelectObject(hDC,parent->GDI_res->hPEN[ColPenIndex]);
-							}
-  else					   {SetTextColor(hDC,RGB(nocol[0],nocol[1],nocol[2]));
-							 SelectObject(hDC,parent->GDI_res->hPEN[NoColPenIndex]);
-							};
-  SetTextAlign(hDC,TA_CENTER);
-  SetBkMode(hDC,TRANSPARENT);
-  SelectObject(hDC,parent->GDI_res->hFNT_Panel[FontIndex]);
-  if (direction){
-  MoveToEx(hDC,length-1, direction*7+5,NULL);
-  LineTo(hDC,length-1,5);
-  LineTo(hDC,length/2+slen/2,5);
-  MoveToEx(hDC,length/2-slen/2, 5,NULL);
-  LineTo(hDC,0,5);
-  LineTo(hDC,0,direction*7+5);};
-  TextOut(hDC,length/2,0,text, sizeof(char)*strlen(text));
+	if (parent->text_logic) {skp->SetTextColor(oapiGetColour(color[0],color[1],color[2]));
+							skp->SetPen(parent->GDI_res->hPEN[ColPenIndex]);
+								}
+	else					   {skp->SetTextColor(oapiGetColour(nocol[0],nocol[1],nocol[2]));
+								skp->SetPen(parent->GDI_res->hPEN[NoColPenIndex]);
+								};
+	skp->SetTextAlign(oapi::Sketchpad::CENTER);
+	skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
+	skp->SetFont(parent->GDI_res->hFNT_Panel[FontIndex]);
+	if (direction){
+	skp->MoveTo(length-1, direction*7+5);
+	skp->LineTo(length-1,5);
+	skp->LineTo(length/2+slen/2,5);
+	skp->MoveTo(length/2-slen/2, 5);
+	skp->LineTo(0,5);
+	skp->LineTo(0,direction*7+5);};
+	skp->Text(length/2,0,text, sizeof(char)*strlen(text));
 
- oapiReleaseDC(parent->surf,hDC);
+	oapiReleaseSketchpad(skp);
 };
 void CText::SetLight()
 {
@@ -197,10 +195,10 @@ if (parent->panel_logic)
 else
  oapiBlt(parent->surf,parent->GDI_res->h_Surface[SRF_index],0,0,0,0,size_x,size_y);
 
-HDC hDC=oapiGetDC(local_blt);
-SelectObject(hDC,parent->GDI_res->hBRUSH_TotalWhite);
-SelectObject(hDC,parent->GDI_res->hPEN_NULL);
-Rectangle(hDC,0,0,2*board_size+1,2*board_size+1);
+oapi::Sketchpad *skp = oapiGetSketchpad(local_blt);
+skp->SetBrush(parent->GDI_res->hBRUSH_TotalWhite);
+skp->SetPen(parent->GDI_res->hPEN_NULL);
+skp->Rectangle(0,0,2*board_size+1,2*board_size+1);
 
 double ang;
 if (G)
@@ -213,18 +211,18 @@ if (last_paint<ang) {if (ang-last_paint<0.01) last_paint=ang;
 					};
 
 ang=last_paint;
-POINT S[3];
+oapi::IVECTOR2 S[3];
 
 for (int i=0;i<3;i++) // rotate the pointer by 'ang'
 {
    S[i].x = (long)(board_size+ TR[i].x*cos(ang)-TR[i].y*sin(ang));
    S[i].y = (long)(board_size+ TR[i].x*sin(ang)+TR[i].y*cos(ang));
 }
-SelectObject(hDC,parent->GDI_res->hBRUSH_TotalBlack);
-SelectObject(hDC,parent->GDI_res->hPEN_NULL);
+skp->SetBrush(parent->GDI_res->hBRUSH_TotalBlack);
+skp->SetPen(parent->GDI_res->hPEN_NULL);
 
-Polygon(hDC,S,3);// then the pointer
-oapiReleaseDC(local_blt,hDC);
+skp->Polygon(S,3);// then the pointer
+oapiReleaseSketchpad(skp);
 //we need to find the blit point aswell
 //double blt_x=33 - cos(ang)*20; //40-5-sin(angle)*radiu
 //double blt_y=30 - sin(ang)*20;
@@ -304,25 +302,25 @@ void Linear::SetAngle(double ang)
 void Linear::DoNeedle()
 {
 local_blt=oapiCreateSurface(needle_h+3,needle_h+3);
-POINT TR[3];
+oapi::IVECTOR2 TR[3];
 TR[0].x = (long)(-needle_h/2.0); TR[0].y = (long)(-needle_w/2.0);
 TR[1].x = (long)(-needle_h/2.0); TR[1].y = (long)(needle_w/2.0);
 TR[2].x = (long)(needle_h/2.0);  TR[2].y=0;
-POINT S[3];
+oapi::IVECTOR2 S[3];
 for (int i=0;i<3;i++) // rotate the pointer by 'ang'
 {
    S[i].x = (long)(1+needle_h/2.0+ TR[i].x*cos(angle)-TR[i].y*sin(angle));
    S[i].y = (long)(1+needle_h/2.0+ TR[i].x*sin(angle)+TR[i].y*cos(angle));
 }
-HDC hDC=oapiGetDC(local_blt);
+oapi::Sketchpad *skp = oapiGetSketchpad(local_blt);
  //SelectObject(hDC,parent->GDI_res->hBRUSH_TotalWhite);
  //SelectObject(hDC,parent->GDI_res->hPEN_NULL);
- Rectangle(hDC,0,0,needle_h+2,needle_h+2);
+ skp->Rectangle(0,0,needle_h+2,needle_h+2);
 
- SelectObject(hDC,parent->GDI_res->hBRUSH_TotalBlack);
- SelectObject(hDC,parent->GDI_res->hPEN_NULL);
- Polygon(hDC,S,3);// draw the pointer
-oapiReleaseDC(local_blt,hDC);
+ skp->SetBrush(parent->GDI_res->hBRUSH_TotalBlack);
+ skp->SetPen(parent->GDI_res->hPEN_NULL);
+ skp->Polygon(S,3);// draw the pointer
+oapiReleaseSketchpad(skp);
 }
 void Linear::SetNeedleSize(int w, int h)
 {needle_h=h;
@@ -628,23 +626,23 @@ oapiRegisterMFD(mfd_type,mfdspecs);
 void inst_MFD::PaintMe()
 {
 
-HDC hDC=oapiGetDC(parent->surf);
+oapi::Sketchpad *skp = oapiGetSketchpad(parent->surf);
 
-SelectObject(hDC, parent->GDI_res->hFNT_Panel[FontIndex]);
-SetTextColor (hDC, RGB(red,green,blue));
-SetTextAlign (hDC, TA_CENTER);
-SetBkMode (hDC, TRANSPARENT);
+skp->SetFont(parent->GDI_res->hFNT_Panel[FontIndex]);
+skp->SetTextColor (oapiGetColour(red,green,blue));
+skp->SetTextAlign(oapi::Sketchpad::CENTER);
+skp->SetBackgroundMode(oapi::Sketchpad::BK_TRANSPARENT);
 
 const char *label;
 	for (int bt = 0; bt < mfdspecs.nbt_left+mfdspecs.nbt_right; bt++) {
 		if (label = oapiMFDButtonLabel (mfd_type, bt))
 			{if (bt<mfdspecs.nbt_left)
-					TextOut (hDC, (int)(button_w/2.0), mfdspecs.bt_yofs+
+					skp->Text ((int)(button_w/2.0), mfdspecs.bt_yofs+
 					mfdspecs.bt_ydist*bt, label, strlen(label));
-			else TextOut (hDC, (int)(width+button_w*1.5), mfdspecs.bt_yofs+
+			else skp->Text ((int)(width+button_w*1.5), mfdspecs.bt_yofs+
 					mfdspecs.bt_ydist*(bt-6), label, strlen(label));}
 	}
-oapiReleaseDC(parent->surf,hDC);
+oapiReleaseSketchpad(skp);
 
 };
 

@@ -29,7 +29,7 @@ int Compare(char* ln, char* trg)
 return 0;
 };
 
-DWORD GetDWORDfromChar(char *name)
+int GetDWORDfromChar(char *name)
 {
 if (Compare(name,"OAPI_KEY_ESCAPE")) return		0x01;
 else if (Compare(name,"OAPI_KEY_1")) return		0x02;

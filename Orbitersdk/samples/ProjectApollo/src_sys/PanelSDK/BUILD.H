@@ -27,7 +27,7 @@
 #if _MSC_VER > 1300 
 #include <fstream>
 #else
-#include <fstream.h>
+//#include <fstream.h>
 #endif
 
 char* ReadConfigLine();

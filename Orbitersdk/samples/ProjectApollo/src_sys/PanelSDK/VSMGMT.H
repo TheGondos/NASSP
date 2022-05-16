@@ -124,7 +124,7 @@ class Stage
 
 class KeyPress
 {public:
-   DWORD key;
+   int key;
    int trigger_type;	//1- separation , 2- animation
    int index;			//ie. which separation or which animation
    KeyPress *next;

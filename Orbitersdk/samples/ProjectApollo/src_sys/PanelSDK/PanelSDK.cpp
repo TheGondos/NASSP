@@ -26,7 +26,7 @@
 #include "Internals/Thermal.h"
 #include "Internals/Hsystems.h"
 #include "Internals/Esystems.h"
-#include "vsmgmt.h"
+#include "VSMGMT.H"
 
 PanelSDK::PanelSDK() {
 
@@ -99,8 +99,8 @@ int PanelSDK::AddBitmapResource(char* BitmapName)
 {
 if (!GDI_res) GDI_res=new GDI_resources;
 GDI_res->num_surfaces++;
-HBITMAP new_b=(HBITMAP)LoadImage(NULL,BitmapName,IMAGE_BITMAP,0,0,LR_LOADFROMFILE);
-GDI_res->h_Surface[GDI_res->num_surfaces]=oapiCreateSurface (new_b);
+SURFHANDLE new_b=oapiLoadTexture(BitmapName);
+GDI_res->h_Surface[GDI_res->num_surfaces]=new_b;
 if (new_b)
 return GDI_res->num_surfaces;
 else
@@ -110,8 +110,10 @@ int PanelSDK::AddFontResource(char *FontName,int size)
 {
 if (!GDI_res) GDI_res=new GDI_resources;
 GDI_res->num_fonts++;
-GDI_res->hFNT_Panel[GDI_res->num_fonts]=CreateFont(size,0,0,0,FW_NORMAL,0,0,0,ANSI_CHARSET,OUT_RASTER_PRECIS,
-			 CLIP_DEFAULT_PRECIS,PROOF_QUALITY,DEFAULT_PITCH,FontName);
+
+//GDI_res->hFNT_Panel[GDI_res->num_fonts]=CreateFont(size,0,0,0,FW_NORMAL,0,0,0,ANSI_CHARSET,OUT_RASTER_PRECIS,
+//			 CLIP_DEFAULT_PRECIS,PROOF_QUALITY,DEFAULT_PITCH,FontName);
+GDI_res->hFNT_Panel[GDI_res->num_fonts]=oapiCreateFont(size,true,FontName);
 if (GDI_res->hFNT_Panel[GDI_res->num_fonts])
 return GDI_res->num_fonts;
 else
@@ -121,22 +123,22 @@ int PanelSDK::AddBrushResource(int red,int green,int blue)
 {
 if (!GDI_res) GDI_res=new GDI_resources;
 GDI_res->num_brush++;
-GDI_res->hPEN[GDI_res->num_brush]=CreatePen(PS_SOLID,1,RGB(red,green,blue));
+GDI_res->hPEN[GDI_res->num_brush]=oapiCreatePen(1,1,oapiGetColour(red,green,blue));
 return GDI_res->num_brush;
 }
 bool  PanelSDK::LoadPanel(int id)
 {
 if (id<NumPanels) {
 Current_Panel=id;
-oapiRegisterPanelBackground (panels[id]->MakeYourBackground(), PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_BOTTOM, (unsigned int)panels[id]->transparent_color);
+oapiRegisterPanelBackground (panels[id]->MakeYourBackground(), PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_BOTTOM);//, (unsigned int)panels[id]->transparent_color);
 oapiSetPanelNeighbours (panels[id]->neighbours[0],
 						panels[id]->neighbours[1],
 						panels[id]->neighbours[2],
 						panels[id]->neighbours[3]);
 panels[id]->RegisterYourInstruments();
-return TRUE;
+return true;
 }
-return FALSE;
+return false;
 };
 
 void PanelSDK::PanelEvent(int id,int event,SURFHANDLE surf)
@@ -250,15 +252,15 @@ void PanelSDK::Timestep(double time)
 	double dt = time - lastTime;
 	lastTime = time;
 
-	double mintFactor = __max(dt / 100.0, 0.5);
-	double tFactor = __min(mintFactor, dt);
+	double mintFactor = std::max(dt / 100.0, 0.5);
+	double tFactor = std::min(mintFactor, dt);
 	while (dt > 0) {
 		THERMAL->Radiative(tFactor);
 		HYDRAULIC->Refresh(tFactor);
 		ELECTRIC->Refresh(tFactor);
 
 		dt -= tFactor;
-		tFactor = __min(mintFactor, dt);
+		tFactor = std::min(mintFactor, dt);
 	}
 }
 
@@ -292,7 +294,7 @@ oapiTriggerPanelRedrawArea(Current_Panel,
 						   panels[Current_Panel]->mfd_idx[mfd]);
 };
 
-int PanelSDK::KeybEvent(DWORD key,char *kstate)
+int PanelSDK::KeybEvent(int key,char *kstate)
 {
 	KeyPress *runner;
 	runner=VESSELMGMT->DefinedKeys;

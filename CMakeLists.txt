@@ -534,6 +534,95 @@ install(TARGETS MCC
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
+####### ML #######
+add_library(ML SHARED
+    ${SRC_DIR}/src_launch/IUUmbilical.cpp
+    ${SRC_DIR}/src_launch/IUUmbilicalInterface.cpp
+    ${SRC_DIR}/src_launch/IU_ESE.cpp
+    ${SRC_DIR}/src_launch/ML.cpp
+    ${SRC_DIR}/src_launch/RCA110A.cpp
+    ${SRC_DIR}/src_launch/SIC_ESE.cpp
+    ${SRC_DIR}/src_launch/TSMUmbilical.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(ML PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+)
+
+set_target_properties(ML
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME ML
+)
+
+install(TARGETS ML
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### MSS #######
+add_library(MSS SHARED
+    ${SRC_DIR}/src_launch/MSS.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(MSS PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+)
+
+set_target_properties(MSS
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME MSS
+)
+
+install(TARGETS MSS
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### PanelSDK #######
+add_library(PanelSDK SHARED
+    ${SRC_DIR}/src_sys/PanelSDK/BUILD.CPP
+    ${SRC_DIR}/src_sys/PanelSDK/intruments.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Panel.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/PanelSDK.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/VSMGMT.CPP
+    ${SRC_DIR}/src_sys/PanelSDK/Matrix.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Vectors.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/esysparse.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Esystems.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Hsysparse.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Hsystems.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Thermal.cpp
+)
+
+target_include_directories(PanelSDK PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(PanelSDK
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME PanelSDK
+)
+
+install(TARGETS PanelSDK
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/

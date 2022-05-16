@@ -905,7 +905,7 @@ void h_Pipe::refresh(double dt) {
 		// as a "quick hack" it's proportional to the minimum size,
 		// but this has to be improved
 
-		double minSize = __min(in->size, out->size);
+		double minSize = std::min(in->size, out->size);
 		trQ = trQ * minSize;
 
 		if (in->parent->space.Q < trQ)

@@ -333,7 +333,7 @@ int MSS::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int MSS::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int MSS::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (KEYMOD_SHIFT(kstate) || KEYMOD_CONTROL(kstate)) {
 		return 0;

@@ -23,7 +23,7 @@
   **************************************************************************/
 
 #include "Matrix.h"
-#include "vectors.h"
+#include "Vectors.h"
 #include <math.h>
 
 matrix matrix::operator * (matrix &m)
