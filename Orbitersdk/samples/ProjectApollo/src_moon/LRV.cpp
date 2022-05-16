@@ -37,7 +37,7 @@
 #include "toggleswitch.h"
 #include "LEM.h"
 
-#include "lrv.h"
+#include "LRV.h"
 #include "lrv_console.h"
 #include "tracer.h"
 
@@ -463,24 +463,24 @@ void LRV::MoveLRV(double SimDT, VESSELSTATUS *eva, double heading)
 	{
 		if (speed > 0.0) {
 			// we are still braking from forward movement to standstill
-			speed = __max(0.0, speed - ctrl_factor * SimDT * ROVER_BRK_M_S2); 
+			speed = std::max(0.0, speed - ctrl_factor * SimDT * ROVER_BRK_M_S2); 
 			speedlock = (speed == 0.0);  // if wheelstop: don't go into reverse until key is released
 		}
 		else if (!speedlock)
 		{
-			speed = __max(-ROVER_SPEED_M_S, speed - ctrl_factor * SimDT * ROVER_ACC_M_S2); 
+			speed = std::max(-ROVER_SPEED_M_S, speed - ctrl_factor * SimDT * ROVER_ACC_M_S2); 
 		}
 	}
 	else if (KEYADD)  // accelerate
 	{
 		if (speed < 0.0) {
 			// we are still braking from reverse movement to standstill
-			speed = __min(0.0, speed + ctrl_factor * SimDT * ROVER_BRK_M_S2); 
+			speed = std::min(0.0, speed + ctrl_factor * SimDT * ROVER_BRK_M_S2); 
 			speedlock = (speed == 0.0);  // if wheelstop: don't accellerate until key is released
 		}
 		else if (!speedlock)
 		{
-			speed = __min(ROVER_SPEED_M_S, speed + ctrl_factor * SimDT * ROVER_ACC_M_S2); 
+			speed = std::min(ROVER_SPEED_M_S, speed + ctrl_factor * SimDT * ROVER_ACC_M_S2); 
 		}
 	}
 	else
@@ -617,7 +617,7 @@ int LRV::clbkConsumeDirectKey(char *kstate) {
 	return 0;
 }
 
-int LRV::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int LRV::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	TRACESETUP("clbkConsumeBufferedKey");
 
@@ -686,7 +686,7 @@ void LRV::SetNeedleAngle(int idx, double val, double min_val, double max_val)
 	//
 	// Move one of the 8 needles of the 4 power/temp gauges
 	//
-	double pos = __min(1.0, __max(0.0, (val - min_val) / (max_val - min_val)));  // position in [0 .. 1]
+	double pos = std::min(1.0, std::max(0.0, (val - min_val) / (max_val - min_val)));  // position in [0 .. 1]
 	double needle_rad = Radians(pos * (VCC_NEEDLE_MAXPOS[idx] - VCC_NEEDLE_MINPOS[idx]));
 
 	mgtRotGauges.P.rotparam.angle = float(needle_rad - vccNeedleAngle[idx]);

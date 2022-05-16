@@ -444,6 +444,34 @@ install(TARGETS LEVA
 )
 
 
+####### LRV #######
+add_library(LRV SHARED
+    ${SRC_DIR}/src_aux/CDK.cpp
+    ${SRC_DIR}/src_moon/LRV.cpp
+    ${SRC_DIR}/src_aux/OrbiterMath.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+)
+
+target_include_directories(LRV PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_moon
+)
+
+set_target_properties(LRV
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME LRV
+)
+
+install(TARGETS LRV
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/
