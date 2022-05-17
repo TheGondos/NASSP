@@ -13520,7 +13520,7 @@ EVENTTIMER_END
   </group> 
   </checklist> 
 END
-Eagle-LEVA-FLAG:ProjectApollo/sat5flag
+Eagle-LEVA-FLAG:ProjectApollo/Sat5Flag
   STATUS Landed Moon
   POS 23.7095890 0.7139977
   HEADING 84.66

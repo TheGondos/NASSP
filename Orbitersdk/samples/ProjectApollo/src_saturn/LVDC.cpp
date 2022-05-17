@@ -396,7 +396,7 @@ void LVDC1B::Init(){
 		return;
 	}
 
-	sprintf(FSPFileName, "Config\\ProjectApollo\\Saturn IB Default Flight Sequence Program.txt");
+	sprintf(FSPFileName, "Config/ProjectApollo/Saturn IB Default Flight Sequence Program.txt");
 	
 	//presettings in order of boeing listing for easier maintainece
 	//GENERAL
@@ -1923,7 +1923,7 @@ gtupdate:	// Target of jump from further down
 							ModeCode27[MC27_TrackLocalReferenceAfterSCControl] = false;
 							ModeCode27[MC27_InertialAttHoldManeuverAfterSCControl] = false;
 
-							//Pitch up 10°
+							//Pitch up 10ï¿½
 							ROLLA = CurrentAttitude.x;
 							SPITCH = CurrentAttitude.y + 10.0*RAD;
 							if (SPITCH >= PI2)
@@ -2099,6 +2099,9 @@ void LVDC1B::SaveState(FILEHANDLE scn) {
 	oapiWriteLine(scn, LVDC_START_STRING);
 	// Thank heaven for text processing.
 	oapiWriteScenario_string(scn, "LVDC_FSPFileName", FSPFileName);
+	for(int i = 0; i<strlen(FSPFileName);i++) {
+		if(FSPFileName[i] == '\\') FSPFileName[i]='/';
+	}
 	// bool
 	oapiWriteScenario_int(scn, "LVDC_alpha_D_op", alpha_D_op);
 	oapiWriteScenario_int(scn, "LVDC_BOOST", BOOST);
@@ -2455,6 +2458,9 @@ void LVDC1B::LoadState(FILEHANDLE scn){
 		// Doing it in long chains makes the MS compiler silently optimize away the tail of the chain.
 		// So we do it in small groups.
 		papiReadScenario_string(line, "LVDC_FSPFileName", FSPFileName);
+		for(int i = 0; i< strlen(FSPFileName);i++) {
+			if(FSPFileName[i]=='\\') FSPFileName[i] = '/';
+		}
 		// INT
 		papiReadScenario_int(line, "LVDC_CommandSequence", CommandSequence);
 		papiReadScenario_int(line, "LVDC_IGMCycle", IGMCycle);
@@ -4024,6 +4030,9 @@ void LVDCSV::SaveState(FILEHANDLE scn) {
 	oapiWriteLine(scn, LVDC_START_STRING);
 	// Here we go
 	oapiWriteScenario_string(scn, "LVDC_FSPFileName", FSPFileName);
+		for(int i = 0; i< strlen(FSPFileName);i++) {
+			if(FSPFileName[i]=='\\') FSPFileName[i] = '/';
+		}
 	oapiWriteScenario_int(scn, "LVDC_alpha_D_op", alpha_D_op);
 	oapiWriteScenario_int(scn, "LVDC_BOOST", BOOST);
 	oapiWriteScenario_int(scn, "LVDC_CHIBARSTEER", CHIBARSTEER);
@@ -4729,6 +4738,9 @@ void LVDCSV::LoadState(FILEHANDLE scn) {
 		// So we do it in single lines.
 		// strings
 		papiReadScenario_string(line, "LVDC_FSPFileName", FSPFileName);
+		for(int i = 0; i< strlen(FSPFileName);i++) {
+			if(FSPFileName[i]=='\\') FSPFileName[i] = '/';
+		}
 		// booleans
 		papiReadScenario_bool(line, "LVDC_alpha_D_op", alpha_D_op);
 		papiReadScenario_bool(line, "LVDC_BOOST", BOOST);
@@ -6088,7 +6100,7 @@ void LVDCSV::PhaseActivator(bool init)
 		NISTAT[6] = false;
 		NISTAT[7] = false;
 		NISTAT[8] = false;
-		NISTAT[9] = false; //TBD, should be true. What are Chi Computations needed for? Check on 45° yaw?
+		NISTAT[9] = false; //TBD, should be true. What are Chi Computations needed for? Check on 45ï¿½ yaw?
 		NISTAT[10] = false;
 		NISTAT[11] = false;
 		NISTAT[12] = false;
@@ -9129,7 +9141,7 @@ void LVDCSV::ChiComputations(int entry)
 	// IGM is supposed to generate attitude directly.
 	CommandedAttitude.y = X_Yi; // PITCH
 	CommandedAttitude.z = X_Zi; // YAW;	
-	//Limit yaw to +/-45°
+	//Limit yaw to +/-45ï¿½
 	if (CommandedAttitude.z < -45 * RAD && CommandedAttitude.z >= -180 * RAD)
 	{
 		CommandedAttitude.z = -45 * RAD;
@@ -9416,7 +9428,7 @@ restartprep:
 			f			True anomaly of transfer ellipse
 			*/
 
-			fprintf(lvlog, "7-parameter update: T_RP: %f, C_3: %f, Inc: %f°, e: %f, alpha_D: %f°, f: %f°, theta_N: %f° \r\n", T_RP, C_3, Inclination*DEG, e, alpha_D*DEG, f*DEG, theta_N*DEG);
+			fprintf(lvlog, "7-parameter update: T_RP: %f, C_3: %f, Inc: %fï¿½, e: %f, alpha_D: %fï¿½, f: %fï¿½, theta_N: %fï¿½ \r\n", T_RP, C_3, Inclination*DEG, e, alpha_D*DEG, f*DEG, theta_N*DEG);
 
 			alpha_D_op = 0;
 			first_op = false;
@@ -9529,7 +9541,7 @@ void LVDCSV::RestartCalculations()
 		alpha_D = TABLE15[1].target[tgt_index].alpha_D;
 	}
 
-	fprintf(lvlog, "Elliptic parameters: Inc: %f°, e: %f, p: %f, theta_N: %f°, alpha_D: %f°, f: %f°\r\n", Inclination*DEG, e, p, theta_N*DEG, alpha_D*DEG, f*DEG);
+	fprintf(lvlog, "Elliptic parameters: Inc: %fï¿½, e: %f, p: %f, theta_N: %fï¿½, alpha_D: %fï¿½, f: %fï¿½\r\n", Inclination*DEG, e, p, theta_N*DEG, alpha_D*DEG, f*DEG);
 
 O3GMatrix:
 	MX_B = _M(cos(theta_N), 0, sin(theta_N), sin(theta_N)*sin(Inclination), cos(Inclination), -cos(theta_N)*sin(Inclination),

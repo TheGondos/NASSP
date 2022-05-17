@@ -1275,7 +1275,7 @@ void HUDToggle::DrawSwitch(SURFHANDLE DrawSurface)
 	DoDrawSwitch(DrawSurface);
 }
 
-/*bool HUDToggle::CheckMouseClick(int event, int mx, int my)
+bool HUDToggle::CheckMouseClick(int event, int mx, int my)
 
 {
 	int OldState = state;
@@ -1294,7 +1294,7 @@ void HUDToggle::DrawSwitch(SURFHANDLE DrawSurface)
 	}
 
 	return true;
-}*/
+}
 
 bool HUDToggle::SwitchTo(int newState, bool dontspring)
 {

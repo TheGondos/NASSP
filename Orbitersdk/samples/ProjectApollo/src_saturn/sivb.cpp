@@ -361,7 +361,7 @@ void SIVB::InitS4b()
 	if (!PanelSDKInitalised)
 	{
 		Panelsdk.RegisterVessel(this);
-		Panelsdk.InitFromFile("ProjectApollo\\SIVBSystems");
+		Panelsdk.InitFromFile("ProjectApollo/SIVBSystems");
 		PanelSDKInitalised = true;
 	}
 

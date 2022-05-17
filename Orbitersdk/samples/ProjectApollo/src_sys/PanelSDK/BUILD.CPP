@@ -105,7 +105,7 @@ char name[150];
 char string1[25];
 int int1;
 char *line;
-sprintf(name,"config\\%s.prd",FileName);
+sprintf(name,"config/%s.prd",FileName);
 resources=fopen(name,"rt");
 while (!feof(resources)){
 line=ReadResourceLine();
@@ -191,7 +191,7 @@ void PanelSDK::InitFromFile(char *FileName)
 char name[40];
 char type[40];
 int stage;
-sprintf(name,"Config\\\\%s.cfg",FileName);
+sprintf(name,"Config/%s.cfg",FileName);
 
 config_file=fopen(name,"rt");
 

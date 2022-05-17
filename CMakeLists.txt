@@ -12,6 +12,10 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive -Wno-write-strings -Wno-fo
 #	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
 #)
 
+#target_link_libraries(ASTP
+#	${ORBITER_SDK_LIB}
+#)
+
 #set_target_properties(ASTP
 #	PROPERTIES
 #	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -65,6 +69,10 @@ target_include_directories(ApolloRTCCMFD PUBLIC
     ${SRC_DIR}/src_launch
 )
 
+target_link_libraries(ApolloRTCCMFD
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(ApolloRTCCMFD
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
@@ -88,6 +96,10 @@ target_include_directories(ASTP PUBLIC
     ${SRC_DIR}/src_sys
 )
 
+target_link_libraries(ASTP
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(ASTP
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -109,6 +121,10 @@ target_include_directories(CMChute PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(CMChute
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(CMChute
@@ -137,6 +153,10 @@ target_include_directories(Crawler PUBLIC
     ${SRC_DIR}/src_saturn
 )
 
+target_link_libraries(Crawler
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(Crawler
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -157,6 +177,10 @@ target_include_directories(EVA PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
+)
+
+target_link_libraries(EVA
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(EVA
@@ -181,6 +205,10 @@ target_include_directories(FloatBag PUBLIC
     ${SRC_DIR}/src_sys
 )
 
+target_link_libraries(FloatBag
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(FloatBag
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -191,27 +219,31 @@ install(TARGETS FloatBag
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
-####### FloodLight #######
-add_library(FloodLight SHARED
+####### Floodlight #######
+add_library(Floodlight SHARED
     ${SRC_DIR}/src_launch/Floodlight.cpp
     ${SRC_DIR}/src_sys/soundlib.cpp
     ${SRC_DIR}/src_aux/tracer.cpp
 )
 
-target_include_directories(FloodLight PUBLIC
+target_include_directories(Floodlight PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_sys
 )
 
-set_target_properties(FloodLight
-	PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
-	OUTPUT_NAME FloodLight
+target_link_libraries(Floodlight
+	${ORBITER_SDK_LIB}
 )
 
-install(TARGETS FloodLight
+set_target_properties(Floodlight
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
+	OUTPUT_NAME Floodlight
+)
+
+install(TARGETS Floodlight
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
@@ -235,6 +267,10 @@ target_include_directories(LC34 PUBLIC
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_mfd
+)
+
+target_link_libraries(LC34
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(LC34
@@ -269,6 +305,10 @@ target_include_directories(LC37 PUBLIC
     ${SRC_DIR}/src_csm
 )
 
+target_link_libraries(LC37
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(LC37
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -291,6 +331,10 @@ target_include_directories(LCC PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_rtccmfd
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(LCC
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(LCC
@@ -386,6 +430,11 @@ target_include_directories(LEM PUBLIC
     ${SRC_DIR}/src_moon
 )
 
+target_link_libraries(LEM
+	${ORBITER_SDK_LIB}
+    PanelSDK
+)
+
 set_target_properties(LEM
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -404,6 +453,10 @@ add_library(LES SHARED
 target_include_directories(LES PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(LES
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(LES
@@ -433,6 +486,10 @@ target_include_directories(LEVA PUBLIC
     ${SRC_DIR}/src_mfd
 )
 
+target_link_libraries(LEVA
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(LEVA
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -460,6 +517,10 @@ target_include_directories(LRV PUBLIC
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_mfd
     ${SRC_DIR}/src_moon
+)
+
+target_link_libraries(LRV
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(LRV
@@ -524,6 +585,12 @@ target_include_directories(MCC PUBLIC
     ${SRC_DIR}/src_launch
 )
 
+target_link_libraries(MCC
+	${ORBITER_SDK_LIB}
+    PanelSDK
+    lua::lib
+)
+
 set_target_properties(MCC
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -556,6 +623,10 @@ target_include_directories(ML PUBLIC
     ${SRC_DIR}/src_mfd
 )
 
+target_link_libraries(ML
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(ML
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -580,6 +651,10 @@ target_include_directories(MSS PUBLIC
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_mfd
     ${SRC_DIR}/src_saturn
+)
+
+target_link_libraries(MSS
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(MSS
@@ -613,6 +688,10 @@ target_include_directories(PanelSDK PUBLIC
     ${SRC_DIR}/src_sys
 )
 
+target_link_libraries(PanelSDK
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(PanelSDK
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -641,6 +720,11 @@ target_include_directories(s1b PUBLIC
     ${SRC_DIR}/src_launch
 )
 
+target_link_libraries(s1b
+	${ORBITER_SDK_LIB}
+    PanelSDK
+)
+
 set_target_properties(s1b
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -659,6 +743,10 @@ add_library(s1c SHARED
 target_include_directories(s1c PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(s1c
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(s1c
@@ -681,6 +769,10 @@ target_include_directories(Sat1Abort1 PUBLIC
     ${SRC_DIR}/src_sys
 )
 
+target_link_libraries(Sat1Abort1
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(Sat1Abort1
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -699,6 +791,10 @@ add_library(Sat1Abort2 SHARED
 target_include_directories(Sat1Abort2 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(Sat1Abort2
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(Sat1Abort2
@@ -722,6 +818,10 @@ target_include_directories(Sat5Abort1 PUBLIC
     ${SRC_DIR}/src_aux
 )
 
+target_link_libraries(Sat5Abort1
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(Sat5Abort1
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -741,6 +841,10 @@ target_include_directories(Sat5Abort2 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
+)
+
+target_link_libraries(Sat5Abort2
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(Sat5Abort2
@@ -766,6 +870,10 @@ target_include_directories(Sat5Abort3 PUBLIC
     ${SRC_DIR}/src_csm
 )
 
+target_link_libraries(Sat5Abort3
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(Sat5Abort3
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -783,6 +891,10 @@ add_library(Sat5LMDSC SHARED
 
 target_include_directories(Sat5LMDSC PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+)
+
+target_link_libraries(Sat5LMDSC
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(Sat5LMDSC
@@ -887,6 +999,7 @@ target_include_directories(Saturn1b PUBLIC
 target_link_libraries(Saturn1b
 	${ORBITER_SDK_LIB}
 	lua::lib
+    PanelSDK
 )
 
 set_target_properties(Saturn1b
@@ -991,6 +1104,7 @@ target_include_directories(Saturn5 PUBLIC
 target_link_libraries(Saturn5
 	${ORBITER_SDK_LIB}
 	lua::lib
+    PanelSDK
 )
 
 set_target_properties(Saturn5
@@ -1011,6 +1125,10 @@ add_library(sii SHARED
 target_include_directories(sii PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
+)
+
+target_link_libraries(sii
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(sii
@@ -1055,6 +1173,12 @@ target_include_directories(SIVb PUBLIC
     ${SRC_DIR}/src_lm
 )
 
+target_link_libraries(SIVb
+	${ORBITER_SDK_LIB}
+    lua::lib
+    PanelSDK
+)
+
 set_target_properties(SIVb
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
@@ -1077,6 +1201,10 @@ target_include_directories(SM PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
+)
+
+target_link_libraries(SM
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(SM
@@ -1104,6 +1232,10 @@ target_include_directories(VAB PUBLIC
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_mfd
     ${SRC_DIR}/src_saturn
+)
+
+target_link_libraries(VAB
+	${ORBITER_SDK_LIB}
 )
 
 set_target_properties(VAB
@@ -1139,6 +1271,10 @@ target_include_directories(ProjectApolloMFD PUBLIC
     ${SRC_DIR}/src_launch
 )
 
+target_link_libraries(ProjectApolloMFD
+	${ORBITER_SDK_LIB}
+)
+
 set_target_properties(ProjectApolloMFD
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
@@ -1147,4 +1283,50 @@ set_target_properties(ProjectApolloMFD
 
 install(TARGETS ProjectApolloMFD
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### Resources #######
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Config
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Config/ProjectApollo/Saturn1b.cfg
+    DESTINATION ${ORBITER_INSTALL_ROOT_DIR}/Config/Vessels/ProjectApollo/
+    RENAME Saturn1B.cfg
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Config/ProjectApollo/SIVBSystems.cfg
+    DESTINATION ${ORBITER_INSTALL_ROOT_DIR}/Config/Vessels/ProjectApollo/
+#    RENAME Saturn1B.cfg
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Meshes
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Missions
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Scenarios
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Script
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Sound
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Textures
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+file(GLOB NASSP_BITMAPS ${SRC_DIR}/Bitmaps/*.bmp)
+
+install(FILES ${NASSP_BITMAPS}
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}/Bitmaps/ProjectApollo
 )

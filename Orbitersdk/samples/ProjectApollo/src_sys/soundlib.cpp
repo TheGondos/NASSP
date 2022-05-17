@@ -555,7 +555,7 @@ Sound &Sound::operator=(const Sound &s)
 		valid = s.valid;
 		sd = s.sd;
 
-		sd->AddRef();
+		if(sd) sd->AddRef();
 		sl = s.sl;
 	}
 	return *this;
