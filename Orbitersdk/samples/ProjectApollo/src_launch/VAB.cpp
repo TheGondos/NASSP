@@ -681,7 +681,7 @@ void VAB::clbkPostStep (double simt, double simdt, double mjd) {
 
 				// Platforms
 				if (lav &&  crane_Proc < 0.95 && crane_Proc > 0.8 && platform_Proc[lav->GetBuildStatus() - 1] > 0)
-					platform_Proc[lav->GetBuildStatus() - 1] = max(0, platform_Proc[lav->GetBuildStatus() - 1] - simdt / 1000.0);
+					platform_Proc[lav->GetBuildStatus() - 1] = std::max(0.0, platform_Proc[lav->GetBuildStatus() - 1] - simdt / 1000.0);
 
 				// Saturn Stage 1
 				if (currentAnimCrane == (int) animCrane[0]) {
@@ -707,7 +707,7 @@ void VAB::clbkPostStep (double simt, double simdt, double mjd) {
 	// sprintf(oapiDebugString(), "platform_Proc %f crane_Status %d", platform_Proc, crane_Status);		
 }
 			
-void VAB::SetSaturnMeshVisibilityMode(int buildStatus, WORD mode) {
+void VAB::SetSaturnMeshVisibilityMode(int buildStatus, uint16_t mode) {
 
 	int i;
 
@@ -810,7 +810,7 @@ void VAB::clbkSaveState(FILEHANDLE scn) {
 		oapiWriteScenario_string (scn, "LVNAME", LVName);
 }
 
-int VAB::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int VAB::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (!firstTimestepDone) return 0;
 

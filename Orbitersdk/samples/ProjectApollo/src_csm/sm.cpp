@@ -411,7 +411,7 @@ void SM::clbkPreStep(double simt, double simdt, double mjd)
 	double da = simdt * UMBILICAL_SPEED;
 	if (umbilical_proc < 1.0)
 	{
-		umbilical_proc = min (1.0, umbilical_proc+da);
+		umbilical_proc = std::min (1.0, umbilical_proc+da);
 	}
     SetAnimation (anim_umbilical, umbilical_proc);
 

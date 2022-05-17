@@ -1003,6 +1003,119 @@ install(TARGETS Saturn5
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
+####### sii #######
+add_library(sii SHARED
+    ${SRC_DIR}/src_saturn/sii.cpp
+)
+
+target_include_directories(sii PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+)
+
+set_target_properties(sii
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME sii
+)
+
+install(TARGETS sii
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### SIVb #######
+add_library(SIVb SHARED
+    ${SRC_DIR}/src_rtccmfd/OrbMech.cpp
+    ${SRC_DIR}/src_saturn/dcs.cpp
+    ${SRC_DIR}/src_saturn/eds.cpp
+    ${SRC_DIR}/src_saturn/FCC.cpp
+    ${SRC_DIR}/src_saturn/IUAuxiliaryPowerDistributor.cpp
+    ${SRC_DIR}/src_saturn/IUControlDistributor.cpp
+    ${SRC_DIR}/src_saturn/IUControlSignalProcessor.cpp
+    ${SRC_DIR}/src_saturn/LVDA.cpp
+    ${SRC_DIR}/src_saturn/LVDC.cpp
+    ${SRC_DIR}/src_saturn/lvimu.cpp
+    ${SRC_DIR}/src_saturn/sivbsystems.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_saturn/iu.cpp
+    ${SRC_DIR}/src_sys/DelayTimer.cpp
+    ${SRC_DIR}/src_sys/powersource.cpp
+    ${SRC_DIR}/src_saturn/sivb.cpp
+    ${SRC_DIR}/src_sys/pyro.cpp
+)
+
+target_include_directories(SIVb PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_launch
+    ${SRC_DIR}/src_lm
+)
+
+set_target_properties(SIVb
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME SIVb
+)
+
+install(TARGETS SIVb
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### SM #######
+add_library(SM SHARED
+    ${SRC_DIR}/src_csm/sm.cpp
+    ${SRC_DIR}/src_csm/smjc.cpp
+    ${SRC_DIR}/src_sys/DelayTimer.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+)
+
+target_include_directories(SM PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+)
+
+set_target_properties(SM
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME SM
+)
+
+install(TARGETS SM
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+####### VAB #######
+add_library(VAB SHARED
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+    ${SRC_DIR}/src_launch/VAB.cpp
+    ${SRC_DIR}/src_launch/VABAnimations.cpp
+)
+
+target_include_directories(VAB PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+)
+
+set_target_properties(VAB
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME VAB
+)
+
+install(TARGETS VAB
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/

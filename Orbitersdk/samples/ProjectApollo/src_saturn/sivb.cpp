@@ -36,7 +36,7 @@
 #include "powersource.h"
 #include "connector.h"
 #include "iu.h"
-#include "SIVBSystems.h"
+#include "sivbsystems.h"
 
 #include "toggleswitch.h"
 #include "apolloguidance.h"
@@ -44,8 +44,8 @@
 
 #include "payload.h"
 #include "sivb.h"
-#include "astp.h"
-#include "lem.h"
+#include "ASTP.h"
+#include "LEM.h"
 #include "LVDC.h"
 
 #include <stdio.h>
