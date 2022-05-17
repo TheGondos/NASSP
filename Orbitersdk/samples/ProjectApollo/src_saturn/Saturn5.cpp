@@ -110,9 +110,6 @@ SaturnV::SaturnV (OBJHANDLE hObj, int fmodel) : Saturn (hObj, fmodel),
 void SaturnV::initSaturnV()
 
 {
-	// DS20060301 Save DLL instance handle for later abuse
-	dllhandle = g_Param.hDLL;
-
 	//
 	// Do the basic initialisation from the
 	// generic Saturn class first.
@@ -882,7 +879,7 @@ void SaturnV::ConfigureStageEngines(int stage_state)
 	}
 }
 
-int SaturnV::clbkConsumeBufferedKey(DWORD key, bool down, char *kstate) {
+int SaturnV::clbkConsumeBufferedKey(int key, bool down, char *kstate) {
 
 	if (FirstTimestep) return 0;
 

@@ -128,13 +128,13 @@ void F1Engine::Timestep(double simdt)
 			{
 				if (ThrustTimer < tm_2)
 				{
-					ThrustLevel = min(ThrustLevel, 1.0 - 3.35*(ThrustTimer - tm_1));
+					ThrustLevel = std::min(ThrustLevel, 1.0 - 3.35*(ThrustTimer - tm_1));
 				}
 				else
 				{
 					if (ThrustTimer < tm_3)
 					{
-						ThrustLevel = min(ThrustLevel, 0.33 - 0.825*(ThrustTimer - tm_2));
+						ThrustLevel = std::min(ThrustLevel, 0.33 - 0.825*(ThrustTimer - tm_2));
 					}
 					else
 					{
@@ -144,7 +144,7 @@ void F1Engine::Timestep(double simdt)
 			}
 			else
 			{
-				ThrustLevel = min(ThrustLevel, 1);
+				ThrustLevel = std::min(ThrustLevel, 1.0);
 			}
 
 			vessel->SetThrusterLevel(th_f1, ThrustLevel);
@@ -416,7 +416,7 @@ void SICSystems::Timestep(double misst, double simdt)
 
 	//Contrail Level
 
-	contrailLevel = min(1.0, max(0.0, GetSumThrust()*(-vessel->GetAltitude(ALTMODE_GROUND) + 400.0) / 300.0));
+	contrailLevel = std::min(1.0, std::max(0.0, GetSumThrust()*(-vessel->GetAltitude(ALTMODE_GROUND) + 400.0) / 300.0));
 
 	//sprintf(oapiDebugString(), "%f %f %f %f %f %f", contrailLevel, f1engine1.GetThrustLevel(), f1engine2.GetThrustLevel(), f1engine3.GetThrustLevel(), f1engine4.GetThrustLevel(), f1engine5.GetThrustLevel());
 	//sprintf(oapiDebugString(), "%f %f %f %f %f", FirstStageFailureTime[0], FirstStageFailureTime[1], FirstStageFailureTime[2], FirstStageFailureTime[3], FirstStageFailureTime[4]);

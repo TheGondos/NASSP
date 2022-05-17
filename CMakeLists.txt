@@ -899,6 +899,110 @@ install(TARGETS Saturn1b
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
+####### Saturn5 #######
+add_library(Saturn5 SHARED
+    ${SRC_DIR}/src_aux/animations.cpp
+    ${SRC_DIR}/src_aux/Mission.cpp
+    ${SRC_DIR}/src_aux/vesim.cpp
+    ${SRC_DIR}/src_csm/csmsensors.cpp
+    ${SRC_DIR}/src_csm/rhc.cpp
+    ${SRC_DIR}/src_csm/sce.cpp
+    ${SRC_DIR}/src_csm/smjc.cpp
+    ${SRC_DIR}/src_rtccmfd/OrbMech.cpp
+    ${SRC_DIR}/src_saturn/canard.cpp
+    ${SRC_DIR}/src_saturn/dcs.cpp
+    ${SRC_DIR}/src_saturn/eds.cpp
+    ${SRC_DIR}/src_saturn/FCC.cpp
+    ${SRC_DIR}/src_saturn/IUAuxiliaryPowerDistributor.cpp
+    ${SRC_DIR}/src_saturn/IUControlDistributor.cpp
+    ${SRC_DIR}/src_saturn/IUControlSignalProcessor.cpp
+    ${SRC_DIR}/src_saturn/j2engine.cpp
+    ${SRC_DIR}/src_saturn/LVDA.cpp
+    ${SRC_DIR}/src_saturn/LVDC.cpp
+    ${SRC_DIR}/src_saturn/qball.cpp
+    ${SRC_DIR}/src_saturn/s1csystems.cpp
+    ${SRC_DIR}/src_saturn/siisystems.cpp
+    ${SRC_DIR}/src_saturn/sivbsystems.cpp
+    ${SRC_DIR}/src_sys/apolloguidance.cpp
+    ${SRC_DIR}/src_aux/BasicExcelVC6.cpp
+    ${SRC_DIR}/src_sys/cautionwarning.cpp
+    ${SRC_DIR}/src_sys/cdu.cpp
+    ${SRC_DIR}/src_sys/checklistController.cpp
+    ${SRC_DIR}/src_sys/checklistControllerHelpers.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_csm/csm_telecom.cpp
+    ${SRC_DIR}/src_csm/csmcautionwarning.cpp
+    ${SRC_DIR}/src_csm/CSMcomputer.cpp
+    ${SRC_DIR}/src_csm/csmconnector.cpp
+    ${SRC_DIR}/src_csm/csmrcs.cpp
+    ${SRC_DIR}/src_csm/dockingprobe.cpp
+    ${SRC_DIR}/src_sys/DelayTimer.cpp
+    ${SRC_DIR}/src_sys/dsky.cpp
+    ${SRC_DIR}/src_sys/dskyinterface.cpp
+    ${SRC_DIR}/src_csm/ecs.cpp
+    ${SRC_DIR}/src_sys/FDAI.cpp
+    ${SRC_DIR}/src_sys/imu.cpp
+    ${SRC_DIR}/src_sys/imulog.cpp
+    ${SRC_DIR}/src_sys/imumath.cpp
+    ${SRC_DIR}/src_saturn/iu.cpp
+    ${SRC_DIR}/src_saturn/lvimu.cpp
+    ${SRC_DIR}/src_mfd/MFDconnector.cpp
+    ${SRC_DIR}/src_sys/MechanicalAccelerometer.cpp
+    ${SRC_DIR}/src_sys/missiontimer.cpp
+    ${SRC_DIR}/src_sys/ORDEAL.cpp
+    ${SRC_DIR}/src_sys/powersource.cpp
+    ${SRC_DIR}/src_sys/pyro.cpp
+    ${SRC_DIR}/src_saturn/sat5mesh.cpp
+    ${SRC_DIR}/src_csm/satswitches.cpp
+    ${SRC_DIR}/src_csm/satsystems.cpp
+    ${SRC_DIR}/src_csm/saturn.cpp
+    ${SRC_DIR}/src_saturn/Saturn5.cpp
+    ${SRC_DIR}/src_csm/saturnmesh.cpp
+    ${SRC_DIR}/src_csm/saturnpanel.cpp
+    ${SRC_DIR}/src_csm/saturnvc.cpp
+    ${SRC_DIR}/src_csm/scs.cpp
+    ${SRC_DIR}/src_csm/secs.cpp
+    ${SRC_DIR}/src_sys/soundevents.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_csm/sps.cpp
+    ${SRC_DIR}/src_sys/thread.cpp
+    ${SRC_DIR}/src_sys/toggleswitch.cpp
+    ${SRC_DIR}/src_aux/tracer.cpp
+    ${SRC_DIR}/src_sys/yaAGC/agc_engine.c
+    ${SRC_DIR}/src_sys/yaAGC/agc_engine_init.c
+    ${SRC_DIR}/src_sys/yaAGC/Backtrace.c
+    ${SRC_DIR}/src_sys/yaAGC/random.c
+    ${SRC_DIR}/src_sys/yaAGC/rfopen.c
+    ${SRC_DIR}/src_aux/IMFD/IMFD_Client.cpp
+)
+
+target_include_directories(Saturn5 PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_launch
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_landing
+)
+
+target_link_libraries(Saturn5
+	${ORBITER_SDK_LIB}
+	lua::lib
+)
+
+set_target_properties(Saturn5
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME Saturn5
+)
+
+install(TARGETS Saturn5
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
 ####### Template #######
 #add_library(ASTP SHARED
 #    ${SRC_DIR}/
