@@ -30,7 +30,6 @@
 #include "Orbitersdk.h"
 
 #include "math.h"
-#include "windows.h"
 #include "nasspsound.h"
 #include "soundlib.h"
 #include "tracer.h"
@@ -52,14 +51,14 @@
 
 DLLCLBK void opcDLLInit(oapi::DynamicModule *hDLL)
 {
-	ProjectApolloMFDopcDLLInit (hDLL);
-	ProjectApolloChecklistMFDopcDLLInit (hDLL);
+	ProjectApolloMFDopcDLLInit ();
+	ProjectApolloChecklistMFDopcDLLInit ();
 }
 
 DLLCLBK void opcDLLExit(oapi::DynamicModule *hDLL)
 {
-	ProjectApolloMFDopcDLLExit (hDLL);
-	ProjectApolloChecklistMFDopcDLLExit (hDLL);
+	ProjectApolloMFDopcDLLExit ();
+	ProjectApolloChecklistMFDopcDLLExit ();
 }
 
 DLLCLBK void opcPreStep(double simt, double simdt, double mjd)

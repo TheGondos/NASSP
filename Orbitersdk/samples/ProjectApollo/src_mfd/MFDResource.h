@@ -2,7 +2,7 @@
 // Microsoft Developer Studio generated include file.
 // Used by MFDResources.rc
 //
-#define IDB_LOGO                     101
+#define IDB_LOGO                     "Bitmaps/ProjectApollo/Logo.bmp"
 
 // Next default values for new objects
 // 

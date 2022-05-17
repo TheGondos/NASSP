@@ -1116,21 +1116,35 @@ install(TARGETS VAB
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
-####### Template #######
-#add_library(ASTP SHARED
-#    ${SRC_DIR}/
-#)
+####### ProjectApolloMFD #######
+add_library(ProjectApolloMFD SHARED
+    ${SRC_DIR}/src_mfd/ProjectApolloMFDButtons.cpp
+    ${SRC_DIR}/src_rtccmfd/OrbMech.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_mfd/MFDconnector.cpp
+    ${SRC_DIR}/src_mfd/ProjectApolloChecklistMFD.cpp
+    ${SRC_DIR}/src_mfd/ProjectApolloMFD.cpp
+    ${SRC_DIR}/src_mfd/ProjectApolloPlugin.cpp
+)
 
-#target_include_directories(ASTP PUBLIC
-#	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
-#)
+target_include_directories(ProjectApolloMFD PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${SRC_DIR}/src_rtccmfd
+    ${SRC_DIR}/src_sys
+    ${SRC_DIR}/src_aux
+    ${SRC_DIR}/src_mfd
+    ${SRC_DIR}/src_csm
+    ${SRC_DIR}/src_lm
+    ${SRC_DIR}/src_saturn
+    ${SRC_DIR}/src_launch
+)
 
-#set_target_properties(ASTP
-#	PROPERTIES
-#	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
-#	OUTPUT_NAME ASTP
-#)
+set_target_properties(ProjectApolloMFD
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME ProjectApolloMFD
+)
 
-#install(TARGETS ASTP
-#	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
-#)
+install(TARGETS ProjectApolloMFD
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)

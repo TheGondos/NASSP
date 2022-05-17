@@ -22,30 +22,30 @@
 
   **************************************************************************/
 
-#include "Connector.h"
-#include "MFDConnector.h"
+#include "connector.h"
+#include "MFDconnector.h"
 
-class ProjectApolloChecklistMFD: public MFD {
+class ProjectApolloChecklistMFD: public MFD2 {
 public:
-	ProjectApolloChecklistMFD (DWORD w, DWORD h, VESSEL *vessel);
+	ProjectApolloChecklistMFD (int w, int h, VESSEL *vessel);
 	~ProjectApolloChecklistMFD ();
 	char *ButtonLabel (int bt);
 	int ButtonMenu (const MFDBUTTONMENU **menu) const;
 	bool ConsumeButton (int bt, int event);
-	bool ConsumeKeyBuffered (DWORD key);
-	void Update (HDC hDC);
+	bool ConsumeKeyBuffered (int key);
+	bool Update (oapi::Sketchpad *skp);
 	void WriteStatus (FILEHANDLE scn) const;
 	void ReadStatus (FILEHANDLE scn);
 	void StoreStatus (void) const;
 	void RecallStatus (void);
 	void substituteVariables(char *buffer,int buflen);
 
-	static int MsgProc (UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam);
+	static OAPI_MSGTYPE MsgProc (MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *, VESSEL *);
 
 	MFDConnector conn;
 	vector<ChecklistGroup> groups;
-	DWORD width;
-	DWORD height;
+	int width;
+	int height;
 
 protected:
 	int screen;
@@ -67,7 +67,7 @@ protected:
 	int CurrentStep;
 	int HiLghtdLine;
 	bool HiLghtdLineDown;
-	HBITMAP hBmpLogo;
+	SURFHANDLE hBmpLogo;
 
 	std::string DisplayChecklistMissionTime (ChecklistItem *item);
 	bool bDisplayMET; // Coussini 

@@ -34,15 +34,15 @@ class Crawler;
 ///
 /// \ingroup MFD
 ///
-class ProjectApolloMFD: public MFD {
+class ProjectApolloMFD: public MFD2 {
 public:
-	ProjectApolloMFD (DWORD w, DWORD h, VESSEL *vessel);
+	ProjectApolloMFD (int w, int h, VESSEL *vessel);
 	~ProjectApolloMFD ();
 	char *ButtonLabel (int bt);
 	int ButtonMenu (const MFDBUTTONMENU **menu) const;
 	bool ConsumeButton (int bt, int event);
-	bool ConsumeKeyBuffered (DWORD key);
-	void Update (HDC hDC);
+	bool ConsumeKeyBuffered (int key);
+	bool Update (oapi::Sketchpad *skp);
 	void GetStateVector (void);
 	bool SetSource(char *rstr);
 	bool SetIUSource(char *rstr);
@@ -119,15 +119,15 @@ public:
 	void ReadStatus (FILEHANDLE scn);
 	void StoreStatus (void) const;
 	void RecallStatus (void);
-	static int MsgProc (UINT msg, UINT mfd, WPARAM wparam, LPARAM lparam);
+	static OAPI_MSGTYPE MsgProc (MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *, VESSEL *);
 
 protected:
 
 	void GetCSM();
 
-	HBITMAP hBmpLogo;
-	DWORD width;
-	DWORD height;
+	SURFHANDLE hBmpLogo;
+	int width;
+	int height;
 	//We can link to the Saturn OR the Crawler.  Only the Saturn has full funcionality.  The Crawler can ONLY read the mission time.
 	Saturn *saturn;
 	Crawler *crawler;
