@@ -81,7 +81,7 @@ set_target_properties(ApolloRTCCMFD
 
 install(TARGETS ApolloRTCCMFD
 #	RUNTIME
-	DESTINATION ${ORBITER_BINARY_PLUGIN_DIR}
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
 
 ####### ASTP #######
@@ -704,6 +704,7 @@ install(TARGETS PanelSDK
 
 ####### Template #######
 add_library(s1b SHARED
+    ${SRC_DIR}/src_saturn/s1b.cpp
     ${SRC_DIR}/src_saturn/s1bsystems.cpp
     ${SRC_DIR}/src_sys/connector.cpp
     ${SRC_DIR}/src_sys/pyro.cpp
@@ -759,51 +760,51 @@ install(TARGETS s1c
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
-####### Template #######
-add_library(Sat1Abort1 SHARED
+####### Sat1bAbort1 #######
+add_library(Sat1bAbort1 SHARED
     ${SRC_DIR}/src_saturn/Saturn1Abort.cpp
 )
 
-target_include_directories(Sat1Abort1 PUBLIC
+target_include_directories(Sat1bAbort1 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
 )
 
-target_link_libraries(Sat1Abort1
+target_link_libraries(Sat1bAbort1
 	${ORBITER_SDK_LIB}
 )
 
-set_target_properties(Sat1Abort1
+set_target_properties(Sat1bAbort1
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
-	OUTPUT_NAME Sat1Abort1
+	OUTPUT_NAME Sat1bAbort1
 )
 
-install(TARGETS Sat1Abort1
+install(TARGETS Sat1bAbort1
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
-####### Sat1Abort2 #######
-add_library(Sat1Abort2 SHARED
+####### Sat1bAbort2 #######
+add_library(Sat1bAbort2 SHARED
     ${SRC_DIR}/src_saturn/Saturn1Abort2.cpp
 )
 
-target_include_directories(Sat1Abort2 PUBLIC
+target_include_directories(Sat1bAbort2 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
     ${SRC_DIR}/src_sys
 )
 
-target_link_libraries(Sat1Abort2
+target_link_libraries(Sat1bAbort2
 	${ORBITER_SDK_LIB}
 )
 
-set_target_properties(Sat1Abort2
+set_target_properties(Sat1bAbort2
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
-	OUTPUT_NAME Sat1Abort2
+	OUTPUT_NAME Sat1bAbort2
 )
 
-install(TARGETS Sat1Abort2
+install(TARGETS Sat1bAbort2
 	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
 )
 
@@ -1298,7 +1299,10 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Config/ProjectApollo/Saturn1b.cfg
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Config/ProjectApollo/SIVBSystems.cfg
     DESTINATION ${ORBITER_INSTALL_ROOT_DIR}/Config/Vessels/ProjectApollo/
-#    RENAME Saturn1B.cfg
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Config/ProjectApollo/nsat1stg2.cfg
+    DESTINATION ${ORBITER_INSTALL_ROOT_DIR}/Config/Vessels/ProjectApollo/
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Meshes
@@ -1310,6 +1314,10 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Missions
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Scenarios
+	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Doc
 	DESTINATION ${ORBITER_INSTALL_ROOT_DIR}
 )
 

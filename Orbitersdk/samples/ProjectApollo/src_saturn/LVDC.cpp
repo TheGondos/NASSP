@@ -2790,7 +2790,7 @@ void LVDC1B::ReadFlightSequenceProgram(char *fspfile)
 	ifstream file(fspfile);
 	if (file.is_open())
 	{
-		while (getline(file, line))
+		while (oapiGetLine(file, line))
 		{
 			if (sscanf(line.c_str(), "TB%d", &tbtemp) == 1 || line.compare("END") == 0)
 			{
@@ -5514,7 +5514,7 @@ void LVDCSV::ReadFlightSequenceProgram(char *fspfile)
 
 	if (file.is_open())
 	{
-		while (getline(file, line))
+		while (oapiGetLine(file, line))
 		{
 			if (line.compare("END") == 0)
 			{

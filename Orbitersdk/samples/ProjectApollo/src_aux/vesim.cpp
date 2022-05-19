@@ -317,7 +317,7 @@ bool Vesim::setupDevices(char* vesselStationName){
 		std::string line;
 		int lineidx = 0;
 		int colidx[] = { -1, -1, -1, -1, -1, -1, -1 };
-		while (std::getline(fdevcfg, line))
+		while (oapiGetLine(fdevcfg, line))
 		{
 #ifdef _DEBUG
 			fprintf(out_file, "Cfg Line:%s \n", line.c_str());
@@ -330,7 +330,7 @@ bool Vesim::setupDevices(char* vesselStationName){
 			int subdevtype = -1;
 			int subdevid = -1;
 			bool isreverse = false;
-			while (posidx<7 && std::getline(ts, token, '\t')) {
+			while (posidx<7 && oapiGetLine(ts, token, '\t')) {
 				if (lineidx == 0) {
 					if (token == "INPUT")
 						colidx[posidx] = 0;

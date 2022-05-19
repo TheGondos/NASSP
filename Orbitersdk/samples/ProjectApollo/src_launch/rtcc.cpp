@@ -1472,7 +1472,7 @@ void RTCC::QMSEARCH(int year, int month, int day)
 {
 	//This function loads the skeleton flight plan for the launch day
 	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d SFP.txt", year, month, day);
+	sprintf_s(Buff, "./Config/ProjectApollo/RTCC/%d-%02d-%02d SFP.txt", year, month, day);
 
 	ifstream startable(Buff);
 	if (startable.is_open())
@@ -1480,7 +1480,7 @@ void RTCC::QMSEARCH(int year, int month, int day)
 		std::string line;
 		double dtemp;
 
-		while (getline(startable, line))
+		while (oapiGetLine(startable, line))
 		{
 			sprintf_s(Buff, line.c_str());
 
@@ -1593,7 +1593,7 @@ void RTCC::QMMBLD(int year, int month, int day)
 	//This function loads the TLI targeting parameters for the launch day
 	//Loaded file has to have the punch card format from MSC memo 69-FM-171. One punch card = one line
 	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d TLI.txt", year, month, day);
+	sprintf_s(Buff, "./Config/ProjectApollo/RTCC/%d-%02d-%02d TLI.txt", year, month, day);
 
 	ifstream startable(Buff);
 
@@ -1606,7 +1606,7 @@ void RTCC::QMMBLD(int year, int month, int day)
 		for (i = 0;i < 2;i++)
 		{
 			entry = 0;
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%d %d %lf %lf", &day, &opp, &dtemp1, &dtemp2);
 			if (opp < 1 || opp > 2)
 			{
@@ -1616,7 +1616,7 @@ void RTCC::QMMBLD(int year, int month, int day)
 			PZSTARGP.t_D[opp - 1][entry] = dtemp1;
 			PZSTARGP.cos_sigma[opp - 1][entry] = dtemp2;
 
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 			PZSTARGP.C_3[opp - 1][entry] = dtemp1;
 			PZSTARGP.e_N[opp - 1][entry] = dtemp2;
@@ -1624,21 +1624,21 @@ void RTCC::QMMBLD(int year, int month, int day)
 			PZSTARGP.DEC[opp - 1][entry] = dtemp4 * RAD;
 			for (j = 0;j < 7;j++)
 			{
-				getline(startable, line);
+				oapiGetLine(startable, line);
 				sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 				entry++;
 				PZSTARGP.t_D[opp - 1][entry] = dtemp1;
 				PZSTARGP.cos_sigma[opp - 1][entry] = dtemp2;
 				PZSTARGP.C_3[opp - 1][entry] = dtemp3;
 				PZSTARGP.e_N[opp - 1][entry] = dtemp4;
-				getline(startable, line);
+				oapiGetLine(startable, line);
 				sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 				PZSTARGP.RA[opp - 1][entry] = dtemp1 * RAD;
 				PZSTARGP.DEC[opp - 1][entry] = dtemp2 * RAD;
 				entry++;
 				PZSTARGP.t_D[opp - 1][entry] = dtemp3;
 				PZSTARGP.cos_sigma[opp - 1][entry] = dtemp4;
-				getline(startable, line);
+				oapiGetLine(startable, line);
 				sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 				PZSTARGP.C_3[opp - 1][entry] = dtemp1;
 				PZSTARGP.e_N[opp - 1][entry] = dtemp2;
@@ -1648,7 +1648,7 @@ void RTCC::QMMBLD(int year, int month, int day)
 		}
 		for (i = 0;i < 2;i++)
 		{
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%d %d %lf %lf", &day, &opp, &dtemp1, &dtemp2);
 			if (opp < 1 || opp > 2)
 			{
@@ -1656,68 +1656,68 @@ void RTCC::QMMBLD(int year, int month, int day)
 			}
 			PZSTARGP.T_ST[opp - 1] = dtemp1;
 			PZSTARGP.beta[opp - 1] = dtemp2 * RAD;
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 			PZSTARGP.alpha_TS[opp - 1] = dtemp1 * RAD;
 			PZSTARGP.f[opp - 1] = dtemp2 * RAD;
 			PZSTARGP.R_N[opp - 1] = dtemp3;
 			PZSTARGP.T3_apo[opp - 1] = dtemp4;
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 			PZSTARGP.tau3R[opp - 1] = dtemp1;
 			PZSTARGP.T2[opp - 1] = dtemp2;
 			PZSTARGP.Vex2[opp - 1] = dtemp3;
 			PZSTARGP.Mdot2[opp - 1] = dtemp4;
-			getline(startable, line);
+			oapiGetLine(startable, line);
 			sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 			PZSTARGP.DV_BR[opp - 1] = dtemp1;
 			PZSTARGP.tau2N[opp - 1] = dtemp2;
 			PZSTARGP.KP0[opp - 1] = dtemp3;
 			PZSTARGP.KY0[opp - 1] = dtemp4;
 		}
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%d %lf %lf %lf", &day, &dtemp1, &dtemp2, &dtemp3);
 		PZSTARGP.T_LO = dtemp1;
 		PZSTARGP.theta_EO = dtemp2;
 		PZSTARGP.omega_E = dtemp3 / 3600.0;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		PZSTARGP.K_a1 = dtemp1;
 		PZSTARGP.K_a2 = dtemp2;
 		PZSTARGP.K_T3 = dtemp3;
 		SystemParameters.MDVSTP.t_DS0 = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.t_DS1 = dtemp1;
 		SystemParameters.MDVSTP.t_DS2 = dtemp2;
 		SystemParameters.MDVSTP.t_DS3 = dtemp3;
 		SystemParameters.MDVSTP.hx[0][0] = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.hx[0][1] = dtemp1;
 		SystemParameters.MDVSTP.hx[0][2] = dtemp2;
 		SystemParameters.MDVSTP.hx[0][3] = dtemp3;
 		SystemParameters.MDVSTP.hx[0][4] = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.t_D0 = 0.0;
 		SystemParameters.MDVSTP.t_D1 = dtemp1;
 		SystemParameters.MDVSTP.t_SD1 = dtemp2;
 		SystemParameters.MDVSTP.hx[1][0] = dtemp3;
 		SystemParameters.MDVSTP.hx[1][1] = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.hx[1][2] = dtemp1;
 		SystemParameters.MDVSTP.hx[1][3] = dtemp2;
 		SystemParameters.MDVSTP.hx[1][4] = dtemp3;
 		SystemParameters.MDVSTP.t_D2 = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.t_SD2 = dtemp1;
 		SystemParameters.MDVSTP.hx[2][0] = dtemp2;
 		SystemParameters.MDVSTP.hx[2][1] = dtemp3;
 		SystemParameters.MDVSTP.hx[2][2] = dtemp4;
-		getline(startable, line);
+		oapiGetLine(startable, line);
 		sscanf(line.c_str(), "%lf %lf %lf %lf", &dtemp1, &dtemp2, &dtemp3, &dtemp4);
 		SystemParameters.MDVSTP.hx[2][3] = dtemp1;
 		SystemParameters.MDVSTP.hx[2][4] = dtemp2;
@@ -1730,7 +1730,7 @@ void RTCC::LoadMissionInitParameters(int year, int month, int day)
 {
 	//This function loads launch day specific parameters that might be updated and might be saved/loaded
 	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d Init.txt", year, month, day);
+	sprintf_s(Buff, "./Config/ProjectApollo/RTCC/%d-%02d-%02d Init.txt", year, month, day);
 
 	ifstream startable(Buff);
 	if (startable.is_open())
@@ -1739,7 +1739,7 @@ void RTCC::LoadMissionInitParameters(int year, int month, int day)
 		double dtemp, darrtemp[2];
 		int itemp;
 
-		while (getline(startable, line))
+		while (oapiGetLine(startable, line))
 		{
 			sprintf_s(Buff, line.c_str());
 
@@ -1840,7 +1840,7 @@ void RTCC::LoadMissionConstantsFile(char *file)
 {
 	//This function loads mission specific constants that will not be changed or saved/loaded
 	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%s.txt", file);
+	sprintf_s(Buff, "./Config/ProjectApollo/RTCC/%s.txt", file);
 
 	ifstream startable(Buff);
 	if (startable.is_open())
@@ -1851,7 +1851,7 @@ void RTCC::LoadMissionConstantsFile(char *file)
 		int itemp;
 		double darrtemp[10];
 
-		while (getline(startable, line))
+		while (oapiGetLine(startable, line))
 		{
 			sprintf_s(Buff, line.c_str());
 
@@ -33317,11 +33317,11 @@ void RTCC::EMSGSUPP(int QUEID, int refs, int refs2, unsigned man, bool headsup)
 	{
 		if (EZJGSTAR.size() == 0)
 		{
-			ifstream startable(".\\Config\\ProjectApollo\\RTCC\\Star Table.txt");
+			ifstream startable("./Config/ProjectApollo/RTCC/Star Table.txt");
 			std::string line;
 			VECTOR3 temp;
 
-			while (getline(startable, line))
+			while (oapiGetLine(startable, line))
 			{
 				sscanf(line.c_str(), "%lf %lf %lf", &temp.x, &temp.y, &temp.z);
 				EZJGSTAR.push_back(temp);

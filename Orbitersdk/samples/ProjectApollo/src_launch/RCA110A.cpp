@@ -27,6 +27,7 @@
 #include "PadLCCInterface.h"
 #include "LCCPadInterface.h"
 #include "RCA110A.h"
+#include <cstring>
 
 ATOLLSequence::ATOLLSequence()
 {
@@ -139,6 +140,8 @@ void ATOLLProcessor::Timestep(double simt)
 		{
 			ifs.close();
 		}
+		size_t len = strlen(line);
+		if(line[len] == '\r') line[len] = '\0';
 	}
 	seq.Clear();
 	if (seq.ReadIn(line))

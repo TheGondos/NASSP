@@ -186,7 +186,7 @@ sibsys(this, th_main, ph_main, SIB_SIVB_Sep, LaunchS, SShutS)
 	RegisterConnector(0, &sibSIVBConnector);
 
 	Panelsdk.RegisterVessel(this);
-	Panelsdk.InitFromFile("ProjectApollo\\SIBSystems");
+	Panelsdk.InitFromFile("ProjectApollo/SIBSystems");
 }
 
 S1B::~S1B()
@@ -476,7 +476,7 @@ void S1B::clbkSetClassCaps (FILEHANDLE cfg)
 	double td_tdph = -20.955 - 3.0;
 	double td_height = 40.0;
 
-	static DWORD ntdp = 4;
+	static int ntdp = 4;
 	static TOUCHDOWNVTX td[4];
 	double stiffness = (-1)*(td_mass*9.80655) / (3 * -0.05);
 	double damping = 0.9*(2 * sqrt(td_mass*stiffness));

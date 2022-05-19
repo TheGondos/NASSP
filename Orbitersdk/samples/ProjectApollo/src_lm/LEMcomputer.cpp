@@ -77,7 +77,9 @@ void LEMcomputer::SetMissionInfo(std::string ProgramName, char *OtherVessel)
 	char Buffer[100];
 	sprintf(Buffer, "Config/ProjectApollo/%s.bin", ProgramName.c_str());
 
-	agc_load_binfile(&vagc, Buffer);
+	std::string localPath = oapiGetFilePath(Buffer);
+
+	agc_load_binfile(&vagc, localPath.c_str());
 }
 
 void LEMcomputer::agcTimestep(double simt, double simdt)

@@ -287,11 +287,13 @@ bool ChecklistController::init(char *checkFile)
 	if (!init(true))
 		return false;
 
-	if (*checkFile == '\0') {
+	std::string localPath = oapiGetFilePath(checkFile);
+
+	if (*localPath.c_str() == '\0') {
 		if (!file.Load(DefaultChecklistFile)) {
 			return false;
 		}
-	} else if (!file.Load(checkFile)) {
+	} else if (!file.Load(localPath.c_str())) {
 		if (!file.Load(DefaultChecklistFile)) {
 			return false;
 		}
