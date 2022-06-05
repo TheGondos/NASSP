@@ -1,32 +1,6 @@
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Orbitersdk/samples/ProjectApollo)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive -Wno-write-strings -Wno-format-overflow -Wno-format-zero-length")
 
-
-
-####### Template #######
-#add_library(ASTP SHARED
-#    ${SRC_DIR}/
-#)
-
-#target_include_directories(ASTP PUBLIC
-#	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
-#)
-
-#target_link_libraries(ASTP
-#	${ORBITER_SDK_LIB}
-#)
-
-#set_target_properties(ASTP
-#	PROPERTIES
-#	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
-#	OUTPUT_NAME ASTP
-#)
-
-#install(TARGETS ASTP
-#	DESTINATION ${ORBITER_INSTALL_MODULE_DIR}/ProjectApollo
-#)
-
-
 ####### ApolloRTCCMFD #######
 
 add_library(ApolloRTCCMFD SHARED
@@ -56,6 +30,28 @@ add_library(ApolloRTCCMFD SHARED
     ${SRC_DIR}/src_rtccmfd/rtcc_library_programs.cpp
     ${SRC_DIR}/src_rtccmfd/TLIGuidanceSim.cpp
     ${SRC_DIR}/src_rtccmfd/TLMCC.cpp
+    ${SRC_DIR}/src_csm/saturnmesh.cpp
+    ${SRC_DIR}/src_csm/saturnvc.cpp
+    ${SRC_DIR}/src_csm/saturnpanel.cpp
+    ${SRC_DIR}/src_csm/ecs.cpp
+    ${SRC_DIR}/src_sys/dsky.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Esystems.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Hsystems.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/esysparse.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Thermal.cpp
+    ${SRC_DIR}/src_sys/PanelSDK/Internals/Hsysparse.cpp
+    ${SRC_DIR}/src_csm/csmcautionwarning.cpp
+    ${SRC_DIR}/src_sys/cautionwarning.cpp
+    ${SRC_DIR}/src_launch/mccvc.cpp
+    ${SRC_DIR}/src_sys/powersource.cpp
+    ${SRC_DIR}/src_csm/csmrcs.cpp
+    ${SRC_DIR}/src_csm/satswitches.cpp
+    ${SRC_DIR}/src_sys/toggleswitch.cpp
+    ${SRC_DIR}/src_sys/connector.cpp
+    ${SRC_DIR}/src_csm/satsystems.cpp
+    ${SRC_DIR}/src_csm/csmsensors.cpp
+    ${SRC_DIR}/src_sys/soundlib.cpp
+    ${SRC_DIR}/src_sys/pyro.cpp
 )
 
 target_include_directories(ApolloRTCCMFD PUBLIC
@@ -1258,6 +1254,9 @@ add_library(ProjectApolloMFD SHARED
     ${SRC_DIR}/src_mfd/ProjectApolloChecklistMFD.cpp
     ${SRC_DIR}/src_mfd/ProjectApolloMFD.cpp
     ${SRC_DIR}/src_mfd/ProjectApolloPlugin.cpp
+    ${SRC_DIR}/src_csm/csmconnector.cpp
+    ${SRC_DIR}/src_csm/saturn.cpp
+    ${SRC_DIR}/src_csm/saturnpanel.cpp
 )
 
 target_include_directories(ProjectApolloMFD PUBLIC
@@ -1274,6 +1273,7 @@ target_include_directories(ProjectApolloMFD PUBLIC
 
 target_link_libraries(ProjectApolloMFD
 	${ORBITER_SDK_LIB}
+    lua::lib
 )
 
 set_target_properties(ProjectApolloMFD

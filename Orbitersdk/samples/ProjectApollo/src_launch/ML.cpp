@@ -90,7 +90,7 @@ PARTICLESTREAMSPEC liftoffStreamSpec = {
 };
 
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 

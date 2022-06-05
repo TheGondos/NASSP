@@ -53,7 +53,7 @@
 
 char trace_file[] = "ProjectApollo Crawler.log";
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel, int flightmodel) {

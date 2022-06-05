@@ -741,7 +741,7 @@ DLLCLBK void ovcExit (VESSEL *vessel)
 		delete sv;
 }
 
-DLLCLBK void InitModule (oapi::DynamicModule *hModule)
+DLLCLBK void InitModule (MODULEHANDLE hModule)
 {
 
 }

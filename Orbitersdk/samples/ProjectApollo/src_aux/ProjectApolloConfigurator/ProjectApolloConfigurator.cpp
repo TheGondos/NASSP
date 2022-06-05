@@ -655,7 +655,7 @@ void ProjectApolloConfigurator::UpdateControlState(HWND hWnd) {
 // The DLL entry point
 // ==============================================================
 
-DLLCLBK void opcDLLInit (oapi::DynamicModule *hDLL)
+DLLCLBK void opcDLLInit (MODULEHANDLEhDLL)
 {
 	int i;
 

@@ -51,7 +51,7 @@ char trace_file[] = "ProjectApollo MSS.log";
 #define PAD_LAT 28.60839
  
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 

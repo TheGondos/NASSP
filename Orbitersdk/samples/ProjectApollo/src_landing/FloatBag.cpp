@@ -37,7 +37,7 @@
 char trace_file[] = "ProjectApollo FloatBag.log";
 
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 

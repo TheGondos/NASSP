@@ -28,7 +28,7 @@ See http://nassp.sourceforge.net/license/ for more details.
 
 class ARoapiModule : public oapi::Module {
 public:
-	ARoapiModule(oapi::DynamicModule *hDLL);
+	ARoapiModule(MODULEHANDLE hDLL);
 	~ARoapiModule();
 	void clbkSimulationStart(RenderMode mode);
 	void clbkSimulationEnd();

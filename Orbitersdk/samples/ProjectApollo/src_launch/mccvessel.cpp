@@ -30,11 +30,11 @@
 
 static int refcount = 0;
 
-DLLCLBK void InitModule(oapi::DynamicModule *hDLL)
+DLLCLBK void InitModule(MODULEHANDLE hDLL)
 {
 }
 
-DLLCLBK void ExitModule(oapi::DynamicModule *hDLL)
+DLLCLBK void ExitModule(MODULEHANDLE hDLL)
 {
 }
 

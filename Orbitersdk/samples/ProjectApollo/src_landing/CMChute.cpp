@@ -46,7 +46,7 @@ const double timprc[3]={1,6,5};
 #define CH_MAIN   1
 #define CH_DROGUE 2
 //############################################################################//
-DLLCLBK void InitModule(oapi::DynamicModule *hModule)               {}
+DLLCLBK void InitModule(MODULEHANDLE hModule)               {}
 DLLCLBK VESSEL *ovcInit(OBJHANDLE hvessel,int flightmodel){return new CMChute(hvessel,flightmodel);}
 DLLCLBK void    ovcExit(VESSEL *vessel)                  {if(vessel)delete(CMChute*)vessel;}
 //############################################################################//

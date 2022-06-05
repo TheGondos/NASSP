@@ -49,13 +49,13 @@
 #include "ProjectApolloChecklistMFD.h"
 #include "ProjectApolloPlugin.h"
 
-DLLCLBK void opcDLLInit(oapi::DynamicModule *hDLL)
+DLLCLBK void opcDLLInit(MODULEHANDLE hDLL)
 {
 	ProjectApolloMFDopcDLLInit ();
 	ProjectApolloChecklistMFDopcDLLInit ();
 }
 
-DLLCLBK void opcDLLExit(oapi::DynamicModule *hDLL)
+DLLCLBK void opcDLLExit(MODULEHANDLE hDLL)
 {
 	ProjectApolloMFDopcDLLExit ();
 	ProjectApolloChecklistMFDopcDLLExit ();

@@ -119,11 +119,11 @@ void LCC::SLCCLoadProgram(const char *str)
 	rca110a->ReadFile(str);
 }
 
-DLLCLBK void InitModule(oapi::DynamicModule *hDLL)
+DLLCLBK void InitModule(MODULEHANDLE hDLL)
 {
 }
 
-DLLCLBK void ExitModule(oapi::DynamicModule *hDLL)
+DLLCLBK void ExitModule(MODULEHANDLE hDLL)
 {
 }
 

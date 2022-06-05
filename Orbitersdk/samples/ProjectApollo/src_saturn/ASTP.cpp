@@ -42,12 +42,12 @@
 static int refcount = 0;
 static MESHHANDLE hastp;
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule)
+DLLCLBK void InitModule(MODULEHANDLE hModule)
 {
 	hastp = oapiLoadMeshGlobal("ProjectApollo/nASTP2");
 }
 
-DLLCLBK void ExitModule(oapi::DynamicModule *hModule)
+DLLCLBK void ExitModule(MODULEHANDLE hModule)
 {
 
 }

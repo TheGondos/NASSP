@@ -42,7 +42,7 @@
 char trace_file[] = "ProjectApollo VAB.log";
 
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 

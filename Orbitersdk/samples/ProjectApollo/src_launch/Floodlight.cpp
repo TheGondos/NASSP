@@ -38,7 +38,7 @@
 char trace_file[] = "ProjectApollo Floodlight.log";
  
 
-DLLCLBK void InitModule(oapi::DynamicModule *hModule) {
+DLLCLBK void InitModule(MODULEHANDLE hModule) {
 }
 
 

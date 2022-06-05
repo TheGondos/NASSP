@@ -54,7 +54,7 @@ static char *name = "Apollo RTCC MFD";
 // ==============================================================
 //
 
-DLLCLBK void InitModule(oapi::DynamicModule *hDLL) {          // Called by Orbiter when module selected in the Launchpad
+DLLCLBK void InitModule(MODULEHANDLE hDLL) {          // Called by Orbiter when module selected in the Launchpad
 	g_coreMod = new ARoapiModule(hDLL);           // Declare a single root class instance for ApolloRTCCMFD for this simulation run
 
 
@@ -68,7 +68,7 @@ DLLCLBK void InitModule(oapi::DynamicModule *hDLL) {          // Called by Orbit
 	nGutsUsed = 0;
 }
 
-DLLCLBK void ExitModule(oapi::DynamicModule *hDLL) {          // Called by Orbiter when module deselected in the Launchpad
+DLLCLBK void ExitModule(MODULEHANDLE hDLL) {          // Called by Orbiter when module deselected in the Launchpad
 	oapiUnregisterMFDMode(g_MFDmode);                // Unregister use as an MFD. Note - don't kill the g_coreMod module (Orbiter does this)
 	g_coreMod = NULL;
 	nGutsUsed = 0;
@@ -82,7 +82,7 @@ OAPI_MSGTYPE ARoapiModule::MsgProc(MFD_msg msg, MfdId mfd, MFDMODEOPENSPEC *para
 	return 0;
 }
 
-ARoapiModule::ARoapiModule(oapi::DynamicModule *hDLL) : oapi::Module(hDLL) {}
+ARoapiModule::ARoapiModule(MODULEHANDLE hDLL) : oapi::Module(hDLL) {}
 ARoapiModule::~ARoapiModule() {}
 
 void ARoapiModule::clbkSimulationStart(RenderMode mode) {}
