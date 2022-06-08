@@ -547,13 +547,19 @@ void h_volume::ThermalComps(double dt) {
 		else {
 			vap_press = exp(ANTIONE_A[composition[i].subst_type] - (ANTIONE_B[composition[i].subst_type] / Temp))*1E5; //this is vapor pressure of current substance
 		}
+
 		//need to boil material if vapor pressure > pressure, otherwise condense
 		if (vap_press > Press)	
 			Q += composition[i].Boil(dt);
 		else
 			Q += composition[i].Condense(dt);
 
-		composition[i].p_press = R_CONST * Temp * (composition[i].vapor_mass / MMASS[composition[i].subst_type]) / air_volume;
+		// we should recompute air_volume after boil/condense because
+		// it can be zero if initial vapor_mass was zero
+		if(air_volume != 0.0)
+			composition[i].p_press = R_CONST * Temp * (composition[i].vapor_mass / MMASS[composition[i].subst_type]) / air_volume;
+		else
+			composition[i].p_press = 0.0;
 	}
 }
 
