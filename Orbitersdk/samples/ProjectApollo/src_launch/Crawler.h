@@ -37,6 +37,7 @@ public:
 	int clbkConsumeDirectKey(char *kstate);
 	int clbkConsumeBufferedKey(int key, bool down, char *kstate);
 	void clbkPreStep (double simt, double simdt, double mjd);
+	void clbkPostCreation();
 	void clbkPostStep(double simt, double simdt, double mjd);
 	void clbkVisualCreated(VISHANDLE vis, int refcount);
 	void clbkVisualDestroyed(VISHANDLE vis, int refcount);

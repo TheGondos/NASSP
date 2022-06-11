@@ -486,9 +486,6 @@ LEM::LEM(OBJHANDLE hObj, int fmodel) : Payload (hObj, fmodel),
 	InitMissionManagementMemory();
 	pMission = paGetDefaultMission();
 
-	// VESSELSOUND initialisation
-	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
-
 	// Switch to compatible dock mode
 	SetDockMode(0);
 
@@ -658,15 +655,20 @@ void LEM::Init()
 	// Initial sound setup
 	//
 
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
 	/// \todo Disabled for now because of the LEVA and the descent stage vessel
 	///		  Enable before CSM docking
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 	// Disable Rolling, landing, speedbrake, crash sound. This causes issues in Orbiter 2016.
-	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, false);
+	soundlib.SoundOptionOnOff(XRSound::Crash, false);
+	soundlib.SoundOptionOnOff(XRSound::MetalCrunch, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelChirp, false);
+	soundlib.SoundOptionOnOff(XRSound::Touchdown, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelStop, false);
+	soundlib.SoundOptionOnOff(XRSound::TiresRolling, false);
+	soundlib.SoundOptionOnOff(XRSound::Wheekbrakes, false);
 
 	strncpy(AudioLanguage, "English", 64);
 	soundlib.SetLanguage(AudioLanguage);
@@ -744,19 +746,19 @@ void LEM::LoadDefaultSounds()
 	soundlib.LoadMissionSound(LunarAscent, LUNARASCENT_SOUND, LUNARASCENT_SOUND);
 	soundlib.LoadSound(StageS, "Stagesep.wav");
 	soundlib.LoadMissionSound(Scontact, LUNARCONTACT_SOUND, LUNARCONTACT_SOUND);
-	soundlib.LoadSound(Sclick, CLICK_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(Rclick, ROTARY_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(Bclick, "button.wav", INTERNAL_ONLY);
-	soundlib.LoadSound(Gclick, "guard.wav", INTERNAL_ONLY);
-	soundlib.LoadSound(CabinFans, "cabin.wav", INTERNAL_ONLY);
+	soundlib.LoadSound(Sclick, CLICK_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(Rclick, ROTARY_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(Bclick, "button.wav", XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(Gclick, "guard.wav", XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(CabinFans, "cabin.wav", XRSound::PlaybackType::InternalOnly);
 	soundlib.LoadSound(Vox, "vox.wav");
 	soundlib.LoadSound(Afire, "des_abort.wav");
-	soundlib.LoadSound(RCSFireSound, RCSFIRE_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(RCSSustainSound, RCSSUSTAIN_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(HatchOpenSound, HATCHOPEN_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(HatchCloseSound, HATCHCLOSE_SOUND, INTERNAL_ONLY);
-	soundlib.LoadSound(GlycolPumpSound, "GlycolPump.wav", INTERNAL_ONLY);
-	soundlib.LoadSound(SuitFanSound, "LMSuitFan.wav", INTERNAL_ONLY);
+	soundlib.LoadSound(RCSFireSound, RCSFIRE_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(RCSSustainSound, RCSSUSTAIN_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(HatchOpenSound, HATCHOPEN_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(HatchCloseSound, HATCHCLOSE_SOUND, XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(GlycolPumpSound, "GlycolPump.wav", XRSound::PlaybackType::InternalOnly);
+	soundlib.LoadSound(SuitFanSound, "LMSuitFan.wav", XRSound::PlaybackType::InternalOnly);
 	soundlib.LoadSound(CrewDeadSound, CREWDEAD_SOUND);
 
 	// Configure sound options where needed
@@ -1385,7 +1387,7 @@ void LEM::clbkPostStep(double simt, double simdt, double mjd)
 				99999.0,
 				-1.0,
 				-1.0,
-				NOLOOP,
+				false,
 				255);
         if (todo)
 		{
@@ -1839,6 +1841,9 @@ void LEM::clbkSetClassCaps (FILEHANDLE cfg) {
 
 void LEM::clbkPostCreation()
 {
+	// VESSELSOUND initialisation
+	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
+
 	//Find MCC, if it exists
 	pMCC = NULL;
 	hMCC = oapiGetVesselByName("MCC");
@@ -2283,7 +2288,7 @@ void LEM::RCSSoundTimestep() {
 	// Play/stop sounds
 	if (on) {
 		if (RCSFireSound.isPlaying()) {
-			RCSSustainSound.play(LOOP);
+			RCSSustainSound.play(true);
 		}
 		else if (!RCSSustainSound.isPlaying()) {
 			RCSFireSound.play();

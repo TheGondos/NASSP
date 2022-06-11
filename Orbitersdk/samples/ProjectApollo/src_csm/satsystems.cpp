@@ -3910,7 +3910,7 @@ void Saturn::RCSSoundTimestep() {
 	// Play/stop sounds
 	if (on) {
 		if (RCSFireSound.isPlaying()) {
-			RCSSustainSound.play(LOOP);
+			RCSSustainSound.play(true);
 		} else if (!RCSSustainSound.isPlaying()) {
 			RCSFireSound.play();
 		}				

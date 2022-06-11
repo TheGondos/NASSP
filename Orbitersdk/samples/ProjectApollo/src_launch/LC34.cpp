@@ -120,8 +120,6 @@ LC34::LC34(OBJHANDLE hObj, int fmodel) : VESSEL2 (hObj, fmodel) {
 	}
 	liftoffStreamLevel = 0;
 
-	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
-
 	//meshoffsetMSS = _V(0,0,0);
 
 	IuUmb = new IUUmbilical(this);
@@ -167,6 +165,8 @@ void LC34::clbkSetClassCaps(FILEHANDLE cfg) {
 void LC34::clbkPostCreation()
 {
 	char buffer[256];
+
+	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
 
 	if (swingarmState.action == AnimState::CLOSED)
 	{
@@ -524,11 +524,10 @@ void LC34::clbkPostStep (double simt, double simdt, double mjd) {
 
 void LC34::DoFirstTimestep()
 {
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+	soundlib.SoundOptionOnOff(XRSound::CabinAmbienceGroup, false);
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 	firstTimestepDone = true;
 }

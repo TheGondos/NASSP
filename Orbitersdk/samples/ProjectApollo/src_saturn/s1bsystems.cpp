@@ -788,7 +788,7 @@ void SIBSystems::SwitchSelector(int channel)
 	{
 	case 0: //Liftoff (NOT A REAL SWITCH SELECTOR EVENT)
 		if (LaunchSound.isValid() && !LaunchSound.isPlaying()) {	// And play launch sound
-			LaunchSound.play(NOLOOP, 255);
+			LaunchSound.play(false, 255);
 			LaunchSound.done();
 		}
 		break;
@@ -816,7 +816,7 @@ void SIBSystems::SwitchSelector(int channel)
 		break;
 	case 98: //Inboard Engines Cutoff
 		SetInboardEnginesCutoff();
-		SShutSound.play(NOLOOP, 235);
+		SShutSound.play(false, 235);
 		SShutSound.done();
 		break;
 	case 100: //Single Engine Cutoff Enable

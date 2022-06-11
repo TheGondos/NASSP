@@ -138,8 +138,6 @@ ML::ML(OBJHANDLE hObj, int fmodel) : VESSEL2 (hObj, fmodel) {
 	}
 	liftoffStreamLevel = 0;
 
-	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
-
 	sat = NULL;
 
 	IuUmb = new IUUmbilical(this);
@@ -182,6 +180,8 @@ void ML::clbkSetClassCaps(FILEHANDLE cfg) {
 void ML::clbkPostCreation()
 {	
 	char buffer[256];
+
+	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
 
 	if (swingarmState.action == AnimState::CLOSED)
 	{
@@ -808,11 +808,10 @@ void ML::clbkPostStep (double simt, double simdt, double mjd) {
 
 void ML::DoFirstTimestep()
 {
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+	soundlib.SoundOptionOnOff(XRSound::CabinAmbienceGroup, false);
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 	firstTimestepDone = true;
 }

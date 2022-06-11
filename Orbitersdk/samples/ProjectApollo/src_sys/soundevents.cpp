@@ -101,7 +101,7 @@ int SoundEvent::play(SoundLib soundlib,
 					  double  timeremaining,
 					  double  timeafterpdi,
 					  double  timetoapproach,
-					  int     flags,
+					  bool    loop,
 					  int     volume)
 
 

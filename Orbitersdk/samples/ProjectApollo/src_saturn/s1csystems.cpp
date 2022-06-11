@@ -543,7 +543,7 @@ void SICSystems::SwitchSelector(int channel)
 	{
 	case 0: //Liftoff (NOT A REAL SWITCH SELECTOR EVENT)
 		if (LaunchSound.isValid() && !LaunchSound.isPlaying()) {			// And play launch sound			
-			LaunchSound.play(NOLOOP, 255);
+			LaunchSound.play(false, 255);
 			LaunchSound.done();
 		}
 		break;
@@ -564,7 +564,7 @@ void SICSystems::SwitchSelector(int channel)
 		break;
 	case 8: //Inboard Engine Cutoff
 		InboardEngineCutoff();
-		SShutSound.play(NOLOOP, 235);
+		SShutSound.play(false, 235);
 		SShutSound.done();
 		break;
 	case 9: //Outboard Engines Cutoff Enable

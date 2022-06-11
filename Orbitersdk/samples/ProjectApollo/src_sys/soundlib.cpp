@@ -43,7 +43,7 @@ SoundData::SoundData()
 	valid = false;
 	id = (-1);
 	filename[0] = 0;
-	SoundlibId = 0;
+	Soundlib = nullptr;
 }
 
 SoundData::~SoundData()
@@ -73,17 +73,17 @@ bool SoundData::isValid()
 	return valid;
 }
 
-bool SoundData::play(int flags, int libflags, int volume, int playvolume, int frequency /*= NULL*/)
+bool SoundData::play(bool loop, int libflags, int volume, int playvolume, int frequency /*= NULL*/)
 
 {
 	if (valid) {
-		if (!PlayVesselWave(SoundlibId, id, flags, playvolume, frequency))
+		if (!Soundlib->PlayWav(id, loop, playvolume/255.0f))
 		{
 			return false;
 		}
 
 		PlayVolume = playvolume;
-		PlayFlags = flags;
+		PlayLooped = loop;
 		LibFlags = libflags;
 		BaseVolume = volume;
 
@@ -108,7 +108,7 @@ void SoundData::stop()
 	if (!isPlaying())
 		return;
 
-	StopVesselWave(SoundlibId, id);
+	Soundlib->StopWav(id);
 }
 
 bool SoundData::isPlaying()
@@ -117,7 +117,7 @@ bool SoundData::isPlaying()
 	if (id < 0)
 		return false;
 
-	return (IsPlaying(SoundlibId, id) != 0);
+	return (Soundlib->IsWavPlaying(id) != 0);
 }
 
 bool SoundData::matches(char *s)
@@ -148,8 +148,8 @@ SoundLib::SoundLib()
 		sounds[i].MakeInvalid();
 	}
 
-	SoundlibId = 0;
-	OrbiterSoundActive = 0;
+	Soundlib = nullptr;
+	XRSoundActive = 0;
 	missionpath[0] = 0;
 	basepath[0] = 0;
 	strcpy(languagepath, "English");
@@ -168,13 +168,13 @@ SoundLib::~SoundLib()
 	//
 }
 
-void SoundLib::InitSoundLib(OBJHANDLE h, char *soundclass)
+void SoundLib::InitSoundLib(VESSEL *h, char *soundclass)
 
 {
 	_snprintf(basepath, 255, "Sound/%s", soundclass);
 
-	SoundlibId = ConnectToOrbiterSoundDLL(h);
-	OrbiterSoundActive = (SoundlibId >= 0);
+	Soundlib = XRSound::CreateInstance(h);
+	XRSoundActive = Soundlib->IsPresent();
 }
 
 void SoundLib::SetSoundLibMissionPath(char *mission)
@@ -245,7 +245,7 @@ int SoundLib::FindSlot()
 	return -1;
 }
 
-SoundData *SoundLib::DoLoadSound(char *SoundPath, EXTENDEDPLAY extended)
+SoundData *SoundLib::DoLoadSound(char *SoundPath, XRSound::PlaybackType type)
 
 {
 	SoundData *s;
@@ -272,11 +272,11 @@ SoundData *SoundLib::DoLoadSound(char *SoundPath, EXTENDEDPLAY extended)
 	// So the file exists and we have a free slot. Try to load it.
 	//
 
-	if (RequestLoadVesselWave(SoundlibId, id, s->GetFilename(), extended) == 0)
+	if (Soundlib->LoadWav(id, s->GetFilename(), type) == 0)
 		return 0;
 
 
-	s->setSoundlibId(SoundlibId);
+	s->setSoundlib(Soundlib);
 	s->setID(id);
 	s->MakeValid();
 	s->AddRef();
@@ -290,11 +290,11 @@ SoundData *SoundLib::DoLoadSound(char *SoundPath, EXTENDEDPLAY extended)
 // directory.
 //
 
-void SoundLib::LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
+void SoundLib::LoadSound(Sound &s, char *soundname, XRSound::PlaybackType type)
 
 {
 
-	if (!OrbiterSoundActive) {
+	if (!XRSoundActive) {
 		s.SetSoundData(0);
 		return;
 	}
@@ -309,7 +309,7 @@ void SoundLib::LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 
 	_snprintf(SoundPath, 255, "%s/%s/%s", basepath, languagepath, soundname);
 	if (IsFile(SoundPath)) {
-		s.SetSoundData(DoLoadSound(SoundPath, extended));
+		s.SetSoundData(DoLoadSound(SoundPath, type));
 		return;
 	}
 
@@ -319,7 +319,7 @@ void SoundLib::LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 
 	_snprintf(SoundPath, 255, "%s/%s", basepath, soundname);
 	if (IsFile(SoundPath)) {
-		s.SetSoundData(DoLoadSound(SoundPath, extended));
+		s.SetSoundData(DoLoadSound(SoundPath, type));
 		return;
 	}
 
@@ -329,7 +329,7 @@ void SoundLib::LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 
 	_snprintf(SoundPath, 255, "Sound/Vessel/%s", soundname);
 	if (IsFile(SoundPath)) {
-		s.SetSoundData(DoLoadSound(SoundPath, extended));
+		s.SetSoundData(DoLoadSound(SoundPath, type));
 		return;
 	}
 
@@ -342,12 +342,12 @@ void SoundLib::LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 // then it will instead try to load the generic sound file if it's passed in.
 //
 
-void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, EXTENDEDPLAY extended)
+void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, XRSound::PlaybackType type)
 
 {
 	char	SoundPath[256];
 
-	if (!OrbiterSoundActive) {
+	if (!XRSoundActive) {
 		s.SetSoundData(0);
 		return;
 	}
@@ -360,7 +360,7 @@ void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, EX
 
 	_snprintf(SoundPath, 255, "%s/%s/%s/%s", basepath, languagepath, missionpath, soundname);
 	if (IsFile(SoundPath)) {
-		s.SetSoundData(DoLoadSound(SoundPath, extended));
+		s.SetSoundData(DoLoadSound(SoundPath, type));
 		return;
 	}
 
@@ -370,7 +370,7 @@ void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, EX
 
 	_snprintf(SoundPath, 255, "%s/%s/%s", basepath, missionpath, soundname);
 	if (IsFile(SoundPath)) {
-		s.SetSoundData(DoLoadSound(SoundPath, extended));
+		s.SetSoundData(DoLoadSound(SoundPath, type));
 		return;
 	}
 
@@ -379,7 +379,7 @@ void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, EX
 	//
 
 	if (genericname) {
-		LoadSound(s, genericname, extended);
+		LoadSound(s, genericname, type);
 		return;
 	}
 
@@ -394,12 +394,12 @@ void SoundLib::LoadMissionSound(Sound &s, char *soundname, char *genericname, EX
 // Load a sound from the generic Vessel directory. You shouldn't call this without a good reason.
 //
 
-void SoundLib::LoadVesselSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
+void SoundLib::LoadVesselSound(Sound &s, char *soundname, XRSound::PlaybackType type)
 
 {
 	char	SoundPath[256];
 
-	if (!OrbiterSoundActive) {
+	if (!XRSoundActive) {
 		s.SetSoundData(0);
 		return;
 	}
@@ -407,13 +407,13 @@ void SoundLib::LoadVesselSound(Sound &s, char *soundname, EXTENDEDPLAY extended)
 	s.SetSoundLib(this);
 
 	_snprintf(SoundPath, 255, "Vessel/%s", soundname);
-	s.SetSoundData(DoLoadSound(SoundPath, extended));
+	s.SetSoundData(DoLoadSound(SoundPath, type));
 }
 
-void SoundLib::SoundOptionOnOff(int option, bool status)
+void SoundLib::SoundOptionOnOff(XRSound::DefaultSoundID id, bool status)
 
 {
-	::SoundOptionOnOff(SoundlibId, option, status);
+	Soundlib->SetDefaultSoundEnabled(id, status);
 }
 
 void SoundLib::SetLanguage(char *language)
@@ -502,10 +502,10 @@ void SoundLib::SetVolume(int type, int percent)
 			int libflags = sounds[i].GetLibFlags();
 			if (libflags & match_flags) {
 				int base_vol = sounds[i].GetBaseVolume();
-				int playflags = sounds[i].GetPlayFlags();
+				int looped = sounds[i].IsLooped();
 				int vol = GetSoundVolume(libflags, base_vol);
 
-				sounds[i].play(playflags, libflags, base_vol, vol);
+				sounds[i].play(looped, libflags, base_vol, vol);
 			}
 		}
 	}
@@ -597,7 +597,7 @@ bool Sound::isPlaying()
 	return sd->isPlaying();
 }
 
-bool Sound::play(int flags, int volume, int frequency /*= NULL*/)
+bool Sound::play(bool loop, int volume, int frequency /*= NULL*/)
 
 {
 	if (valid && sd && sd->isValid()) {
@@ -617,7 +617,7 @@ bool Sound::play(int flags, int volume, int frequency /*= NULL*/)
 			vol = sl->GetSoundVolume(soundflags, volume);
 		}
 
-		return sd->play(flags, soundflags, volume, vol, frequency);
+		return sd->play(loop, soundflags, volume, vol, frequency);
 	}
 
 	return false;
@@ -683,7 +683,7 @@ bool FadeInOutSound::play(int volume /*= 255*/)
 		freq = hasFrequencyShift()
 			? fMin + (currentVolume * (fMax - fMin) / 255)
 			: 0;
-		Sound::play(LOOP, currentVolume, freq);
+		Sound::play(true, currentVolume, freq);
 	}
 	else
 	{
@@ -801,7 +801,7 @@ void TimedSoundManager::Timestep(double simt, double simdt, bool autoslow)
 
 {
 	// Is OrbiterSound available?
-	if (!soundlib.IsOrbiterSoundActive()) return;
+	if (!soundlib.IsXRSoundActive()) return;
 
 	double timeaccel = oapiGetTimeAcceleration();
 	if (LaunchSoundsLoaded && simt >= TimeToPlay)
@@ -1051,12 +1051,3 @@ void TimedSoundManager::LoadFromFile(char *dataFile, double MissionTime)
 
 	fclose(fp);
 }
-
-//
-// To use OrbiterSound 3.5 with compilers older 
-// than Microsoft Visual Studio Version 2003 
-//
-
-#if defined(_MSC_VER) && (_MSC_VER < 1300) 
-void operator delete[] (void *) {}
-#endif

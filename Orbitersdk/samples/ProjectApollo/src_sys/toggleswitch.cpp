@@ -1768,7 +1768,7 @@ void GuardedToggleSwitch::InitGuard(int xp, int yp, int w, int h, SURFHANDLE sur
 	guardYOffset = yOffset;
 
 	if (!guardClick.isValid())
-		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, INTERNAL_ONLY);
+		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, XRSound::PlaybackType::InternalOnly);
 }
 
 void GuardedToggleSwitch::DrawSwitch(SURFHANDLE DrawSurface) {
@@ -1996,7 +1996,7 @@ void GuardedPushSwitch::InitGuard(int xp, int yp, int w, int h, SURFHANDLE surf,
 	guardYOffset = yOffset;
 
 	if (!guardClick.isValid())
-		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, INTERNAL_ONLY);
+		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, XRSound::PlaybackType::InternalOnly);
 }
 
 void GuardedPushSwitch::DefineMeshGroup(UINT _grpIndex, UINT _coverGrpIndex)
@@ -2199,7 +2199,7 @@ void GuardedThreePosSwitch::InitGuard(int xp, int yp, int w, int h, SURFHANDLE s
 	guardYOffset = yOffset;
 
 	if (!guardClick.isValid())
-		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, INTERNAL_ONLY);
+		switchRow->panelSwitches->soundlib->LoadSound(guardClick, GUARD_SOUND, XRSound::PlaybackType::InternalOnly);
 }
 
 void GuardedThreePosSwitch::DefineMeshGroup(UINT _grpIndex, UINT _coverGrpIndex)

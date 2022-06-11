@@ -25,14 +25,7 @@
 #ifndef SOUNDLIB_H
 #define SOUNDLIB_H
 
-//#include "OrbiterSoundSDK50.h"
-
-/*
-  OrbiterSound stub
-*/
-#define NOLOOP 0
-#define EXTENDEDPLAY int
-#define DEFAULT 0
+#include "XRSound.h"
 
 ///
 /// \ingroup Sound
@@ -44,17 +37,17 @@ public:
 	virtual ~SoundData();
 	bool isValid();
 	bool isPlaying();
-	bool play(int flags, int libflags, int volume, int playvolume, int frequency = 0);
+	bool play(bool loop, int libflags, int volume, int playvolume, int frequency = 0);
 	void stop();
 	void done();
 	void setID(int num) { id = num; };
-	void setSoundlibId(int num) { SoundlibId = num; };
+	void setSoundlib(XRSound *s) { Soundlib = s; };
 	void setFileName(char *s);
 	void AddRef() { refcount++; };
 	void MakeValid() { valid = true; refcount = 0; };
 	void MakeInvalid() { valid = false; };
 	bool matches(char *s);
-	int GetPlayFlags() { return PlayFlags; };
+	int IsLooped() { return PlayLooped; };
 	int GetLibFlags() { return LibFlags; };
 	int GetBaseVolume() { return BaseVolume; };
 	char *GetFilename() { return filename; };
@@ -67,10 +60,10 @@ protected:
 
 	int	id;
 	int PlayVolume;
-	int PlayFlags;
+	bool PlayLooped;
 	int LibFlags;
 	int BaseVolume;
-	int SoundlibId;
+	XRSound *Soundlib;
 };
 
 class SoundLib;
@@ -88,7 +81,7 @@ public:
 	bool isPlaying();
 	void setFlags(int fl);
 	void clearFlags(int fl);
-	bool play(int flags = NOLOOP, int volume = 255, int frequency = 0);
+	bool play(bool loop = false, int volume = 255, int frequency = 0);
 	void stop();
 	void done();
 	void SetSoundData(SoundData *s);
@@ -148,14 +141,14 @@ public:
 
 	///
 	/// \brief Initialise library and connection to Orbitersound.
-	/// \param h Vessel handle to pass to Orbitersound.
+	/// \param h VESSEL to pass to XRSound.
 	/// \param soundclass The 'class' of sound to use (e.g. 'ProjectApollo'). This is 
 	/// appended to the sound path to find the right files.
 	///
-	void InitSoundLib(OBJHANDLE h, char *soundclass);
-	void LoadSound(Sound &s, char *soundname, EXTENDEDPLAY extended = DEFAULT);
-	void LoadMissionSound(Sound &s, char *soundname, char *genericname = NULL, EXTENDEDPLAY extended = DEFAULT);
-	void LoadVesselSound(Sound &s, char *soundname, EXTENDEDPLAY extended = DEFAULT);
+	void InitSoundLib(VESSEL *h, char *soundclass);
+	void LoadSound(Sound &s, char *soundname, XRSound::PlaybackType type = XRSound::PlaybackType::Global);
+	void LoadMissionSound(Sound &s, char *soundname, char *genericname = NULL, XRSound::PlaybackType type = XRSound::PlaybackType::Global);
+	void LoadVesselSound(Sound &s, char *soundname, XRSound::PlaybackType type = XRSound::PlaybackType::Global);
 
 	///
 	/// The sound library can use a mission-specific path to find files in preference to the base path.
@@ -175,15 +168,15 @@ public:
 	/// \param option Orbitersound option number.
 	/// \param onoff Turn Orbitersound option on or off.
 	///
-	void SoundOptionOnOff(int option, bool onoff);
+	void SoundOptionOnOff(XRSound::DefaultSoundID id, bool onoff);
 	void SetLanguage(char *language);
 	void SetVolume(int type, int percent);
 	int GetSoundVolume(int flags, int volume);
-	bool IsOrbiterSoundActive() { return OrbiterSoundActive; };
+	bool IsXRSoundActive() { return XRSoundActive; };
 
 protected:
 
-	SoundData *DoLoadSound(char *SoundPath, EXTENDEDPLAY extended);
+	SoundData *DoLoadSound(char *SoundPath, XRSound::PlaybackType type);
 	SoundData *CheckForMatch(char *s);
 	int FindSlot();
 
@@ -218,12 +211,12 @@ protected:
 	///
 	/// \brief Is Orbitersound active? If not, we don't call it.
 	///
-	bool OrbiterSoundActive;
+	bool XRSoundActive;
 
 	///
 	/// \brief Connection ID returned from initialising Orbitersound.
 	///
-	int SoundlibId;
+	XRSound *Soundlib;
 	int NextSlot;
 
 	friend class TimedSound;

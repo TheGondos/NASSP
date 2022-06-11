@@ -55,7 +55,7 @@ public:
 		      double   simcomputert,
 			  double   MissionTime,
 			  int mode,double timeremaining,double timeafterpdi,double timetoapproach,
-		      int flags = NOLOOP, int volume = 255);
+		      bool loop = false, int volume = 255);
 	int  Stop();
 	int  Done();
     int  LoadMissionLandingSoundArray(SoundLib soundlib,char *soundname);

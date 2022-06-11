@@ -4241,25 +4241,25 @@ void Saturn::MousePanel_MFDButton(int mfd, int event, int mx, int my) {
 void Saturn::SwitchClick()
 
 {
-	Sclick.play(NOLOOP,255);
+	Sclick.play(false,255);
 }
 
 void Saturn::ButtonClick()
 
 {
-	Bclick.play(NOLOOP,255);
+	Bclick.play(false,255);
 }
 
 void Saturn::GuardClick()
 
 {
-	Gclick.play(NOLOOP,255);
+	Gclick.play(false,255);
 }
 
 void Saturn::ProbeSound()
 
 {
-	Psound.play(NOLOOP,255);
+	Psound.play(false,255);
 }
 
 void Saturn::CabinFanSound()

@@ -55,7 +55,8 @@ add_library(ApolloRTCCMFD SHARED
 )
 
 target_include_directories(ApolloRTCCMFD PUBLIC
-	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
@@ -67,6 +68,7 @@ target_include_directories(ApolloRTCCMFD PUBLIC
 
 target_link_libraries(ApolloRTCCMFD
 	${ORBITER_SDK_LIB}
+    XRSound_dll
 )
 
 set_target_properties(ApolloRTCCMFD
@@ -142,6 +144,7 @@ add_library(Crawler SHARED
 
 target_include_directories(Crawler PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
@@ -197,6 +200,7 @@ add_library(FloatBag SHARED
 
 target_include_directories(FloatBag PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_sys
 )
@@ -224,6 +228,7 @@ add_library(Floodlight SHARED
 
 target_include_directories(Floodlight PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_sys
@@ -258,6 +263,7 @@ add_library(LC34 SHARED
 
 target_include_directories(LC34 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_saturn
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
@@ -293,6 +299,7 @@ add_library(LC37 SHARED
 
 target_include_directories(LC37 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_saturn
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
@@ -325,6 +332,7 @@ add_library(LCC SHARED
 
 target_include_directories(LCC PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_rtccmfd
     ${SRC_DIR}/src_sys
 )
@@ -416,6 +424,7 @@ add_library(LEM SHARED
 
 target_include_directories(LEM PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_mfd
@@ -476,6 +485,7 @@ add_library(LEVA SHARED
 
 target_include_directories(LEVA PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_lm
     ${SRC_DIR}/src_aux
@@ -508,6 +518,7 @@ add_library(LRV SHARED
 
 target_include_directories(LRV PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_lm
     ${SRC_DIR}/src_aux
@@ -572,6 +583,7 @@ add_library(MCC SHARED
 
 target_include_directories(MCC PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_aux
@@ -585,6 +597,7 @@ target_link_libraries(MCC
 	${ORBITER_SDK_LIB}
     PanelSDK
     lua::lib
+    XRSound_dll
 )
 
 set_target_properties(MCC
@@ -612,6 +625,7 @@ add_library(ML SHARED
 
 target_include_directories(ML PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_saturn
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
@@ -642,6 +656,7 @@ add_library(MSS SHARED
 
 target_include_directories(MSS PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
@@ -709,6 +724,7 @@ add_library(s1b SHARED
 
 target_include_directories(s1b PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_csm
@@ -739,6 +755,7 @@ add_library(s1c SHARED
 
 target_include_directories(s1c PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
 )
 
@@ -983,6 +1000,7 @@ add_library(Saturn1b SHARED
 
 target_include_directories(Saturn1b PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_mfd
@@ -1088,6 +1106,7 @@ add_library(Saturn5 SHARED
 
 target_include_directories(Saturn5 PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_mfd
@@ -1161,6 +1180,7 @@ add_library(SIVb SHARED
 
 target_include_directories(SIVb PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_csm
     ${SRC_DIR}/src_aux
@@ -1196,6 +1216,7 @@ add_library(SM SHARED
 
 target_include_directories(SM PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux
 )
@@ -1224,6 +1245,7 @@ add_library(VAB SHARED
 
 target_include_directories(VAB PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_aux
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_csm
@@ -1261,6 +1283,7 @@ add_library(ProjectApolloMFD SHARED
 
 target_include_directories(ProjectApolloMFD PUBLIC
 	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    ${ORBITER_BINARY_SDK_DIR}/XRSound
     ${SRC_DIR}/src_rtccmfd
     ${SRC_DIR}/src_sys
     ${SRC_DIR}/src_aux

@@ -681,7 +681,7 @@ void SIVB200Systems::SwitchSelector(int channel)
 		break;
 	case 32: //P.U. Mixture Ratio 4.5 On
 		SetPUValve(PUVALVE_OPEN);
-		//SPUShiftS.play(NOLOOP, 255);
+		//SPUShiftS.play(false, 255);
 		//SPUShiftS.done();
 		break;
 	case 33: //P.U. Mixture Ratio 4.5 Off

@@ -529,7 +529,7 @@ void LEVA::DoFirstTimestep()
 	//
 
 	if (StateSet) {
-		soundlib.InitSoundLib(GetHandle(), SOUND_DIRECTORY);
+		soundlib.InitSoundLib(this, SOUND_DIRECTORY);
 		SetMissionPath();
 
 		//
@@ -545,12 +545,11 @@ void LEVA::DoFirstTimestep()
 		// Turn off pretty much everything that Orbitersound does by default.
 		//
 
-		soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-		soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-		soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
-		soundlib.SoundOptionOnOff(PLAYRADIOATC, false);
-		soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
-		soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+		soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+		soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+		soundlib.SoundOptionOnOff(XRSound::CabinAmbienceGroup, false);
+		soundlib.SoundOptionOnOff(XRSound::RadioATCGroup, false);
+		soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 		FirstTimestep = false;
 	}

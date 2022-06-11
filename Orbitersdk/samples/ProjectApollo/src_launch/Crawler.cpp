@@ -102,9 +102,6 @@ Crawler::Crawler(OBJHANDLE hObj, int fmodel) : VESSEL2 (hObj, fmodel) {
 	meshidxPanel = 0;
 	meshidxPanelReverse = 0;
 
-	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
-	soundlib.LoadSound(soundEngine, "CrawlerEngine.wav", BOTHVIEW_FADED_MEDIUM);
-
 	panelMeshoffset = _V(0,0,0);
     panelMeshidx = 0;
 }
@@ -341,6 +338,12 @@ void Crawler::clbkPreStep(double simt, double simdt, double mjd) {
 	sprintf(oapiDebugString(), "Dist %f", length(pos)); */
 }
 
+void Crawler::clbkPostCreation()
+{
+	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
+	soundlib.LoadSound(soundEngine, "CrawlerEngine.wav", XRSound::PlaybackType::BothViewMedium);
+}
+
 void Crawler::clbkPostStep(double simt, double simdt, double mjd) {
 	//This seems the best place to update our mission time off of the Saturn.
 	Saturn *lv = NULL;
@@ -360,13 +363,18 @@ void Crawler::DoFirstTimestep() {
 	oapiGetHeading(GetHandle(), &targetHeading);
 	
 	// Turn off pretty much everything that Orbitersound does by default.
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
-	soundlib.SoundOptionOnOff(PLAYLANDINGANDGROUNDSOUND, false);
-	soundlib.SoundOptionOnOff(PLAYRADIOATC, false);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+	soundlib.SoundOptionOnOff(XRSound::CabinAmbienceGroup, false);
+	soundlib.SoundOptionOnOff(XRSound::Crash, false);
+	soundlib.SoundOptionOnOff(XRSound::MetalCrunch, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelChirp, false);
+	soundlib.SoundOptionOnOff(XRSound::Touchdown, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelStop, false);
+	soundlib.SoundOptionOnOff(XRSound::TiresRolling, false);
+	soundlib.SoundOptionOnOff(XRSound::Wheekbrakes, false);
+	soundlib.SoundOptionOnOff(XRSound::RadioATCGroup, false);
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 	if (!standalone) {
 		if (LVName[0])

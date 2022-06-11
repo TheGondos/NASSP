@@ -1717,7 +1717,7 @@ void SECS::Timestep(double simt, double simdt)
 		}
 
 		//Time to hear the Stage separation
-		Sat->SMJetS.play(NOLOOP);
+		Sat->SMJetS.play(false);
 		// Disable docking probe because it's jettisoned 
 		Sat->dockingprobe.SetEnabled(false);
 		Sat->HasProbe = false;

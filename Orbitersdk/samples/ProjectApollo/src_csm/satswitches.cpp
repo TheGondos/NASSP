@@ -2025,7 +2025,7 @@ void SaturnGuardedCabinPressureReliefLever::InitGuard(SURFHANDLE surf, SoundLib 
 	guardSurface = surf;
 
 	if (!guardClick.isValid())
-		soundlib->LoadSound(guardClick, GUARD_SOUND, INTERNAL_ONLY);
+		soundlib->LoadSound(guardClick, GUARD_SOUND, XRSound::PlaybackType::InternalOnly);
 }
 
 void SaturnGuardedCabinPressureReliefLever::DrawSwitch(SURFHANDLE drawSurface)

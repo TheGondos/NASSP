@@ -91,8 +91,6 @@ VAB::VAB(OBJHANDLE hObj, int fmodel) : VESSEL2 (hObj, fmodel) {
 		for (int j = 0; j < 8; j++) 
 			mgroupCrane2[i][j] = 0;
 	}
-
-	soundlib.InitSoundLib(hObj, SOUND_DIRECTORY);
 }
 
 VAB::~VAB() {
@@ -492,6 +490,7 @@ void VAB::DefineCrane2Animation(MGROUP_TRANSFORM *mgroup[], double pickupHeight,
 }
 
 void VAB::clbkPostCreation() {
+	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
 
 	//
 	// High bay doors
@@ -733,11 +732,10 @@ void VAB::SetSaturnMeshVisibilityMode(int buildStatus, uint16_t mode) {
 
 void VAB::DoFirstTimestep() {
 
-	soundlib.SoundOptionOnOff(PLAYCOUNTDOWNWHENTAKEOFF, false);
-	soundlib.SoundOptionOnOff(PLAYCABINAIRCONDITIONING, false);
-	soundlib.SoundOptionOnOff(PLAYCABINRANDOMAMBIANCE, false);
-	soundlib.SoundOptionOnOff(PLAYRADARBIP, false);
-	soundlib.SoundOptionOnOff(DISPLAYTIMER, false);
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+	soundlib.SoundOptionOnOff(XRSound::CabinAmbienceGroup, false);
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
 
 	firstTimestepDone = true;
 }

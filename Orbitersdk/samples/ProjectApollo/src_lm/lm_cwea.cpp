@@ -55,7 +55,7 @@ void LEM_CWEA::Init(LEM *l, e_object *cwea, e_object *ma, h_HeatLoad *cweah) {
 		}
 		row = 0; col++;
 	}
-	soundlib.LoadSound(MasterAlarmSound, LM_MASTERALARM_SOUND, INTERNAL_ONLY);
+	soundlib.LoadSound(MasterAlarmSound, LM_MASTERALARM_SOUND, XRSound::PlaybackType::InternalOnly);
 
 	cwea_pwr = cwea;
 	ma_pwr = ma;
@@ -101,7 +101,7 @@ void LEM_CWEA::Timestep(double simdt) {
 
 	if (MasterAlarm && IsMAPowered()) {
 		if (!MasterAlarmSound.isPlaying()) {
-			MasterAlarmSound.play(LOOP, 255);
+			MasterAlarmSound.play(true, 255);
 		}
 	}
 	else if (!IsMAPowered() ){
@@ -882,7 +882,7 @@ void LEM_CWEA::PushMasterAlarm()
 		MasterAlarmSound.stop();
 		SetMasterAlarm(false);
 	}
-	ButtonSound.play(NOLOOP, 255);
+	ButtonSound.play(false, 255);
 }
 
 bool LEM_CWEA::CheckMasterAlarmMouseClick(int event) {
