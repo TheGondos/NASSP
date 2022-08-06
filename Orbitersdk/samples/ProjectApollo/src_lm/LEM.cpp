@@ -651,27 +651,6 @@ void LEM::Init()
 	NextFlashUpdate = MINUS_INFINITY;
 	PanelFlashOn = false;
 
-	//
-	// Initial sound setup
-	//
-
-	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
-	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
-	/// \todo Disabled for now because of the LEVA and the descent stage vessel
-	///		  Enable before CSM docking
-	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
-
-	// Disable Rolling, landing, speedbrake, crash sound. This causes issues in Orbiter 2016.
-	soundlib.SoundOptionOnOff(XRSound::Crash, false);
-	soundlib.SoundOptionOnOff(XRSound::MetalCrunch, false);
-	soundlib.SoundOptionOnOff(XRSound::WheelChirp, false);
-	soundlib.SoundOptionOnOff(XRSound::Touchdown, false);
-	soundlib.SoundOptionOnOff(XRSound::WheelStop, false);
-	soundlib.SoundOptionOnOff(XRSound::TiresRolling, false);
-	soundlib.SoundOptionOnOff(XRSound::Wheekbrakes, false);
-
-	strncpy(AudioLanguage, "English", 64);
-	soundlib.SetLanguage(AudioLanguage);
 	SoundsLoaded = false;
 
 	exhaustTex = oapiRegisterExhaustTexture("ProjectApollo/Exhaust_atrcs");
@@ -1844,6 +1823,29 @@ void LEM::clbkPostCreation()
 	// VESSELSOUND initialisation
 	soundlib.InitSoundLib(this, SOUND_DIRECTORY);
 
+	//
+	// Initial sound setup
+	//
+
+	soundlib.SoundOptionOnOff(XRSound::Liftoff, false);
+	soundlib.SoundOptionOnOff(XRSound::AirConditioning, false);
+	/// \todo Disabled for now because of the LEVA and the descent stage vessel
+	///		  Enable before CSM docking
+	soundlib.SoundOptionOnOff(XRSound::DockingRadarBeep, false);
+
+	// Disable Rolling, landing, speedbrake, crash sound. This causes issues in Orbiter 2016.
+	soundlib.SoundOptionOnOff(XRSound::Crash, false);
+	soundlib.SoundOptionOnOff(XRSound::MetalCrunch, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelChirp, false);
+	soundlib.SoundOptionOnOff(XRSound::Touchdown, false);
+	soundlib.SoundOptionOnOff(XRSound::WheelStop, false);
+	soundlib.SoundOptionOnOff(XRSound::TiresRolling, false);
+	soundlib.SoundOptionOnOff(XRSound::Wheekbrakes, false);
+
+	strncpy(AudioLanguage, "English", 64);
+	soundlib.SetLanguage(AudioLanguage);
+	SoundsLoaded = true;
+	
 	//Find MCC, if it exists
 	pMCC = NULL;
 	hMCC = oapiGetVesselByName("MCC");
@@ -2309,7 +2311,7 @@ void LEM::UpdateMassAndCoG()
 	// If the weight has changed by more than this value, update things.
 	// The value is to be adjusted such that the updates are not too frequent (impacting framerate)
 	// but are sufficiently fine to keep the LGC happy.
-	if ((LastFuelWeight - CurrentFuelWeight) > 100.0) {
+	if ((LastFuelWeight - CurrentFuelWeight) > 10.0) {
 		// Update physical parameters
 		VECTOR3 pmi, CoG;
 		CalculatePMIandCOG(pmi, CoG);

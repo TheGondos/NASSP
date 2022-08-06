@@ -2,7 +2,6 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Orbitersdk/samples/ProjectApollo)
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fpermissive -Wno-write-strings -Wno-format-overflow -Wno-format-zero-length")
 
 ####### ApolloRTCCMFD #######
-
 add_library(ApolloRTCCMFD SHARED
     ${SRC_DIR}/src_launch/rtcc.cpp
     ${SRC_DIR}/src_rtccmfd/ApollomfdButtons.cpp
@@ -75,6 +74,11 @@ set_target_properties(ApolloRTCCMFD
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
 	OUTPUT_NAME ApolloRTCCMFD
+)
+
+add_dependencies(ApolloRTCCMFD
+	Orbitersdk
+    XRSound_dll
 )
 
 install(TARGETS ApolloRTCCMFD
@@ -534,6 +538,11 @@ set_target_properties(LRV
 	PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_MODULE_DIR}/ProjectApollo
 	OUTPUT_NAME LRV
+)
+
+add_dependencies(LRV
+	Orbitersdk
+    XRSound_dll
 )
 
 install(TARGETS LRV

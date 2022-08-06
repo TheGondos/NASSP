@@ -1403,7 +1403,7 @@ void VHFAMTransceiver::Init(Saturn *vessel, ThreePosSwitch *vhfASw, ThreePosSwit
 	leftAntenna = lAnt;
 	rightAntenna = rAnt;
 
-	RCVDfreqRCVR_A = 0.0;
+	RCVDfreqRCVR_A = 9832.8;
 	RCVDpowRCVR_A = 0.0;
 	RCVDgainRCVR_A = 0.0;
 	RCVDPhaseRCVR_A = 0.0;
@@ -5614,7 +5614,10 @@ void RNDZXPDRSystem::TimeStep(double simdt)
 		if (RadarDist > 80.0*0.3048)
 		{
 			RCVDPowerdB = RCVDgain * RNDZXPDRGain * RCVDpow*pow((C0 / (RCVDfreq * 1000000)) / (4 * PI*RadarDist), 2); //watts
-			RCVDPowerdB = 10.0 * log10(1000.0 * RCVDPowerdB); //convert to dBm
+			if(RCVDPowerdB > 0.0)
+				RCVDPowerdB = 10.0 * log10(1000.0 * RCVDPowerdB); //convert to dBm
+			else
+				RCVDPowerdB = RF_ZERO_POWER_DBM;
 		}
 		else
 		{

@@ -50,10 +50,9 @@ static inline double RFCALC_rcvdPower(double xmitrPower, double xmitrGain, doubl
 	wavelength = C0 / (frequency);
 
 	rcvdPower = xmitrPower * xmitrGain * rcvrGain * pow((wavelength / (4 * PI * distance)), 2); //watts
-	rcvdPower = 10.0 * log10(1000.0 * rcvdPower); //convert to dBm
-
-	if (fpclassify(rcvdPower) != FP_NORMAL)
-	{
+  if(rcvdPower > 0.0) {
+    	rcvdPower = 10.0 * log10(1000.0 * rcvdPower); //convert to dBm
+  } else {
 		return RF_ZERO_POWER_DBM;
 	}
 

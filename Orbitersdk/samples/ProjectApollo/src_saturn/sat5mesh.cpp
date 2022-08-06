@@ -931,7 +931,8 @@ void SaturnV::SetThirdStageMesh (double offset)
 	VECTOR3 dockrot = {0,1,0};
 	SetDockParams(dockpos, dockdir, dockrot);
 
-	SetCameraOffset (_V(-1,1.0,32.4 + offset));
+	VECTOR3 camoffset = _V(-1,1.0,32.4 + offset);
+	SetCameraOffset (camoffset);
 	SetView(23.1 + offset, false);
 }
 

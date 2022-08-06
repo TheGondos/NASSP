@@ -323,17 +323,7 @@ void LEM_ASA::PulseTimestep(int* ASAPulses)
 
 	for (i = 3;i < 6;i++)
 	{
-		ASAPulses[i] = 32 + (int)(RemainingDeltaVel.data[i - 3] * AccPulsesScal);
-
-		if (ASAPulses[i] > 61)
-		{
-			ASAPulses[i] = 61;
-		}
-		else if (ASAPulses[i] < 3)
-		{
-			ASAPulses[i] = 3;
-		}
-
+		ASAPulses[i] = (int)std::clamp(32.0 + RemainingDeltaVel.data[i - 3] * AccPulsesScal, 3.0, 61.0);
 		RemainingDeltaVel.data[i - 3] -= (1.0 / AccPulsesScal)*(ASAPulses[i] - 32);
 	}
 }

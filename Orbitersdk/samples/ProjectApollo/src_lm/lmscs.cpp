@@ -710,7 +710,7 @@ void ATCA::Timestep(double simt, double simdt) {
 			if (abs(SummingAmplifierOutput[i]) > 0.5)
 			{
 				double V_norm = abs(SummingAmplifierOutput[i] / 10.0);
-				Limiter(V_norm, 1.0);
+				Limiter(V_norm, 0.9999);
 				double t_on = PRMOnTime(V_norm);
 				double t_off = PRMOffTime(V_norm);
 				PRMPulse[i] = PRMTimestep(i, simdt, t_on, t_off);

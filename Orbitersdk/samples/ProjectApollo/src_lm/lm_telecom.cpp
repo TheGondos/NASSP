@@ -113,7 +113,7 @@ void LM_VHF::Init(LEM *vessel, h_HeatLoad *vhfh){
 		lem->lm_vhf_to_csm_csm_connector.ConnectTo(GetVesselConnector(csm, VIRTUAL_CONNECTOR_PORT, VHF_RNG));
 	}
 
-	RCVDfreqRCVR_A = 0.0;
+	RCVDfreqRCVR_A = 9832.8;
 	RCVDpowRCVR_A = 0.0;
 	RCVDgainRCVR_A = 0.0;
 	RCVDPhaseRCVR_A = 0.0;
@@ -2803,7 +2803,7 @@ void LEM_SteerableAnt::Timestep(double simdt){
 	//Moon in the way
 	Moonrelang = dotp(unit(R_M - pos), unit(R_E - pos));
 
-	if (Moonrelang > cos(asin(oapiGetSize(hMoon) / length(R_M - pos))))
+	if (Moonrelang > cos(asin(std::clamp(oapiGetSize(hMoon) / length(R_M - pos), -1.0, 1.0))))
 	{
 		SignalStrength = 0.0;
 	}
@@ -3013,7 +3013,7 @@ void LM_OMNI::Timestep()
 	//Moon in the way
 	Moonrelang = dotp(unit(R_M - pos), unit(R_E - pos));
 
-	if (Moonrelang > cos(asin(oapiGetSize(hMoon) / length(R_M - pos))))
+	if (Moonrelang > cos(asin(std::clamp(oapiGetSize(hMoon) / length(R_M - pos),-1.0,1.0))))
 	{
 		SignalStrength = 0.0;
 	}

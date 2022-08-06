@@ -151,7 +151,7 @@ void Thermal_engine::GetSun() {
 	PlanetDistanceFactor = (pow(pl_radius, 2)) / myr.sqmod();
 	
 	float angle = (float) myr.angle(sun);	
-	if (angle > asin(pl_radius / myr.mod())) 
+	if (angle > asin(std::clamp(pl_radius / myr.mod(), -1.0, 1.0))) 
 		InSun = true;
 	else 
 		InSun = false;

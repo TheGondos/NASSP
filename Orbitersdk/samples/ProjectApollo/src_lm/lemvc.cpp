@@ -836,7 +836,7 @@ void LEM::InitPanelVC() {
 	srf[SRF_INDICATORREDVC] = oapiLoadTexture("ProjectApollo/VC/IndicatorRed.dds");
 	srf[SRF_LEM_MASTERALARMVC] = oapiLoadTexture("ProjectApollo/VC/lem_master_alarm.dds");
 	srf[SRF_DEDA_LIGHTSVC] = oapiLoadTexture("ProjectApollo/VC/ags_lights.dds");
-	srf[SRF_AOTFONT_VC] = oapiLoadTexture("ProjectApollo/VC/aot_font.dds");
+	srf[SRF_AOTFONT_VC] = oapiLoadTexture("Bitmaps/ProjectApollo/aot_font.bmp");
 	srf[SRF_ENGSTARTSTOP_VC] = oapiLoadTexture("ProjectApollo/VC/LMEngStartStop.dds");
 
 	oapiSetSurfaceColourKey(srf[SRF_VC_DIGITALDISP], ck);
