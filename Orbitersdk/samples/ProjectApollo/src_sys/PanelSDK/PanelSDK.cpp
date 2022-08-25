@@ -130,7 +130,7 @@ bool  PanelSDK::LoadPanel(int id)
 {
 if (id<NumPanels) {
 Current_Panel=id;
-oapiRegisterPanelBackground (panels[id]->MakeYourBackground(), PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_BOTTOM);//, (unsigned int)panels[id]->transparent_color);
+oapiRegisterPanelBackground (panels[id]->MakeYourBackground(), PANEL_ATTACH_BOTTOM|PANEL_MOVEOUT_BOTTOM, (unsigned int)panels[id]->transparent_color);
 oapiSetPanelNeighbours (panels[id]->neighbours[0],
 						panels[id]->neighbours[1],
 						panels[id]->neighbours[2],

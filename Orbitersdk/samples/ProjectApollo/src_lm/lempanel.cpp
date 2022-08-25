@@ -1567,7 +1567,7 @@ bool LEM::clbkLoadPanel (int id) {
 
 	switch (id) {
 	case LMPANEL_MAIN: // LEM Main panel
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterMFD (MFD_LEFT,  mfds_left);
 		oapiRegisterMFD (MFD_RIGHT, mfds_right);
@@ -1693,7 +1693,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;	
 		
 	case LMPANEL_RIGHTWINDOW: // LEM Right Window
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		fdaiRight.RegisterMe(AID_FDAI_RIGHT, 36, 445);
 		fdaiRight.SetLMmode();
@@ -1726,7 +1726,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_LEFTWINDOW: // LEM Left Window
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		fdaiLeft.RegisterMe(AID_FDAI_LEFT, 1517, 445); // Was 135,625
 		fdaiLeft.SetLMmode();
@@ -1760,7 +1760,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_LPDWINDOW: // LPD Window
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		fdaiLeft.RegisterMe(AID_FDAI_LEFT, 1320, 243); // Was 135,625
 		fdaiLeft.SetLMmode();
@@ -1808,7 +1808,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_RNDZWINDOW: // LEM Rendezvous Window
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_LEM_COAS1, _R(833, 0, 1664, 831), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_LBDOWN, PANEL_MAP_BACKGROUND);
 
@@ -1817,7 +1817,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_LEFTPANEL: // LEM Left Panel
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);	
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);	
 
 		oapiRegisterPanelArea (AID_LEM_P11_CB_ROW1,					_R( 264,  85,  1513,  115), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,										PANEL_MAP_BACKGROUND);
 		oapiRegisterPanelArea (AID_LEM_P11_CB_ROW2,					_R( 264,  258, 1513,  288), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,										PANEL_MAP_BACKGROUND);
@@ -1835,7 +1835,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_RIGHTPANEL: // LEM Right Panel
-		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT);//,  g_Param.col[4]);	
+		oapiRegisterPanelBackground (hBmp,PANEL_ATTACH_TOP|PANEL_ATTACH_BOTTOM|PANEL_ATTACH_LEFT|PANEL_MOVEOUT_RIGHT,  g_Param.col[4]);	
 
 		oapiRegisterPanelArea (AID_LM_EPS_DC_VOLTMETER,             _R( 110,  706, 209,  804), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,                PANEL_MAP_BACKGROUND);
 		oapiRegisterPanelArea (AID_LM_EPS_DC_AMMETER,               _R( 110,  818, 209,  916), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,                PANEL_MAP_BACKGROUND);
@@ -1871,7 +1871,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_AOTVIEW: // LEM Alignment Optical Telescope View
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_AOT_RETICLE_KNOB,				_R(1427,  694, 1502, 1021), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_PRESSED|PANEL_MOUSE_UP,  PANEL_MAP_BACKGROUND);
 		oapiRegisterPanelArea(AID_AOT_SHAFT_KNOB,				_R(1433,    0, 1496,  156), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,				      PANEL_MAP_BACKGROUND);
@@ -1883,7 +1883,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_ECSPANEL: // LEM ECS Panel 
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_LEM_SGD_LEVER,         _R( 204,  129,  204+126,  129+131), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN,                 PANEL_MAP_BACKGROUND);
         oapiRegisterPanelArea(AID_LEM_ECS_OCM,           _R( 640,  160,     1290,      520), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN|PANEL_MOUSE_UP,  PANEL_MAP_BACKGROUND);
@@ -1898,7 +1898,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_DOCKVIEW: // LEM Docking View
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		//If a panel has no panel area at all then Orbiter doesn't get rid of the panel areas from the previous panel when the new one is loaded. Orbiter bug?
 		oapiRegisterPanelArea(AID_DUMMY_PANEL_AREA, _R(10, 10, 20, 20), PANEL_REDRAW_NEVER, PANEL_MOUSE_IGNORE, PANEL_MAP_BACKGROUND);
@@ -1908,7 +1908,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_AOTZOOM: // LEM Alignment Optical Telescope Zoom
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_AOT_RETICLE,						_R( 408,  0, 1458,  1050), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_IGNORE,			  PANEL_MAP_BACKGROUND);
 
@@ -1917,7 +1917,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_LEFTZOOM: // LEM Left Window COAS View
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		//If a panel has no panel area at all then Orbiter doesn't get rid of the panel areas from the previous panel when the new one is loaded. Orbiter bug?
 		oapiRegisterPanelArea(AID_DUMMY_PANEL_AREA, _R(10, 10, 20, 20), PANEL_REDRAW_NEVER, PANEL_MOUSE_IGNORE, PANEL_MAP_BACKGROUND);
@@ -1927,7 +1927,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_UPPERHATCH: // LEM Upper Hatch
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_LEM_UPPER_HATCH, _R(637, 407, 1279, 962), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN, PANEL_MAP_BACKGROUND);
 
@@ -1944,7 +1944,7 @@ bool LEM::clbkLoadPanel (int id) {
 		break;
 
 	case LMPANEL_FWDHATCH: // LEM Forward Hatch
-		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT);//, g_Param.col[4]);
+		oapiRegisterPanelBackground(hBmp, PANEL_ATTACH_TOP | PANEL_ATTACH_BOTTOM | PANEL_ATTACH_LEFT | PANEL_MOVEOUT_RIGHT, g_Param.col[4]);
 
 		oapiRegisterPanelArea(AID_LEM_FWD_HATCH, _R(966, 401, 1734, 852), PANEL_REDRAW_ALWAYS, PANEL_MOUSE_DOWN, PANEL_MAP_BACKGROUND);
 
