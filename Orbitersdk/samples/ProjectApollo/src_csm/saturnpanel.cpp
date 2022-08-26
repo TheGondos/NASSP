@@ -671,16 +671,14 @@ void Saturn::InitPanel (int panel)
 }
 
 int Saturn::GetRenderViewportIsWideScreen() {
-/*
-	HMODULE hpac = GetModuleHandle("Modules\\Startup\\ProjectApolloConfigurator.dll");
-	if (hpac) {
-		int (*pacRenderViewportIsWideScreen)();
-		pacRenderViewportIsWideScreen = (int (*)()) GetProcAddress(hpac, "pacRenderViewportIsWideScreen");
-		if (pacRenderViewportIsWideScreen) {
-			return pacRenderViewportIsWideScreen();
-		}
-	}*/
-	return 0;
+	int w,h;
+	oapiGetViewportSize(&w, &h);
+	if (((double) w) / ((double) h) < 1.47)
+		return 0;
+	else if (((double) w) / ((double) h) < 1.69)
+		return 1;
+	else
+		return 2;
 }
 
 bool Saturn::clbkLoadPanel (int id) {
