@@ -423,6 +423,7 @@ add_library(LEM SHARED
     ${SRC_DIR}/src_lm/yaAGS/aea_engine.c
     ${SRC_DIR}/src_lm/yaAGS/aea_engine_init.c
     ${SRC_DIR}/src_lm/yaAGS/OutputAPI_AGS.c
+    ${SRC_DIR}/src_sys/inertial.cpp
 )
 
 
@@ -1005,6 +1006,7 @@ add_library(Saturn1b SHARED
     ${SRC_DIR}/src_sys/yaAGC/random.c
     ${SRC_DIR}/src_sys/yaAGC/rfopen.c
     ${SRC_DIR}/src_aux/IMFD/IMFD_Client.cpp
+    ${SRC_DIR}/src_sys/inertial.cpp
 )
 
 target_include_directories(Saturn1b PUBLIC
@@ -1111,6 +1113,7 @@ add_library(Saturn5 SHARED
     ${SRC_DIR}/src_sys/yaAGC/random.c
     ${SRC_DIR}/src_sys/yaAGC/rfopen.c
     ${SRC_DIR}/src_aux/IMFD/IMFD_Client.cpp
+    ${SRC_DIR}/src_sys/inertial.cpp
 )
 
 target_include_directories(Saturn5 PUBLIC
@@ -1185,6 +1188,7 @@ add_library(SIVb SHARED
     ${SRC_DIR}/src_sys/powersource.cpp
     ${SRC_DIR}/src_saturn/sivb.cpp
     ${SRC_DIR}/src_sys/pyro.cpp
+    ${SRC_DIR}/src_sys/inertial.cpp
 )
 
 target_include_directories(SIVb PUBLIC
