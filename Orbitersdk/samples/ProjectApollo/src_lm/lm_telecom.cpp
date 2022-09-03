@@ -473,18 +473,22 @@ void LM_PCM::Timestep(double simt)
 		}
 	}
 	else {
-		tx_size = (int)((simt - last_update) / 0.00015625);
-		// sprintf(oapiDebugString(),"Need to send %d bytes",tx_size);
-		if(tx_size > 0){
-			last_update = simt;
-			if(tx_size < 1024){
-				tx_offset = 0;
-				while(tx_offset < tx_size){
-					generate_stream_hbr();
-					tx_offset++;
-				}			
-				perform_io(simt);
+		if(last_update != 0) {
+			tx_size = (int)((simt - last_update) / 0.00015625);
+			// sprintf(oapiDebugString(),"Need to send %d bytes",tx_size);
+			if(tx_size > 0){
+				last_update = simt;
+				if(tx_size < 1024){
+					tx_offset = 0;
+					while(tx_offset < tx_size){
+						generate_stream_hbr();
+						tx_offset++;
+					}			
+					perform_io(simt);
+				}
 			}
+		} else {
+			last_update = simt;
 		}
 	}
 }
