@@ -250,6 +250,7 @@ static inline bool papiReadScenario_intarr(const char *line, const char *item, i
 				sscanf(line + pos, "%d %n", &v[i], &cur);
 				pos += cur;
 			}
+			return true;
 		}
 	}
 	return false;
