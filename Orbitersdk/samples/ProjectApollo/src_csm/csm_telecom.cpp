@@ -1335,7 +1335,11 @@ void OMNI::TimeStep()
 	EarthSignalDist = length(pos - GroundTransmitterRFProperties.GlobalPosition) - oapiGetSize(hEarth); //distance from earth's surface in meters
 
 	RecvdOMNIPower = GroundTransmitterRFProperties.Power * GroundTransmitterRFProperties.Gain * OMNI_Gain * pow(OMNIWavelength / (4 * PI*EarthSignalDist), 2); //maximum recieved power to the HGA on axis in watts
-	RecvdOMNIPower_dBm = 10 * log10(1000 * RecvdOMNIPower);
+	if(RecvdOMNIPower > 0.0)
+		RecvdOMNIPower_dBm = 10 * log10(1000 * RecvdOMNIPower);
+	else
+		RecvdOMNIPower_dBm = RF_ZERO_POWER_DBM;
+
 	SignalStrengthScaleFactor = SBandAntenna::dBm2SignalStrength(RecvdOMNIPower_dBm);
 
 	if (relang < 160*RAD)
