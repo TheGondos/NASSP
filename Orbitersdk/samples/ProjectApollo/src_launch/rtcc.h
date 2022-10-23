@@ -221,8 +221,8 @@ struct MED_M72
 struct TwoImpulseOpt
 {
 	int mode;		//1 = Corrective Combination (NCC), 2 = Multiple Solution/Two-Impulse Computation (TPI), 3 = Single Solution, 4 = Transfer Plan, 5 = DKI/SPQ
-	double T1;	//GET of the maneuver
-	double T2;	// GET of the arrival
+	double T1;	//GMT of the maneuver
+	double T2;	// GMT of the arrival
 	EphemerisData sv_A;		//Chaser state vector
 	EphemerisData sv_P;		//Target state vector
 	int ChaserVehicle = 1;	//1 = CSM, 3 = LEM
@@ -263,6 +263,7 @@ struct TwoImpulseOpt
 	double DH = 0.0;
 	double PhaseAngle = 0.0;
 	double WT = 0.0;
+	double Elev = 0.0;
 };
 
 struct LambertMan //Data for Lambert targeting
@@ -356,8 +357,9 @@ struct AP7TPIPADOpt
 	double GETbase; //usually MJD at launch
 	double TIG; //Time of Ignition
 	VECTOR3 dV_LVLH; //Delta V in LVLH coordinates
-	SV sv_A;
-	SV sv_P;
+	EphemerisData sv_A;
+	EphemerisData sv_P;
+	double mass;
 };
 
 struct AP9LMTPIPADOpt
@@ -586,7 +588,7 @@ struct EarthEntryPADOpt
 	SV sv0;
 	int Thruster = RTCC_ENGINETYPE_CSMSPS;
 	double InitialBank = 0.0;
-	double GLevel = 0.05;
+	double GLevel = 0.2;
 };
 
 struct LunarEntryPADOpt
@@ -642,9 +644,10 @@ struct P27Opt
 
 struct AGSSVOpt
 {
-	SV sv;
+	EphemerisData sv;
 	MATRIX3 REFSMMAT;
 	bool csm;
+	bool landed = false;
 };
 
 struct SkyRendOpt
@@ -2544,7 +2547,7 @@ public:
 	void RotateSVToSOI(EphemerisData &sv);
 	EphemerisData RotateSVToSOI(EphemerisData2 sv);
 	void NavCheckPAD(SV sv, AP7NAV &pad, double GETbase, double GET = 0.0);
-	void AGSStateVectorPAD(AGSSVOpt *opt, AP11AGSSVPAD &pad);
+	void AGSStateVectorPAD(const AGSSVOpt &opt, AP11AGSSVPAD &pad);
 	void AP11LMManeuverPAD(AP11LMManPADOpt *opt, AP11LMMNV &pad);
 	void AP11ManeuverPAD(AP11ManPADOpt *opt, AP11MNV &pad);
 	void AP10CSIPAD(AP10CSIPADOpt *opt, AP10CSI &pad);
@@ -2606,6 +2609,7 @@ public:
 	VECTOR3 LOICrewChartUpdateProcessor(SV sv0, double GETbase, MATRIX3 REFSMMAT, double p_EMP, double LOI_TIG, VECTOR3 dV_LVLH_LOI, double p_T, double y_T);
 	SV coast(SV sv0, double dt);
 	EphemerisData coast(EphemerisData sv1, double dt);
+	EphemerisData coast(EphemerisData sv1, double dt, int veh);
 	EphemerisData coast(EphemerisData sv1, double dt, double Weight, double Area, double KFactor = 1.0);
 	VECTOR3 HatchOpenThermalControl(VESSEL *v, MATRIX3 REFSMMAT);
 	VECTOR3 PointAOTWithCSM(MATRIX3 REFSMMAT, SV sv, int AOTdetent, int star, double dockingangle);
@@ -2750,6 +2754,10 @@ public:
 	void PMMIEV(double T_L);
 	//SLV Targeting Load Module
 	void PMMPAR(VECTOR3 RT, VECTOR3 VT, double TT);
+	//Perigee Adjust
+	void PMMPAD(AEGBlock sv, double mass, double THT, double dt, double H_P, int Thruster, double DPSScaleFactor);
+	//Perigee Adjust Display
+	void PMDPAD();
 	//Mission Planning Print Load Module
 	void PMXSPT(std::string source, int n);
 	void PMXSPT(std::string source, std::vector<std::string> message);
@@ -3257,6 +3265,18 @@ public:
 		double ThresholdTime = 0.0;
 	} med_k20;
 
+	//Perifocus Adjust Computation
+	struct MED_K28
+	{
+		int VEH = RTCC_MPT_CSM;
+		double VectorTime = 0.0;
+		double ThresholdTime = 0.0;
+		double TimeIncrement = 0.0;
+		double H_P = 0.0;
+		int Thruster = RTCC_ENGINETYPE_CSMSPS;
+		double DPSScaleFactor = 0.0;
+	} med_k28;
+
 	//Two Impulse Computation
 	struct MED_K30
 	{
@@ -3396,6 +3416,30 @@ public:
 	BurnParameterTable PZBURN;
 	LWPInputTable PZSLVCON;
 	SLVTargetingParametersTable PZSLVTAR;
+
+	struct PerigeeAdjustTableEntry
+	{
+		double Pitch = 0.0;
+		double TIG = 0.0;
+		double DV = 0.0;
+		double DT = 0.0;
+		double TA = 0.0;
+		double H = 0.0;
+		double H_A = 0.0;
+	};
+
+	struct PerigeeAdjustTable
+	{
+		int Sol = 0;
+		double T_elem = 0.0;
+		double T_thresh = 0.0;
+		double TimeStep = 0.0;
+		double H_A = 0.0;
+		double H_P = 0.0;
+		PerigeeAdjustTableEntry Man[6];
+	} PZPADDIS;
+
+	std::vector<std::string> MSK0050Buffer; //Perigee Adjust Display
 
 	std::vector<VECTOR3> EZJGSTAR;
 
@@ -4753,6 +4797,7 @@ private:
 	bool CalculationMTP_D(int fcn, LPVOID &pad, char * upString = NULL, char * upDesc = NULL, char * upMessage = NULL);
 	bool CalculationMTP_F(int fcn, LPVOID &pad, char * upString = NULL, char * upDesc = NULL, char * upMessage = NULL);
 	bool CalculationMTP_G(int fcn, LPVOID &pad, char * upString = NULL, char * upDesc = NULL, char * upMessage = NULL);
+	bool CalculationMTP_H1(int fcn, LPVOID &pad, char * upString = NULL, char * upDesc = NULL, char * upMessage = NULL);
 
 	//Generalized Contact Generator
 	void EMGENGEN(EphemerisDataTable2 &ephemeris, ManeuverTimesTable &MANTIMES, const StationTable &stationlist, int body, OrbitStationContactsTable &res, LunarStayTimesTable *LUNSTAY = NULL);

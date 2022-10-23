@@ -1483,6 +1483,11 @@ protected:
 
 	int buildstatus;
 
+	///
+	/// \brief NASSP scenario version
+	///
+	int nasspver;
+
 	//
 	// Current mission time and mission times for stage events.
 	//
