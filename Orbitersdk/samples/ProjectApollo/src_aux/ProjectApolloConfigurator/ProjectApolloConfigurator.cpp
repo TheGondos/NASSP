@@ -29,10 +29,10 @@
 // To force Orbitersdk.h to use <fstream> in any compiler version
 #pragma include_alias( <fstream.h>, <fstream> )
 #include "Orbitersdk.h"
-#include <commctrl.h>
-#include "resource.h"
 #include <stdio.h>
-#include "vesim.h"
+#include <cstring>
+#include <imgui.h>
+//#include "vesim.h"
 
 // ==============================================================
 // Some global parameters
@@ -48,8 +48,6 @@ class ProjectApolloConfigurator;
 /// \ingroup DLLsupport
 ///
 static struct {
-	HINSTANCE hInst;	
-	HWND hDlgTabs[MAX_TABNUM];
 	ProjectApolloConfigurator *item;
 
 	int Saturn_MainPanelSplit;
@@ -84,17 +82,17 @@ static struct {
 class ProjectApolloConfigurator: public LaunchpadItem {
 public:
 	ProjectApolloConfigurator();
-	char *Name() { return "Project Apollo Configuration"; }
-	char *Description() { return "Global configuration for Project Apollo - NASSP."; }
-	bool clbkOpen (HWND hLaunchpad);
-	int clbkWriteConfig ();
-	static BOOL CALLBACK DlgProcFrame (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static BOOL CALLBACK DlgProcVisual (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static BOOL CALLBACK DlgProcControl (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	const char *Name() override { return "Project Apollo Configuration"; }
+	const char *Description() override { return "Global configuration for Project Apollo - NASSP."; }
+	int clbkWriteConfig () override;
+	void Draw() override;
+
+    void DrawVisuals();
+	void DrawControls();
+	void DrawMisc();
 
 protected:
 	void WriteConfig(FILEHANDLE hFile);
-	static void UpdateControlState(HWND hWnd);
 };
 
 ProjectApolloConfigurator::ProjectApolloConfigurator (): LaunchpadItem ()
@@ -140,13 +138,6 @@ ProjectApolloConfigurator::ProjectApolloConfigurator (): LaunchpadItem ()
 		}
 	}	
 	oapiCloseFile (hFile, FILE_IN);
-}
-
-bool ProjectApolloConfigurator::clbkOpen (HWND hLaunchpad)
-{
-	// respond to user double-clicking the item in the list
-	DialogBox(gParams.hInst, MAKEINTRESOURCE (IDD_MYFRAME), hLaunchpad, DlgProcFrame);
-	return true;
 }
 
 int ProjectApolloConfigurator::clbkWriteConfig ()
@@ -221,447 +212,83 @@ void ProjectApolloConfigurator::WriteConfig(FILEHANDLE hFile)
 	oapiCloseFile (hFile, FILE_OUT);
 }
 
-BOOL CALLBACK ProjectApolloConfigurator::DlgProcFrame (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void ProjectApolloConfigurator::DrawVisuals()
 {
-	TCITEM tabitem;
-    HWND hTab;
-    NMHDR *hdr;
-	POINT pt;
-	RECT rc;
-	char buffer[100];
-	int i;
+	ImGui::BeginGroupPanel("Mesh resolution");
+    ImGui::RadioButton("High resolution", &gParams.Saturn_LowRes, 1); ImGui::SameLine();
+    ImGui::RadioButton("Low resolution",  &gParams.Saturn_LowRes, 0);
+	ImGui::EndGroupPanel();
 
-	switch (uMsg) {
-	case WM_INITDIALOG: // display the current value
+	ImGui::BeginGroupPanel("CSM main panel");
+    ImGui::RadioButton("Single, continuous panel", &gParams.Saturn_MainPanelSplit, 0); ImGui::SameLine();
+    ImGui::RadioButton("Multiple, split panels",  &gParams.Saturn_MainPanelSplit, 1);
+	ImGui::EndGroupPanel();
 
-	    hTab = GetDlgItem(hWnd, IDC_TAB); 
-		memset(&tabitem, 0, sizeof(tabitem));	
-    
-		tabitem.mask = TCIF_TEXT;
-		tabitem.pszText = "Visuals";
-		SendMessage(hTab, TCM_INSERTITEM, 0, (LPARAM) &tabitem);
+	ImGui::BeginGroupPanel("CSM G&N Lower Equipment Bay panel");
+    ImGui::RadioButton("Single, continuous panel##GN", &gParams.Saturn_GNSplit, 0); ImGui::SameLine();
+    ImGui::RadioButton("Multiple, split panels##GN",  &gParams.Saturn_GNSplit, 1);
+	ImGui::EndGroupPanel();
 
-		tabitem.pszText = "Controls";
-		SendMessage(hTab, TCM_INSERTITEM, 1, (LPARAM) &tabitem);
-
-		tabitem.pszText = "Miscellaneous";
-		SendMessage(hTab, TCM_INSERTITEM, 2, (LPARAM) &tabitem);
-
-		// set tab control display area
-		GetWindowRect(hTab, &rc);
-		TabCtrl_AdjustRect(hTab, false, &rc);
-		pt.x = rc.left;
-		pt.y = rc.top;
-		ScreenToClient(hWnd, &pt);
-
-		// create the child windows
-		gParams.hDlgTabs[0] = CreateDialog(gParams.hInst, MAKEINTRESOURCE(IDD_PAGEVISUAL), hWnd, (DLGPROC) DlgProcVisual);
-		MoveWindow(gParams.hDlgTabs[0], pt.x, pt.y, rc.right - rc.left, rc.bottom - rc.top, false);
-		ShowWindow(gParams.hDlgTabs[0], SW_SHOW);
-
-		gParams.hDlgTabs[1] = CreateDialog(gParams.hInst, MAKEINTRESOURCE(IDD_PAGECONTROL), hWnd, (DLGPROC) DlgProcControl);
-		MoveWindow(gParams.hDlgTabs[1], pt.x, pt.y, rc.right - rc.left, rc.bottom - rc.top, false);
-		ShowWindow(gParams.hDlgTabs[1], SW_HIDE);
-
-		gParams.hDlgTabs[2] = CreateDialog(gParams.hInst, MAKEINTRESOURCE(IDD_PAGEMISC), hWnd, (DLGPROC) DlgProcControl);
-		MoveWindow(gParams.hDlgTabs[2], pt.x, pt.y, rc.right - rc.left, rc.bottom - rc.top, false);
-		ShowWindow(gParams.hDlgTabs[2], SW_HIDE);
-
-		return TRUE;
-
-	case WM_NOTIFY:
-	     hdr = (LPNMHDR) lParam;
-	     if (hdr->code == TCN_SELCHANGING || hdr->code == TCN_SELCHANGE) {
-		   int index;
-		   index = TabCtrl_GetCurSel(hdr->hwndFrom);
-		   if (index >= 0 && index < MAX_TABNUM) 
-			   ShowWindow(gParams.hDlgTabs[index], (hdr->code == TCN_SELCHANGE) ? SW_SHOW : SW_HIDE);
-	     }
-	     break;
- 
-	case WM_COMMAND:
-			switch (LOWORD (wParam)) {
-			case IDOK:    // store the value
-				// Visuals Tab
-				if (SendDlgItemMessage (gParams.hDlgTabs[0], IDC_RADIO_HIGHRES, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_LowRes = 1;
-				} else {
-					gParams.Saturn_LowRes = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[0], IDC_RADIO_SINGLEPANEL, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_MainPanelSplit = 1;
-				} else {
-					gParams.Saturn_MainPanelSplit = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[0], IDC_RADIO_GNSINGLEPANEL, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_GNSplit = 1;
-				} else {
-					gParams.Saturn_GNSplit = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[0], IDC_CHECK_FDAIDISABLED, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_FDAIDisabled = 1;
-				} else {
-					gParams.Saturn_FDAIDisabled = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[0], IDC_CHECK_FDAISMOOTH, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_FDAISmooth = 1;
-				} else {
-					gParams.Saturn_FDAISmooth = 0;
-				}
-
-				// Controls Tab
-				if (SendDlgItemMessage (gParams.hDlgTabs[1], IDC_CHECK_RHC, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_RHC = -1;
-				} else {
-					SendDlgItemMessage(gParams.hDlgTabs[1], IDC_EDIT_RHC, WM_GETTEXT, 3, (LPARAM) (LPCTSTR) buffer);
-					if (sscanf(buffer, "%i", &i) == 1) {
-						gParams.Saturn_RHC = i;
-					} else {
-						gParams.Saturn_RHC = -1;
-					}
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[1], IDC_CHECK_THC, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_THC = -1;
-				} else {
-					SendDlgItemMessage(gParams.hDlgTabs[1], IDC_EDIT_THC, WM_GETTEXT, 3, (LPARAM) (LPCTSTR) buffer);
-					if (sscanf(buffer, "%i", &i) == 1) {
-						gParams.Saturn_THC = i;
-					} else {
-						gParams.Saturn_THC = -1;
-					}
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[1], IDC_CHECK_RHCTHCTOGGLE, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_RHCTHCToggle = 0;
-				} else {
-					gParams.Saturn_RHCTHCToggle = 1;
-				}
-
-				SendDlgItemMessage(gParams.hDlgTabs[1], IDC_EDIT_RHCTHCTOGGLE, WM_GETTEXT, 3, (LPARAM) (LPCTSTR) buffer);
-				if (sscanf(buffer, "%i", &i) == 1) {
-					gParams.Saturn_RHCTHCToggleId = i;
-				} else {
-					gParams.Saturn_RHCTHCToggleId = -1;
-				}
-
-				if (SendDlgItemMessage(gParams.hDlgTabs[1], IDC_CHECK_RSL, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_RSL = -1;
-				}
-				else {
-					SendDlgItemMessage(gParams.hDlgTabs[1], IDC_EDIT_RSL, WM_GETTEXT, 3, (LPARAM)(LPCTSTR)buffer);
-					if (sscanf(buffer, "%i", &i) == 1) {
-						gParams.Saturn_RSL = i;
-					}
-					else {
-						gParams.Saturn_RSL = -1;
-					}
-				}
-
-				if (SendDlgItemMessage(gParams.hDlgTabs[1], IDC_CHECK_TJT, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_TSL = -1;
-				}
-				else {
-					SendDlgItemMessage(gParams.hDlgTabs[1], IDC_EDIT_TJT, WM_GETTEXT, 3, (LPARAM)(LPCTSTR)buffer);
-					if (sscanf(buffer, "%i", &i) == 1) {
-						gParams.Saturn_TSL = i;
-					}
-					else {
-						gParams.Saturn_TSL = -1;
-					}
-				}
-
-				if (SendDlgItemMessage(gParams.hDlgTabs[1], IDC_CHECK_VESIM, BM_GETCHECK, 0, 0) == BST_UNCHECKED) {
-					gParams.Saturn_VESIM = 0;
-				}
-				else {
-					gParams.Saturn_VESIM = 1;
-				}
-
-				// Miscellaneous Tab
-				SendDlgItemMessage(gParams.hDlgTabs[2], IDC_EDIT_TIMEACC, WM_GETTEXT, 4, (LPARAM) (LPCTSTR) buffer);
-				if (sscanf(buffer, "%i", &i) == 1) {
-					gParams.Saturn_MaxTimeAcceleration = i;
-				} else {
-					gParams.Saturn_MaxTimeAcceleration = 100;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[2], IDC_CHECK_MULTITHREAD, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_MultiThread = 1;
-				} else {
-					gParams.Saturn_MultiThread = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[2], IDC_CHECK_VAGCCHECKLISTAUTOSLOW, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_VAGCChecklistAutoSlow = 1;
-				} else {
-					gParams.Saturn_VAGCChecklistAutoSlow = 0;
-				}
-				if (SendDlgItemMessage (gParams.hDlgTabs[2], IDC_CHECK_VAGCCHECKLISTAUTOENABLED, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_VAGCChecklistAutoEnabled = 1;
-				} else {
-					gParams.Saturn_VAGCChecklistAutoEnabled = 0;
-				}
-				if (SendDlgItemMessage(gParams.hDlgTabs[2], IDC_CHECK_VCINFOENABLED, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-					gParams.Saturn_VcInfoEnabled = 1;
-				}
-				else {
-					gParams.Saturn_VcInfoEnabled = 0;
-				}
-
-				EndDialog (hWnd, 0);
-				return 0;
-
-			case IDCANCEL:
-				EndDialog (hWnd, 0);
-				return 0;
-			}
-		
-		break;
+	ImGui::BeginGroupPanel("FDAI");
+	ImGui::Checkbox("Disabled", (bool *)&gParams.Saturn_FDAIDisabled);
+	ImGui::Checkbox("Smooth scrolling", (bool *)&gParams.Saturn_FDAISmooth);
+	ImGui::EndGroupPanel();
+}
+void ProjectApolloConfigurator::DrawControls()
+{
+	
+}
+void ProjectApolloConfigurator::DrawMisc()
+{
+	ImGui::BeginGroupPanel("Time Acceleration");
+	if(ImGui::InputInt("Max. time acceleration (0=unlimited)", &gParams.Saturn_MaxTimeAcceleration)) {
+		gParams.Saturn_MaxTimeAcceleration = std::clamp(gParams.Saturn_MaxTimeAcceleration, 0, 100);
 	}
-	return 0;
+	ImGui::Checkbox("Multi-Threading in time acceleration", (bool *)&gParams.Saturn_MultiThread);
+	ImGui::EndGroupPanel();
+
+	ImGui::BeginGroupPanel("Checklists");
+	ImGui::Checkbox("Slow automatic checklist execution (e.g. for demonstrations)", (bool *)&gParams.Saturn_VAGCChecklistAutoSlow);
+	ImGui::Checkbox("Enable automatic checklist execution", (bool *)&gParams.Saturn_VAGCChecklistAutoEnabled);
+	ImGui::EndGroupPanel();
+
+	ImGui::BeginGroupPanel("Other");
+	ImGui::Checkbox("Enable VC flight instruments in debug string (e.g. during PDI)", (bool *)&gParams.Saturn_VcInfoEnabled);
+	ImGui::EndGroupPanel();
 }
 
-BOOL CALLBACK ProjectApolloConfigurator::DlgProcVisual (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void ProjectApolloConfigurator::Draw ()
 {
-	switch (uMsg) {
-	case WM_INITDIALOG: // display the current value
-		SendDlgItemMessage(hWnd, IDC_RADIO_HIGHRES,   BM_SETCHECK, gParams.Saturn_LowRes?BST_UNCHECKED:BST_CHECKED, 0);
-		SendDlgItemMessage(hWnd, IDC_RADIO_LOWRES, BM_SETCHECK, gParams.Saturn_LowRes?BST_CHECKED:BST_UNCHECKED, 0);
+        const char *tabs[] = {
+            "Visuals", "Controls", "Miscellaneous",
+        };
 
-		SendDlgItemMessage(hWnd, IDC_RADIO_SINGLEPANEL,   BM_SETCHECK, gParams.Saturn_MainPanelSplit?BST_UNCHECKED:BST_CHECKED, 0);
-		SendDlgItemMessage(hWnd, IDC_RADIO_SPLITTEDPANEL, BM_SETCHECK, gParams.Saturn_MainPanelSplit?BST_CHECKED:BST_UNCHECKED, 0);
+        void (ProjectApolloConfigurator::* func[])() = {
+            &ProjectApolloConfigurator::DrawVisuals,
+			&ProjectApolloConfigurator::DrawControls,
+			&ProjectApolloConfigurator::DrawMisc
+        };
 
-		SendDlgItemMessage(hWnd, IDC_RADIO_GNSINGLEPANEL, BM_SETCHECK, gParams.Saturn_GNSplit?BST_UNCHECKED:BST_CHECKED, 0);
-		SendDlgItemMessage(hWnd, IDC_RADIO_GNSPLITTEDPANEL, BM_SETCHECK, gParams.Saturn_GNSplit?BST_CHECKED:BST_UNCHECKED, 0);
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_FDAIDISABLED, BM_SETCHECK, gParams.Saturn_FDAIDisabled?BST_CHECKED:BST_UNCHECKED, 0);
-		SendDlgItemMessage(hWnd, IDC_CHECK_FDAISMOOTH, BM_SETCHECK, gParams.Saturn_FDAISmooth?BST_CHECKED:BST_UNCHECKED, 0);
-		
-		return TRUE;
-	}
-	return 0;
-}
-
-BOOL CALLBACK ProjectApolloConfigurator::DlgProcControl (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	char buffer[100];
-
-	switch (uMsg) {
-	case WM_INITDIALOG: // display the current value
-		if (gParams.Saturn_RHC == -1) {
-			SendDlgItemMessage(hWnd, IDC_CHECK_RHC, BM_SETCHECK, BST_UNCHECKED, 0);
-			SendDlgItemMessage(hWnd, IDC_EDIT_RHC, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) "0");
-		} else {
-			SendDlgItemMessage(hWnd, IDC_CHECK_RHC, BM_SETCHECK, BST_CHECKED, 0);
-			sprintf(buffer, "%i", gParams.Saturn_RHC);
-			SendDlgItemMessage(hWnd, IDC_EDIT_RHC, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) buffer);
-		}
-
-		if (gParams.Saturn_THC == -1) {
-			SendDlgItemMessage(hWnd, IDC_CHECK_THC, BM_SETCHECK, BST_UNCHECKED, 0);
-			SendDlgItemMessage(hWnd, IDC_EDIT_THC, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) "1");
-		} else {
-			SendDlgItemMessage(hWnd, IDC_CHECK_THC, BM_SETCHECK, BST_CHECKED, 0);
-			sprintf(buffer, "%i", gParams.Saturn_THC);
-			SendDlgItemMessage(hWnd, IDC_EDIT_THC, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) buffer);
-		}
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_RHCTHCTOGGLE, BM_SETCHECK, gParams.Saturn_RHCTHCToggle?BST_CHECKED:BST_UNCHECKED, 0);
-
-		if (gParams.Saturn_RHCTHCToggleId == -1) {
-			SendDlgItemMessage(hWnd, IDC_EDIT_RHCTHCTOGGLE, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) "0");
-		} else {
-			sprintf(buffer, "%i", gParams.Saturn_RHCTHCToggleId);
-			SendDlgItemMessage(hWnd, IDC_EDIT_RHCTHCTOGGLE, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) buffer);
-		}
-
-		if (gParams.Saturn_RSL == -1) {
-			SendDlgItemMessage(hWnd, IDC_CHECK_RSL, BM_SETCHECK, BST_UNCHECKED, 0);
-			SendDlgItemMessage(hWnd, IDC_EDIT_RSL, WM_SETTEXT, 0, (LPARAM)(LPCTSTR) "0");
-		}
-		else {
-			SendDlgItemMessage(hWnd, IDC_CHECK_RSL, BM_SETCHECK, BST_CHECKED, 0);
-			sprintf(buffer, "%i", gParams.Saturn_RSL);
-			SendDlgItemMessage(hWnd, IDC_EDIT_RSL, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)buffer);
-		}
-
-		if (gParams.Saturn_TSL == -1) {
-			SendDlgItemMessage(hWnd, IDC_CHECK_TJT, BM_SETCHECK, BST_UNCHECKED, 0);
-			SendDlgItemMessage(hWnd, IDC_EDIT_TJT, WM_SETTEXT, 0, (LPARAM)(LPCTSTR) "1");
-		}
-		else {
-			SendDlgItemMessage(hWnd, IDC_CHECK_TJT, BM_SETCHECK, BST_CHECKED, 0);
-			sprintf(buffer, "%i", gParams.Saturn_TSL);
-			SendDlgItemMessage(hWnd, IDC_EDIT_TJT, WM_SETTEXT, 0, (LPARAM)(LPCTSTR)buffer);
-		}
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_VESIM, BM_SETCHECK, gParams.Saturn_VESIM ? BST_CHECKED : BST_UNCHECKED, 0);
-
-		sprintf(buffer,"%i",gParams.Saturn_MaxTimeAcceleration);
-		SendDlgItemMessage(hWnd, IDC_EDIT_TIMEACC, WM_SETTEXT, 0, (LPARAM) (LPCTSTR) buffer);
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_MULTITHREAD, BM_SETCHECK, gParams.Saturn_MultiThread?BST_CHECKED:BST_UNCHECKED, 0);
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_VAGCCHECKLISTAUTOSLOW, BM_SETCHECK, gParams.Saturn_VAGCChecklistAutoSlow?BST_CHECKED:BST_UNCHECKED, 0);
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_VAGCCHECKLISTAUTOENABLED, BM_SETCHECK, gParams.Saturn_VAGCChecklistAutoEnabled?BST_CHECKED:BST_UNCHECKED, 0);
-
-		SendDlgItemMessage(hWnd, IDC_CHECK_VCINFOENABLED, BM_SETCHECK, gParams.Saturn_VcInfoEnabled ? BST_CHECKED : BST_UNCHECKED, 0);
-
-		UpdateControlState(hWnd);
-		return TRUE;
-
-	case WM_COMMAND:
-		if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_RHC)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_THC)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_RHCTHCTOGGLE)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_RSL)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_TJT)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_CHECK_VESIM)) {
-			UpdateControlState(hWnd);
-
-		} else if (HIWORD(wParam) == BN_CLICKED && (HWND)lParam == GetDlgItem(hWnd, IDC_BUTTON_CREATECONFIG)) {
-			std::string configdir = "Config\\ProjectApollo\\Vesim\\";
-			LPDIRECTINPUT8 dx8ppv;
-			HRESULT hr = DirectInput8Create((HINSTANCE) GetWindowLong(hWnd, GWL_HINSTANCE), DIRECTINPUT_VERSION, IID_IDirectInput8, (void **)&dx8ppv, NULL); // Give us a DirectInput context
-			if (!FAILED(hr)) {
-				Vesim lmvm(NULL, NULL), csmvm(NULL, NULL);
-				lmvm.setupDevices("LM", dx8ppv);
-				csmvm.setupDevices("CSM", dx8ppv);
-				lmvm.createUserConfigs();
-				csmvm.createUserConfigs();
-				/*if (enableVESIM) {
-					for (int i = 0; i < LM_AXIS_INPUT_CNT; i++)
-						vesim.addInput(&vesim_lm_inputs[i]);
-					
-				}*/
-				dx8ppv->Release();
-			}
-			
-		}
-		break;
-
-	case WM_CTLCOLORSTATIC:
-		// Set the color of the text
-		if ((HWND)lParam == GetDlgItem(hWnd, IDC_STATIC_JOYATT)) {
-			// were about to draw the static
-			// set the text color in (HDC)lParam
-			SetBkMode((HDC)wParam,TRANSPARENT);
-			SetTextColor((HDC)wParam, RGB(255,0,0));
-			return (BOOL)CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
-		}
-		break;
-	}
-	return 0;
-}
-
-void ProjectApolloConfigurator::UpdateControlState(HWND hWnd) {
-
-	long rhcChecked, thcChecked, vesimChecked;
-
-	vesimChecked = SendDlgItemMessage(hWnd, IDC_CHECK_VESIM, BM_GETCHECK, 0, 0);
-
-	if (vesimChecked == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_CHECK_RHC, BM_SETCHECK, BST_UNCHECKED, 0);
-		SendDlgItemMessage(hWnd, IDC_CHECK_THC, BM_SETCHECK, BST_UNCHECKED, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RHC), FALSE);
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_THC), FALSE);
-		EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_CREATECONFIG), TRUE);
-		//SendDlgItemMessage(hWnd, IDC_CHECK_RHC, EM_SETREADONLY, (WPARAM)(BOOL)true, 0);
-	}
-	else {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RHC), TRUE);
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_THC), TRUE);
-		EnableWindow(GetDlgItem(hWnd, IDC_BUTTON_CREATECONFIG), FALSE);
-	}
-
-	rhcChecked = SendDlgItemMessage (hWnd, IDC_CHECK_RHC, BM_GETCHECK, 0, 0);
-	thcChecked = SendDlgItemMessage (hWnd, IDC_CHECK_THC, BM_GETCHECK, 0, 0);
-
-	if (rhcChecked == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RHC, EM_SETREADONLY, (WPARAM) (BOOL) false, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RHC), TRUE);
-	} else {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RHC, EM_SETREADONLY, (WPARAM) (BOOL) true, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RHC), FALSE);
-	}
-
-	if (thcChecked == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_EDIT_THC, EM_SETREADONLY, (WPARAM) (BOOL) false, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_THC), TRUE);
-	} else {
-		SendDlgItemMessage(hWnd, IDC_EDIT_THC, EM_SETREADONLY, (WPARAM) (BOOL) true, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_THC), FALSE);
-	}
-
-	if (rhcChecked == BST_CHECKED && thcChecked == BST_UNCHECKED) {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RHCTHCTOGGLE), TRUE);
-	} else {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RHCTHCTOGGLE), FALSE);
-		SendDlgItemMessage(hWnd, IDC_CHECK_RHCTHCTOGGLE, BM_SETCHECK, BST_UNCHECKED, 0);
-	}
-
-	if (SendDlgItemMessage (hWnd, IDC_CHECK_RHCTHCTOGGLE, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RHCTHCTOGGLE, EM_SETREADONLY, (WPARAM) (BOOL) false, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RHCTHCTOGGLE), TRUE);
-	} else {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RHCTHCTOGGLE, EM_SETREADONLY, (WPARAM) (BOOL) true, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RHCTHCTOGGLE), FALSE);
-	}
-
-	if (rhcChecked == BST_CHECKED) {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RSL), TRUE);
-	}
-	else {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_RSL), FALSE);
-		SendDlgItemMessage(hWnd, IDC_CHECK_RSL, BM_SETCHECK, BST_UNCHECKED, 0);
-	}
-
-	if (SendDlgItemMessage(hWnd, IDC_CHECK_RSL, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RSL, EM_SETREADONLY, (WPARAM)(BOOL)false, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RSL), TRUE);
-	}
-	else {
-		SendDlgItemMessage(hWnd, IDC_EDIT_RSL, EM_SETREADONLY, (WPARAM)(BOOL)true, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_RSL), FALSE);
-	}
-
-	if (thcChecked == BST_CHECKED) {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_TJT), TRUE);
-	}
-	else {
-		EnableWindow(GetDlgItem(hWnd, IDC_CHECK_TJT), FALSE);
-		SendDlgItemMessage(hWnd, IDC_CHECK_TJT, BM_SETCHECK, BST_UNCHECKED, 0);
-	}
-
-	if (SendDlgItemMessage(hWnd, IDC_CHECK_TJT, BM_GETCHECK, 0, 0) == BST_CHECKED) {
-		SendDlgItemMessage(hWnd, IDC_EDIT_TJT, EM_SETREADONLY, (WPARAM)(BOOL)false, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_TJT), TRUE);
-	}
-	else {
-		SendDlgItemMessage(hWnd, IDC_EDIT_TJT, EM_SETREADONLY, (WPARAM)(BOOL)true, 0);
-		EnableWindow(GetDlgItem(hWnd, IDC_STATIC_TJT), FALSE);
-	}
+        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+        if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+        {
+            for(size_t i = 0; i<sizeof(tabs)/sizeof(tabs[0]);i++) {
+                if(ImGui::BeginTabItem(tabs[i])) {
+                    (this->*func[i])();
+                    ImGui::EndTabItem();
+                }
+            }
+            ImGui::EndTabBar();
+        }
 }
 
 // ==============================================================
 // The DLL entry point
 // ==============================================================
 
-DLLCLBK void opcDLLInit (MODULEHANDLEhDLL)
+DLLCLBK void opcDLLInit (MODULEHANDLE hDLL)
 {
-	int i;
-
 	// create the new config item
-	gParams.hInst = hDLL;
-
 	gParams.Saturn_LowRes = 0;
 	gParams.Saturn_MainPanelSplit = 0;
 	gParams.Saturn_GNSplit = 1;
@@ -681,43 +308,18 @@ DLLCLBK void opcDLLInit (MODULEHANDLEhDLL)
 	gParams.Saturn_VcInfoEnabled = 0;
 
 	gParams.item = new ProjectApolloConfigurator;
-	for (i = 0; i < MAX_TABNUM; i++)
-		gParams.hDlgTabs[i] = NULL;
 
-	// find the config root entry provided by orbiter
-	LAUNCHPADITEM_HANDLE root = oapiFindLaunchpadItem ("Vessel configuration");
 	// register the config entry
-	oapiRegisterLaunchpadItem (gParams.item, root);
+	oapiRegisterLaunchpadItem (gParams.item, "Vessel configuration");
 }
 
 // ==============================================================
 // The DLL exit point
 // ==============================================================
 
-DLLCLBK void opcDLLExit (HINSTANCE hDLL)
+DLLCLBK void opcDLLExit (MODULEHANDLE hDLL)
 {
 	// Unregister the launchpad items
 	oapiUnregisterLaunchpadItem (gParams.item);
 	delete gParams.item;
-}
-
-// 0 = 4:3
-// 1 = 16:10
-// 2 = 16:9
-static int renderViewportIsWideScreen = 0;
-
-DLLCLBK void opcOpenRenderViewport(HWND renderWnd, DWORD width, DWORD height, BOOL fullscreen)
-
-{
-	if (((double) width) / ((double) height) < 1.47) 
-		renderViewportIsWideScreen = 0;
-	else if (((double) width) / ((double) height) < 1.69) 
-		renderViewportIsWideScreen = 1;
-	else
-		renderViewportIsWideScreen = 2;
-}
-
-DLLCLBK int pacRenderViewportIsWideScreen() 
-{
-	return renderViewportIsWideScreen;
 }
