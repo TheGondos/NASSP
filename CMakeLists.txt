@@ -63,11 +63,13 @@ target_include_directories(ApolloRTCCMFD PUBLIC
     ${SRC_DIR}/src_saturn
     ${SRC_DIR}/src_lm
     ${SRC_DIR}/src_launch
+    imgui
 )
 
 target_link_libraries(ApolloRTCCMFD
 	${ORBITER_SDK_LIB}
     XRSound_dll
+    imgui
 )
 
 set_target_properties(ApolloRTCCMFD
@@ -1305,6 +1307,7 @@ target_include_directories(ProjectApolloMFD PUBLIC
     ${SRC_DIR}/src_lm
     ${SRC_DIR}/src_saturn
     ${SRC_DIR}/src_launch
+    imgui
 )
 
 target_link_libraries(ProjectApolloMFD
@@ -1321,6 +1324,33 @@ set_target_properties(ProjectApolloMFD
 install(TARGETS ProjectApolloMFD
 	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
 )
+####### ProjectApolloConfigurator #######
+add_library(ProjectApolloConfigurator SHARED
+    ${SRC_DIR}/src_aux/ProjectApolloConfigurator/ProjectApolloConfigurator.cpp
+)
+
+target_include_directories(ProjectApolloConfigurator PUBLIC
+	${ORBITER_SOURCE_SDK_INCLUDE_DIR}
+    imgui
+)
+
+target_link_libraries(ProjectApolloConfigurator
+	${ORBITER_SDK_LIB}
+   imgui
+)
+
+set_target_properties(ProjectApolloConfigurator
+	PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY ${ORBITER_BINARY_PLUGIN_DIR}
+	OUTPUT_NAME ProjectApolloConfigurator
+)
+
+install(TARGETS ProjectApolloConfigurator
+	DESTINATION ${ORBITER_INSTALL_PLUGIN_DIR}
+)
+
+
+
 
 ####### Resources #######
 
