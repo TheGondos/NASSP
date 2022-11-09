@@ -544,7 +544,7 @@ void h_volume::ThermalComps(double dt) {
 	for (i = 0; i < MAX_SUB; i++) {
 		//recompute the vapor press
 
-		if (Temp <= 0.0) {
+		if (Temp <= 1E-200) {
 			vap_press = 0.0;
 		}
 		else {

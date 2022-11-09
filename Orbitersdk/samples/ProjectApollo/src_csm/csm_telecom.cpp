@@ -1073,7 +1073,12 @@ void HGA::TimeStep(double simt, double simdt)
 	}
 
 	RecvdHGAPower = GroundTransmitterRFProperties.Power * GroundTransmitterRFProperties.Gain *gain*pow(HGAWavelength/(4*PI*EarthSignalDist),2); //maximum recieved power to the HGA on axis in watts
-	RecvdHGAPower_dBm = 10*log10(1000*RecvdHGAPower);
+	if(RecvdHGAPower > 0.0)
+		RecvdHGAPower_dBm = 10 * log10(1000 * RecvdHGAPower);
+	else
+		RecvdHGAPower_dBm = RF_ZERO_POWER_DBM;
+
+
 	SignalStrengthScaleFactor = SBandAntenna::dBm2SignalStrength(RecvdHGAPower_dBm);
 
 	//sprintf(oapiDebugString(), "Received HGA Power: %lf fW, %lf dBm", RecvdHGAPower*1000000000000000, RecvdHGAPower_dBm); //show theoretical max HGA recieved in Femtowatts and dBm
