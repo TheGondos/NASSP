@@ -218,8 +218,8 @@ void Saturn::InitReticle() {
 }
 
 void drawReticle(SURFHANDLE surf, double shaft, double panelPixelHeight, int reticleLineCnt, int reticleLineLen[], double **reticleLine, oapi::IVECTOR2 ptbuf[]) {
-	oapi::Sketchpad *skp = oapiGetSketchpad(surf);
-	oapi::Pen *pen = oapiCreatePen(1, 1, oapiGetColour(211, 171, 23));
+	oapi::Sketchpad *skp = oapiGetSketchpad(surf, false);
+	oapi::Pen *pen = oapiCreatePen(1, 1, oapiGetColour(23, 171, 211));
 	skp->SetPen(pen);
 	double reticleMul = 0.5*panelPixelHeight / tan(oapiCameraAperture());
 	double cosShaft = cos(shaft), sinShaft = sin(shaft);
@@ -3565,7 +3565,7 @@ void SetupgParam() {
 	g_Param.font[1]  = oapiCreateFont (-10, true, "Arial");
 	g_Param.font[2]  = oapiCreateFont (-8, true, "Arial");
 	g_Param.brush[0] = oapiCreateBrush (oapiGetColour(0,255,0));    // green
-	g_Param.brush[1] = oapiCreateBrush (oapiGetColour(255,0,0));    // red
+	g_Param.brush[1] = oapiCreateBrush (oapiGetColour(0,0,255));    // red
 	g_Param.brush[2] = oapiCreateBrush (oapiGetColour(154,154,154));  // Grey
 	g_Param.brush[3] = oapiCreateBrush (oapiGetColour(3,3,3));  // Black
 	g_Param.pen[0] = oapiCreatePen (1, 3, oapiGetColour(224, 224, 224));
@@ -3573,7 +3573,7 @@ void SetupgParam() {
 	g_Param.pen[2] = oapiCreatePen (1, 1, oapiGetColour(  0,   0,   0));
 	g_Param.pen[3] = oapiCreatePen (1, 3, oapiGetColour( 77,  77,  77));
 	g_Param.pen[4] = oapiCreatePen (1, 3, oapiGetColour(  0,   0,   0));
-	g_Param.pen[5] = oapiCreatePen (1, 1, oapiGetColour(255,   0,   0));
+	g_Param.pen[5] = oapiCreatePen (1, 1, oapiGetColour(0,   0,   255));
 	g_Param.pen[6] = oapiCreatePen (1, 3, oapiGetColour(255, 255, 255));
 }
 
