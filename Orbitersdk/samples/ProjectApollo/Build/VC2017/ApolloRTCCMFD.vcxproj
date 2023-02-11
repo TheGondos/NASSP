@@ -39,6 +39,7 @@
     <ClInclude Include="..\..\src_rtccmfd\RTCCTables.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src_aux\nassputils.cpp" />
     <ClCompile Include="..\..\src_launch\rtcc.cpp" />
     <ClCompile Include="..\..\src_rtccmfd\ApollomfdButtons.cpp" />
     <ClCompile Include="..\..\src_rtccmfd\ApolloRTCCMFD.cpp" />

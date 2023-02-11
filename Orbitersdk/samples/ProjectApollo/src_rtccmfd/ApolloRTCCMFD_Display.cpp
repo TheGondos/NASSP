@@ -1,6 +1,9 @@
 #include "Orbitersdk.h"
 #include "ApolloRTCCMFD.h"
 #include "iu.h"
+#include "nassputils.h"
+
+using nassp::utils::skpTextFmt;
 
 char Buffer[100];
 
@@ -138,21 +141,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(9 * W / 16, 9 * H / 21, "DEL H", 5);
 		skp->Text(9 * W / 16, 10 * H / 21, "ELEV", 4);
 		skp->Text(9 * W / 16, 11 * H / 21, "WT", 2);
-		sprintf(Buffer, "%.3f°", GC->rtcc->GZGENCSN.TIPhaseAngle*DEG);
-		skp->Text(6 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f NM", GC->rtcc->GZGENCSN.TIDeltaH / 1852.0);
-		skp->Text(6 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", GC->rtcc->GZGENCSN.TIElevationAngle*DEG);
-		skp->Text(6 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", GC->rtcc->GZGENCSN.TITravelAngle*DEG);
-		skp->Text(6 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 6 * W / 8, 8 * H / 21, "%.3f°", GC->rtcc->GZGENCSN.TIPhaseAngle* DEG);
+		skpTextFmt(skp, 6 * W / 8, 9 * H / 21, "%.3f NM", GC->rtcc->GZGENCSN.TIDeltaH / 1852.0);
+		skpTextFmt(skp, 6 * W / 8, 10 * H / 21, "%.3f°", GC->rtcc->GZGENCSN.TIElevationAngle* DEG);
+		skpTextFmt(skp, 6 * W / 8, 11 * H / 21, "%.3f°", GC->rtcc->GZGENCSN.TITravelAngle* DEG);
 
 		if (GC->rtcc->med_k30.IVFlag != 0)
 		{
-			sprintf(Buffer, "%.0lf s", GC->rtcc->med_k30.TimeStep);
-			skp->Text(6 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0lf s", GC->rtcc->med_k30.TimeRange);
-			skp->Text(6 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 6 * W / 8, 2 * H / 14, "%.0lf s", GC->rtcc->med_k30.TimeStep);
+			skpTextFmt(skp, 6 * W / 8, 4 * H / 14, "%.0lf s", GC->rtcc->med_k30.TimeRange);
 		}
 	}
 	else if (screen == 2)
@@ -160,8 +157,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->Text(4 * W / 8, 2 * H / 32, "TWO IMPULSE MULTIPLE SOLUTION (MSK 0063)", 40);
 
-		sprintf_s(Buffer, GC->rtcc->TwoImpMultDispBuffer.ErrorMessage.c_str());
-		skp->Text(32 * W / 64, 30 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 32 * W / 64, 30 * H / 32, GC->rtcc->TwoImpMultDispBuffer.ErrorMessage);
 
 		skp->SetFont(font2);
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -170,15 +166,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(6 * W / 32, 6 * H / 32, "MAN VEH", 7);
 		skp->Text(6 * W / 32, 7 * H / 32, "WT", 2);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
-		sprintf_s(Buffer, "GET%s", GC->rtcc->TwoImpMultDispBuffer.GETFRZ.c_str());
-		skp->Text(1 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "GMT%s", GC->rtcc->TwoImpMultDispBuffer.GMTFRZ.c_str());
-		skp->Text(1 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 32, 8 * H / 32, "GET%s", GC->rtcc->TwoImpMultDispBuffer.GETFRZ.c_str());
+		skpTextFmt(skp, 1 * W / 32, 9 * H / 32, "GMT%s", GC->rtcc->TwoImpMultDispBuffer.GMTFRZ.c_str());
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
-		sprintf_s(Buffer, GC->rtcc->TwoImpMultDispBuffer.MAN_VEH.c_str());
-		skp->Text(10 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->TwoImpMultDispBuffer.WT);
-		skp->Text(10 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 10 * W / 32, 6 * H / 32, GC->rtcc->TwoImpMultDispBuffer.MAN_VEH);
+		skpTextFmt(skp, 10 * W / 32, 7 * H / 32, "%.3lf", GC->rtcc->TwoImpMultDispBuffer.WT);
 		GET_Display3(Buffer, GC->rtcc->TwoImpMultDispBuffer.GET1);
 		skp->Text(10 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
 		GET_Display3(Buffer, GC->rtcc->TwoImpMultDispBuffer.GMT1);
@@ -190,19 +182,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(24 * W / 32, 7 * H / 32, "DEL H", 5);
 		skp->Text(24 * W / 32, 8 * H / 32, "OPTION", 6);
 
-		sprintf(Buffer, "%.4lf", GC->rtcc->TwoImpMultDispBuffer.PHASE);
-		skp->Text(31 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.DH);
-		skp->Text(31 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, GC->rtcc->TwoImpMultDispBuffer.OPTION.c_str());
-		skp->Text(31 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 6 * H / 32, "%.4lf", GC->rtcc->TwoImpMultDispBuffer.PHASE);
+		skpTextFmt(skp, 31 * W / 32, 7 * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.DH);
+		Text(skp, 31 * W / 32, 8 * H / 32, GC->rtcc->TwoImpMultDispBuffer.OPTION);
 
 		skp->Text(5 * W / 32, 11 * H / 32, "DEL V1", 6);
 		skp->Text(8 * W / 32, 11 * H / 32, "YAW", 3);
 		skp->Text(23 * W / 64, 11 * H / 32, "PITCH", 5);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
-		sprintf_s(Buffer, "GET%s", GC->rtcc->TwoImpMultDispBuffer.GETVAR.c_str());
-		skp->Text(27 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 27 * W / 64, 11 * H / 32, "GET%s", GC->rtcc->TwoImpMultDispBuffer.GETVAR.c_str());
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 		skp->Text(43 * W / 64, 11 * H / 32, "DEL V2", 6);
 		if (GC->rtcc->TwoImpMultDispBuffer.showTPI)
@@ -220,16 +208,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		
 		for (int i = 0;i < GC->rtcc->TwoImpMultDispBuffer.Solutions;i++)
 		{
-			sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].DELV1);
-			skp->Text(5 * W / 32, (12 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].YAW1);
-			skp->Text(8 * W / 32, (12 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].PITCH1);
-			skp->Text(23 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].DELV1);
+			skpTextFmt(skp, 8 * W / 32, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].YAW1);
+			skpTextFmt(skp, 23 * W / 64, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].PITCH1);
 			GET_Display3(Buffer, GC->rtcc->TwoImpMultDispBuffer.data[i].Time2);
 			skp->Text(35 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].DELV2);
-			skp->Text(43 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 43 * W / 64, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].DELV2);
 			if (GC->rtcc->TwoImpMultDispBuffer.showTPI)
 			{
 				GET_Display(Buffer, GC->rtcc->TwoImpMultDispBuffer.data[i].T_TPI, false);
@@ -237,16 +221,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].YAW2);
-				skp->Text(50 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].PITCH2);
-				skp->Text(57 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 50 * W / 64, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].YAW2);
+				skpTextFmt(skp, 57 * W / 64, (12 + i) * H / 32, "%.2lf", GC->rtcc->TwoImpMultDispBuffer.data[i].PITCH2);
 			}
 			
-			sprintf(Buffer, "%c", GC->rtcc->TwoImpMultDispBuffer.data[i].L);
-			skp->Text(60 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%d", GC->rtcc->TwoImpMultDispBuffer.data[i].C);
-			skp->Text(63 * W / 64, (12 + i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 60 * W / 64, (12 + i) * H / 32, "%c", GC->rtcc->TwoImpMultDispBuffer.data[i].L);
+			skpTextFmt(skp, 63 * W / 64, (12 + i) * H / 32, "%d", GC->rtcc->TwoImpMultDispBuffer.data[i].C);
 		}
 	}
 	else if (screen == 3)
@@ -289,8 +269,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else
 		{
-			sprintf_s(Buffer, "Chaser: %s", G->vessel->GetName());
-			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "Chaser: %s", G->vessel->GetName());
 			if (G->target)
 			{
 				sprintf_s(Buffer, "Target: %s", G->target->GetName());
@@ -407,8 +386,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_CNH || G->GMPManeuverCode == RTCC_GMP_PCH || G->GMPManeuverCode == RTCC_GMP_NSH || G->GMPManeuverCode == RTCC_GMP_HOH)
 		{
 			skp->Text(2 * W / 22, 8 * H / 22, "ALT", 3);
-			sprintf(Buffer, "%.2f NM", G->GMPManeuverHeight / 1852.0);
-			skp->Text(4 * W / 22, 8 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 8 * H / 22, "%.2f NM", G->GMPManeuverHeight / 1852.0);
 		}
 		//Desired Maneuver Longitude
 		else if (G->GMPManeuverCode == RTCC_GMP_PCL || G->GMPManeuverCode == RTCC_GMP_CRL || G->GMPManeuverCode == RTCC_GMP_HOL || G->GMPManeuverCode == RTCC_GMP_NSL ||
@@ -417,8 +395,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_SAA || G->GMPManeuverCode == RTCC_GMP_HAS)
 		{
 			skp->Text(2 * W / 22, 8 * H / 22, "LNG", 3);
-			sprintf(Buffer, "%.2f°", G->GMPManeuverLongitude*DEG);
-			skp->Text(4 * W / 22, 8 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 8 * H / 22, "%.2f°", G->GMPManeuverLongitude* DEG);
 		}
 
 		//Height Change
@@ -427,31 +404,27 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_PHL || G->GMPManeuverCode == RTCC_GMP_PHT || G->GMPManeuverCode == RTCC_GMP_PHA || G->GMPManeuverCode == RTCC_GMP_PHP || G->GMPManeuverCode == RTCC_GMP_HOH)
 		{
 			skp->Text(2 * W / 22, 9 * H / 22, "DH", 2);
-			sprintf(Buffer, "%.2f NM", G->GMPHeightChange / 1852.0);
-			skp->Text(4 * W / 22, 9 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 9 * H / 22, "%.2f NM", G->GMPHeightChange / 1852.0);
 		}
 		//Apoapsis Height
 		else if (G->GMPManeuverCode == RTCC_GMP_HBT || G->GMPManeuverCode == RTCC_GMP_HBH || G->GMPManeuverCode == RTCC_GMP_HBO || G->GMPManeuverCode == RTCC_GMP_HBL ||
 			G->GMPManeuverCode == RTCC_GMP_NHT || G->GMPManeuverCode == RTCC_GMP_NHL || G->GMPManeuverCode == RTCC_GMP_HAS)
 		{
 			skp->Text(2 * W / 22, 9 * H / 22, "ApA", 3);
-			sprintf(Buffer, "%.2f NM", G->GMPApogeeHeight / 1852.0);
-			skp->Text(4 * W / 22, 9 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 9 * H / 22, "%.2f NM", G->GMPApogeeHeight / 1852.0);
 		}
 		//Delta V
 		else if (G->GMPManeuverCode == RTCC_GMP_FCT || G->GMPManeuverCode == RTCC_GMP_FCA || G->GMPManeuverCode == RTCC_GMP_FCP || G->GMPManeuverCode == RTCC_GMP_FCE ||
 			G->GMPManeuverCode == RTCC_GMP_FCL || G->GMPManeuverCode == RTCC_GMP_FCH)
 		{
 			skp->Text(2 * W / 22, 9 * H / 22, "DV", 2);
-			sprintf(Buffer, "%.2f ft/s", G->GMPDeltaVInput / 0.3048);
-			skp->Text(4 * W / 22, 9 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 9 * H / 22, "%.2f ft/s", G->GMPDeltaVInput / 0.3048);
 		}
 		//Apse line rotation
 		else if (G->GMPManeuverCode == RTCC_GMP_SAT || G->GMPManeuverCode == RTCC_GMP_SAO || G->GMPManeuverCode == RTCC_GMP_SAL)
 		{
 			skp->Text(2 * W / 22, 9 * H / 22, "ROT", 4);
-			sprintf(Buffer, "%.2f°", G->GMPApseLineRotAngle*DEG);
-			skp->Text(4 * W / 22, 9 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 9 * H / 22, "%.2f°", G->GMPApseLineRotAngle* DEG);
 		}
 
 		//Wedge Angle
@@ -461,8 +434,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_PCH)
 		{
 			skp->Text(2 * W / 22, 10 * H / 22, "DW", 2);
-			sprintf(Buffer, "%.2f°", G->GMPWedgeAngle*DEG);
-			skp->Text(4 * W / 22, 10 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 10 * H / 22, "%.2f°", G->GMPWedgeAngle * DEG);
 		}
 		//Node Shift
 		else if (G->GMPManeuverCode == RTCC_GMP_NST || G->GMPManeuverCode == RTCC_GMP_NSO || G->GMPManeuverCode == RTCC_GMP_NSH || G->GMPManeuverCode == RTCC_GMP_NSL ||
@@ -470,24 +442,21 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_HNL || G->GMPManeuverCode == RTCC_GMP_HNT || G->GMPManeuverCode == RTCC_GMP_HNA || G->GMPManeuverCode == RTCC_GMP_HNP)
 		{
 			skp->Text(2 * W / 22, 10 * H / 22, "DLN", 3);
-			sprintf(Buffer, "%.2f°", G->GMPNodeShiftAngle*DEG);
-			skp->Text(4 * W / 22, 10 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 10 * H / 22, "%.2f°", G->GMPNodeShiftAngle * DEG);
 		}
 		//Periapsis Height
 		else if (G->GMPManeuverCode == RTCC_GMP_HBT || G->GMPManeuverCode == RTCC_GMP_HBH || G->GMPManeuverCode == RTCC_GMP_HBO || G->GMPManeuverCode == RTCC_GMP_HBL ||
 			G->GMPManeuverCode == RTCC_GMP_NHT || G->GMPManeuverCode == RTCC_GMP_NHL || G->GMPManeuverCode == RTCC_GMP_HAS)
 		{
 			skp->Text(2 * W / 22, 10 * H / 22, "PeA", 3);
-			sprintf(Buffer, "%.2f NM", G->GMPPerigeeHeight / 1852.0);
-			skp->Text(4 * W / 22, 10 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 10 * H / 22, "%.2f NM", G->GMPPerigeeHeight / 1852.0);
 		}
 		//Pitch
 		else if (G->GMPManeuverCode == RTCC_GMP_FCT || G->GMPManeuverCode == RTCC_GMP_FCA || G->GMPManeuverCode == RTCC_GMP_FCP || G->GMPManeuverCode == RTCC_GMP_FCE ||
 			G->GMPManeuverCode == RTCC_GMP_FCL || G->GMPManeuverCode == RTCC_GMP_FCH)
 		{
 			skp->Text(2 * W / 22, 10 * H / 22, "P", 1);
-			sprintf(Buffer, "%.2f°", G->GMPPitch*DEG);
-			skp->Text(4 * W / 22, 10 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 10 * H / 22, "%.2f°", G->GMPPitch * DEG);
 		}
 
 		//Yaw
@@ -495,28 +464,24 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			G->GMPManeuverCode == RTCC_GMP_FCL || G->GMPManeuverCode == RTCC_GMP_FCH)
 		{
 			skp->Text(2 * W / 22, 11 * H / 22, "Y", 1);
-			sprintf(Buffer, "%.2f°", G->GMPYaw*DEG);
-			skp->Text(4 * W / 22, 11 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 11 * H / 22, "%.2f°", G->GMPYaw * DEG);
 		}
 		//Node Shift
 		else if (G->GMPManeuverCode == RTCC_GMP_NHT || G->GMPManeuverCode == RTCC_GMP_NHL)
 		{
 			skp->Text(2 * W / 22, 11 * H / 22, "DLN", 3);
-			sprintf(Buffer, "%.2f°", G->GMPNodeShiftAngle*DEG);
-			skp->Text(4 * W / 22, 11 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 11 * H / 22, "%.2f°", G->GMPNodeShiftAngle * DEG);
 		}
 		//Rev counter
 		else if (G->GMPManeuverCode == RTCC_GMP_HAS)
 		{
 			skp->Text(2 * W / 22, 11 * H / 22, "N", 1);
-			sprintf(Buffer, "%d", G->GMPRevs);
-			skp->Text(4 * W / 22, 11 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 22, 11 * H / 22, "%d", G->GMPRevs);
 		}
 
 		if (GC->rtcc->PZGPMDIS.Err)
 		{
-			sprintf(Buffer, "Error: %d", GC->rtcc->PZGPMDIS.Err);
-			skp->Text(3 * W / 8, 21 * H / 22, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 21 * H / 22, "Error: %d", GC->rtcc->PZGPMDIS.Err);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -532,16 +497,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		GET_Display(Buffer, GC->rtcc->PZGPMDIS.GET_A, false);
 		skp->Text(10 * W / 22, 13 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", GC->rtcc->PZGPMDIS.HA / 1852.0);
-		skp->Text(10 * W / 22, 14 * H / 22, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 22, 14 * H / 22, "%.1f", GC->rtcc->PZGPMDIS.HA / 1852.0);
 		FormatLongitude(Buffer, GC->rtcc->PZGPMDIS.long_A*DEG);
 		skp->Text(10 * W / 22, 15 * H / 22, Buffer, strlen(Buffer));
 		FormatLatitude(Buffer, GC->rtcc->PZGPMDIS.lat_A*DEG);
 		skp->Text(10 * W / 22, 16 * H / 22, Buffer, strlen(Buffer));
 		GET_Display(Buffer, GC->rtcc->PZGPMDIS.GET_P, false);
 		skp->Text(10 * W / 22, 17 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", GC->rtcc->PZGPMDIS.HP / 1852.0);
-		skp->Text(10 * W / 22, 18 * H / 22, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 22, 18 * H / 22, "%.1f", GC->rtcc->PZGPMDIS.HP / 1852.0);
 		FormatLongitude(Buffer, GC->rtcc->PZGPMDIS.long_P*DEG);
 		skp->Text(10 * W / 22, 19 * H / 22, Buffer, strlen(Buffer));
 		FormatLatitude(Buffer, GC->rtcc->PZGPMDIS.lat_P*DEG);
@@ -573,23 +536,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(21 * W / 22, 5 * H / 22, Buffer, strlen(Buffer));
 		AGC_Display(Buffer, length(GC->rtcc->PZGPMDIS.DV) / 0.3048);
 		skp->Text(21 * W / 22, 6 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.2f", GC->rtcc->PZGPMDIS.Pitch_Man*DEG);
-		skp->Text(21 * W / 22, 7 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.2f", GC->rtcc->PZGPMDIS.Yaw_Man*DEG);
-		skp->Text(21 * W / 22, 8 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", GC->rtcc->PZGPMDIS.H_Man / 1852.0);
-		skp->Text(21 * W / 22, 9 * H / 22, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 22, 7 * H / 22, "%+.2f", GC->rtcc->PZGPMDIS.Pitch_Man * DEG);
+		skpTextFmt(skp, 21 * W / 22, 8 * H / 22, "%+.2f", GC->rtcc->PZGPMDIS.Yaw_Man * DEG);
+		skpTextFmt(skp, 21 * W / 22, 9 * H / 22, "%.1f", GC->rtcc->PZGPMDIS.H_Man / 1852.0);
 		FormatLongitude(Buffer, GC->rtcc->PZGPMDIS.long_Man*DEG);
 		skp->Text(21 * W / 22, 10 * H / 22, Buffer, strlen(Buffer));
 		FormatLatitude(Buffer, GC->rtcc->PZGPMDIS.lat_Man*DEG);
 		skp->Text(21 * W / 22, 11 * H / 22, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%.1f", GC->rtcc->PZGPMDIS.A / 1852.0);
-		skp->Text(21 * W / 22, 13 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.6f", GC->rtcc->PZGPMDIS.E);
-		skp->Text(21 * W / 22, 14 * H / 22, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", GC->rtcc->PZGPMDIS.I*DEG);
-		skp->Text(21 * W / 22, 15 * H / 22, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 22, 13 * H / 22, "%.1f", GC->rtcc->PZGPMDIS.A / 1852.0);
+		skpTextFmt(skp, 21 * W / 22, 14 * H / 22, "%.6f", GC->rtcc->PZGPMDIS.E);
+		skpTextFmt(skp, 21 * W / 22, 15 * H / 22, "%.3f°", GC->rtcc->PZGPMDIS.I* DEG);
 		FormatLongitude(Buffer, GC->rtcc->PZGPMDIS.Node_Ang*DEG);
 		skp->Text(21 * W / 22, 16 * H / 22, Buffer, strlen(Buffer));
 		FormatLongitude(Buffer, GC->rtcc->PZGPMDIS.Del_G*DEG);
@@ -665,8 +622,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else if (GC->mission >= 7)
 			{
-				sprintf(Buffer, "Apollo %i", GC->mission);
-				skp->Text((int)(0.5 * W / 8), 2 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 2 * H / 14, "Apollo %i", GC->mission);
 			}
 		}
 		else if (G->REFSMMATopt == 5 || G->REFSMMATopt == 8)
@@ -674,18 +630,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, GC->rtcc->CZTDTGTU.GETTD);
 			skp->Text((int)(0.5 * W / 8), 2 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
-			skp->Text((int)(5.5 * W / 8), 8 * H / 14, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
-			skp->Text((int)(5.5 * W / 8), 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (int)(5.5 * W / 8), 8 * H / 14, "%f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
+			skpTextFmt(skp, (int)(5.5 * W / 8), 10 * H / 14, "%f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
 
 			if (G->REFSMMATopt == 8)
 			{
 				skp->Text(5 * W / 8, 2 * H / 14, "LS during TLC", 13);
 
 				skp->Text((int)(5.5 * W / 8), 11 * H / 14, "Azimuth:", 8);
-				sprintf(Buffer, "%f°", GC->rtcc->med_k18.psi_DS);
-				skp->Text((int)(5.5 * W / 8), 12 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(5.5 * W / 8), 12 * H / 14, "%f°", GC->rtcc->med_k18.psi_DS);
 			}
 			else
 			{
@@ -711,8 +664,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(5 * W / 8, 2 * H / 14, "PTC", 3);
 
 			skp->Text(1 * W / 16, 2 * H / 14, "Average time of TEI:", 20);
-			sprintf(Buffer, "MJD %lf", G->REFSMMAT_PTC_MJD);
-			skp->Text(1 * W / 16, 3 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 3 * H / 14, "MJD %lf", G->REFSMMAT_PTC_MJD);
 		}
 		else if (G->REFSMMATopt == 7)
 		{
@@ -723,12 +675,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text((int)(0.5 * W / 8), 10 * H / 21, Buffer, strlen(Buffer));
 
 			skp->Text((int)(0.5 * W / 8), 12 * H / 21, "Attitude:", 9);
-			sprintf(Buffer, "%+07.2f R", G->VECangles.x*DEG);
-			skp->Text((int)(0.5 * W / 8), 13 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f P", G->VECangles.y*DEG);
-			skp->Text((int)(0.5 * W / 8), 14 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f Y", G->VECangles.z*DEG);
-			skp->Text((int)(0.5 * W / 8), 15 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (int)(0.5 * W / 8), 13 * H / 21, "%+07.2f R", G->VECangles.x* DEG);
+			skpTextFmt(skp, (int)(0.5 * W / 8), 14 * H / 21, "%+07.2f P", G->VECangles.y* DEG);
+			skpTextFmt(skp, (int)(0.5 * W / 8), 15 * H / 21, "%+07.2f Y", G->VECangles.z* DEG);
 		}
 
 		REFSMMATData *refsdata;
@@ -749,8 +698,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0; i < 9; i++)
 		{
-			sprintf(Buffer, "%f", ref.data[i]);
-			skp->Text(7 * W / 16, (4 + i) * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 7 * W / 16, (4 + i) * H / 14, "%f", ref.data[i]);
 		}
 	}
 	else if (screen == 6)
@@ -801,8 +749,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		double secs;
 
 		SStoHHMMSS(GC->rtcc->GETfromGMT(GC->rtcc->GetAGSClockZero()), hh, mm, secs); //Should be relative to LGC clock zero instead of liftoff time
-		sprintf(Buffer, "%d:%02d:%05.2f GET", hh, mm, secs);
-		skp->Text((int)(0.5 * W / 8), 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, (int)(0.5 * W / 8), 10 * H / 14, "%d:%02d:%05.2f GET", hh, mm, secs);
 
 		if (IsBusy(G->subThreadStatus))
 		{
@@ -813,52 +760,38 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 12 * H / 14, "Calculate K-Factor", 18);
 		}
 
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA240);
-		skp->Text(4 * W / 8, 4 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 4 * H / 21, "%+06.0f", G->agssvpad.DEDA240);
 		skp->Text(6 * W / 8, 4 * H / 21, "240", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA241);
-		skp->Text(4 * W / 8, 5 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 5 * H / 21, "%+06.0f", G->agssvpad.DEDA241);
 		skp->Text(6 * W / 8, 5 * H / 21, "241", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA242);
-		skp->Text(4 * W / 8, 6 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 6 * H / 21, "%+06.0f", G->agssvpad.DEDA242);
 		skp->Text(6 * W / 8, 6 * H / 21, "242", 3);
 
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA260);
-		skp->Text(4 * W / 8, 7 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 7 * H / 21, "%+06.0f", G->agssvpad.DEDA260);
 		skp->Text(6 * W / 8, 7 * H / 21, "260", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA261);
-		skp->Text(4 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 8 * H / 21, "%+06.0f", G->agssvpad.DEDA261);
 		skp->Text(6 * W / 8, 8 * H / 21, "261", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA262);
-		skp->Text(4 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 9 * H / 21, "%+06.0f", G->agssvpad.DEDA262);
 		skp->Text(6 * W / 8, 9 * H / 21, "262", 3);
 
-		sprintf(Buffer, "%+07.1f", G->agssvpad.DEDA254);
-		skp->Text(4 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 10 * H / 21, "%+07.1f", G->agssvpad.DEDA254);
 		skp->Text(6 * W / 8, 10 * H / 21, "254", 3);
 
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA244);
-		skp->Text(4 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 11 * H / 21, "%+06.0f", G->agssvpad.DEDA244);
 		skp->Text(6 * W / 8, 11 * H / 21, "244", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA245);
-		skp->Text(4 * W / 8, 12 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 12 * H / 21, "%+06.0f", G->agssvpad.DEDA245);
 		skp->Text(6 * W / 8, 12 * H / 21, "245", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA246);
-		skp->Text(4 * W / 8, 13 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 13 * H / 21, "%+06.0f", G->agssvpad.DEDA246);
 		skp->Text(6 * W / 8, 13 * H / 21, "246", 3);
 
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA264);
-		skp->Text(4 * W / 8, 14 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 14 * H / 21, "%+06.0f", G->agssvpad.DEDA264);
 		skp->Text(6 * W / 8, 14 * H / 21, "264", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA265);
-		skp->Text(4 * W / 8, 15 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 15 * H / 21, "%+06.0f", G->agssvpad.DEDA265);
 		skp->Text(6 * W / 8, 15 * H / 21, "265", 3);
-		sprintf(Buffer, "%+06.0f", G->agssvpad.DEDA266);
-		skp->Text(4 * W / 8, 16 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 16 * H / 21, "%+06.0f", G->agssvpad.DEDA266);
 		skp->Text(6 * W / 8, 16 * H / 21, "266", 3);
 
-		sprintf(Buffer, "%+07.1f", G->agssvpad.DEDA272);
-		skp->Text(4 * W / 8, 17 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 17 * H / 21, "%+07.1f", G->agssvpad.DEDA272);
 		skp->Text(6 * W / 8, 17 * H / 21, "272", 3);
 	}
 	else if (screen == 8)
@@ -871,18 +804,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else if (GC->mission >= 7)
 		{
-			sprintf(Buffer, "Apollo %i", GC->mission);
-			skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 2 * H / 14, "Apollo %i", GC->mission);
 		}
 
-		sprintf(Buffer, "%02d:%02d:%04d", GC->rtcc->GZGENCSN.DayofLiftoff, GC->rtcc->GZGENCSN.MonthofLiftoff, GC->rtcc->GZGENCSN.Year);
-		skp->Text(4 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 2 * H / 14, "%02d:%02d:%04d", GC->rtcc->GZGENCSN.DayofLiftoff, GC->rtcc->GZGENCSN.MonthofLiftoff, GC->rtcc->GZGENCSN.Year);
 
 		GET_Display2(Buffer, GC->rtcc->GetGMTLO()*3600.0);
 		skp->Text(4 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "AGC Epoch: %d", GC->rtcc->SystemParameters.AGCEpoch);
-		skp->Text(4 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 6 * H / 14, "AGC Epoch: %d", GC->rtcc->SystemParameters.AGCEpoch);
 
 		skp->Text(4 * W / 8, 8 * H / 14, "Update Liftoff Time", 19);
 
@@ -932,8 +862,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 
 		skp->Text(1 * W / 8, 10 * H / 14, "Sxt/Star Check:", 15);
-		sprintf(Buffer, "%.0f min", -G->sxtstardtime / 60.0);
-		skp->Text(4 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 10 * H / 14, "%.0f min", -G->sxtstardtime / 60.0);
 
 		skp->Text(1 * W / 8, 12 * H / 14, "Uplink in LOS:", 14);
 
@@ -995,8 +924,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 				if (G->vesselisdocked)
 				{
-					sprintf(Buffer, "LM Weight: %5.0f", G->manpad.LMWeight);
-					skp->Text((int)(0.5 * W / 8), 10 * H / 14, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(0.5 * W / 8), 10 * H / 14, "LM Weight: %5.0f", G->manpad.LMWeight);
 				}
 
 				skp->Text((int)(0.5 * W / 8), 18 * H / 23, "Set Stars:", 10);
@@ -1022,12 +950,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					}
 				}*/
 
-				sprintf(Buffer, "R %03.0f", OrbMech::round(G->manpad.GDCangles.x));
-				skp->Text((int)(0.5 * W / 8), 20 * H / 23, Buffer, strlen(Buffer));
-				sprintf(Buffer, "P %03.0f", OrbMech::round(G->manpad.GDCangles.y));
-				skp->Text((int)(0.5 * W / 8), 21 * H / 23, Buffer, strlen(Buffer));
-				sprintf(Buffer, "Y %03.0f", OrbMech::round(G->manpad.GDCangles.z));
-				skp->Text((int)(0.5 * W / 8), 22 * H / 23, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 20 * H / 23, "R %03.0f", OrbMech::round(G->manpad.GDCangles.x));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 21 * H / 23, "P %03.0f", OrbMech::round(G->manpad.GDCangles.y));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 22 * H / 23, "Y %03.0f", OrbMech::round(G->manpad.GDCangles.z));
 
 				int hh, mm;
 				double secs;
@@ -1040,15 +965,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(7 * W / 8, 9 * H / 26, "N81", 3);
 				skp->Text(7 * W / 8, 15 * H / 26, "N44", 3);
 
-				sprintf(Buffer, "%+06.0f WGT", G->manpad.Weight);
-				skp->Text((int)(3.5 * W / 8), 3 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 3 * H / 26, "%+06.0f WGT", G->manpad.Weight);
 
 				if (G->manpadenginetype == RTCC_ENGINETYPE_CSMSPS)
 				{
-					sprintf(Buffer, "%+07.2f PTRIM", G->manpad.pTrim);
-					skp->Text((int)(3.5 * W / 8), 4 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.2f YTRIM", G->manpad.yTrim);
-					skp->Text((int)(3.5 * W / 8), 5 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(3.5 * W / 8), 4 * H / 26, "%+07.2f PTRIM", G->manpad.pTrim);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 5 * H / 26, "%+07.2f YTRIM", G->manpad.yTrim);
 				}
 				else
 				{
@@ -1056,41 +978,27 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					skp->Text((int)(3.5 * W / 8), 5 * H / 26, "N/A      YTRIM", 14);
 				}
 
-				sprintf(Buffer, "%+06d HRS GETI", hh);
-				skp->Text((int)(3.5 * W / 8), 6 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+06d MIN", mm);
-				skp->Text((int)(3.5 * W / 8), 7 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+06.0f SEC", secs * 100.0);
-				skp->Text((int)(3.5 * W / 8), 8 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 6 * H / 26, "%+06d HRS GETI", hh);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 7 * H / 26, "%+06d MIN", mm);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 8 * H / 26, "%+06.0f SEC", secs * 100.0);
 
-				sprintf(Buffer, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 9 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 10 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 11 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 9 * H / 26, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 10 * H / 26, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 11 * H / 26, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
 
-				sprintf(Buffer, "XXX%03.0f R", G->manpad.Att.x);
-				skp->Text((int)(3.5 * W / 8), 12 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f P", G->manpad.Att.y);
-				skp->Text((int)(3.5 * W / 8), 13 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f Y", G->manpad.Att.z);
-				skp->Text((int)(3.5 * W / 8), 14 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 12 * H / 26, "XXX%03.0f R", G->manpad.Att.x);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 13 * H / 26, "XXX%03.0f P", G->manpad.Att.y);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 14 * H / 26, "XXX%03.0f Y", G->manpad.Att.z);
 
-				sprintf(Buffer, "%+07.1f HA", min(9999.9, G->manpad.HA));
-				skp->Text((int)(3.5 * W / 8), 15 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f HP", G->manpad.HP);
-				skp->Text((int)(3.5 * W / 8), 16 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 15 * H / 26, "%+07.1f HA", min(9999.9, G->manpad.HA));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 16 * H / 26, "%+07.1f HP", G->manpad.HP);
 
-				sprintf(Buffer, "%+07.1f VT", G->manpad.Vt);// length(G->dV_LVLH) / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 17 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 17 * H / 26, "%+07.1f VT", G->manpad.Vt);// length(G->dV_LVLH) / 0.3048);
 
 				SStoHHMMSS(G->manpad.burntime, hh, mm, secs);
 
-				sprintf(Buffer, "XXX%d:%02.0f BT (MIN:SEC)", mm, secs);
-				skp->Text((int)(3.5 * W / 8), 18 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f VC", G->manpad.Vc);
-				skp->Text((int)(3.5 * W / 8), 19 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 18 * H / 26, "XXX%d:%02.0f BT (MIN:SEC)", mm, secs);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 19 * H / 26, "%+07.1f VC", G->manpad.Vc);
 
 				//skp->Text(4 * W / 8, 13 * H / 20, "SXT star check", 14);
 
@@ -1105,12 +1013,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				}
 				else
 				{
-					sprintf(Buffer, "XXXX%02d SXTS", G->manpad.Star);
-					skp->Text((int)(3.5 * W / 8), 20 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.2f SFT", G->manpad.Shaft);
-					skp->Text((int)(3.5 * W / 8), 21 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.3f TRN", G->manpad.Trun);
-					skp->Text((int)(3.5 * W / 8), 22 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(3.5 * W / 8), 20 * H / 26, "XXXX%02d SXTS", G->manpad.Star);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 21 * H / 26, "%+07.2f SFT", G->manpad.Shaft);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 22 * H / 26, "%+07.3f TRN", G->manpad.Trun);
 				}
 				if (G->manpad.BSSStar == 0)
 				{
@@ -1123,12 +1028,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				}
 				else
 				{
-					sprintf(Buffer, "XXXX%02d BSS", G->manpad.BSSStar);
-					skp->Text((int)(3.5 * W / 8), 23 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.2f SPA", G->manpad.SPA);
-					skp->Text((int)(3.5 * W / 8), 24 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.3f SXP", G->manpad.SXP);
-					skp->Text((int)(3.5 * W / 8), 25 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(3.5 * W / 8), 23 * H / 26, "XXXX%02d BSS", G->manpad.BSSStar);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 24 * H / 26, "%+07.2f SPA", G->manpad.SPA);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 25 * H / 26, "%+07.3f SXP", G->manpad.SXP);
 				}
 			}
 			else
@@ -1147,13 +1049,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					skp->Text((int)(0.5 * W / 8), 2 * H / 14, "LM/CSM", 6);
 				}
 
-				sprintf(Buffer, "LM Weight: %5.0f", G->lmmanpad.LMWeight);
-				skp->Text((int)(0.5 * W / 8), 10 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 10 * H / 14, "LM Weight: %5.0f", G->lmmanpad.LMWeight);
 
 				if (G->vesselisdocked)
 				{
-					sprintf(Buffer, "CSM Weight: %5.0f", G->lmmanpad.CSMWeight);
-					skp->Text((int)(0.5 * W / 8), 11 * H / 14, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(0.5 * W / 8), 11 * H / 14, "CSM Weight: %5.0f", G->lmmanpad.CSMWeight);
 				}
 
 				int hh, mm;
@@ -1161,44 +1061,26 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 				SStoHHMMSS(G->P30TIG, hh, mm, secs);
 
-				sprintf(Buffer, "%+06d HRS GETI", hh);
-				skp->Text((int)(3.5 * W / 8), 5 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+06d MIN", mm);
-				skp->Text((int)(3.5 * W / 8), 6 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+06.0f SEC", secs * 100.0);
-				skp->Text((int)(3.5 * W / 8), 7 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 5 * H / 26, "%+06d HRS GETI", hh);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 6 * H / 26, "%+06d MIN", mm);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 7 * H / 26, "%+06.0f SEC", secs * 100.0);
 
-				sprintf(Buffer, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 8 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 9 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 10 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 8 * H / 26, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 9 * H / 26, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 10 * H / 26, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
 
-				sprintf(Buffer, "%+07.1f HA", min(9999.9, G->lmmanpad.HA));
-				skp->Text((int)(3.5 * W / 8), 11 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f HP", G->lmmanpad.HP);
-				skp->Text((int)(3.5 * W / 8), 12 * H / 26, Buffer, strlen(Buffer));
-
-				sprintf(Buffer, "%+07.1f DVR", length(G->dV_LVLH) / 0.3048);
-				skp->Text((int)(3.5 * W / 8), 13 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 11 * H / 26, "%+07.1f HA", min(9999.9, G->lmmanpad.HA));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 12 * H / 26, "%+07.1f HP", G->lmmanpad.HP);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 13 * H / 26, "%+07.1f DVR", length(G->dV_LVLH) / 0.3048);
 
 				SStoHHMMSS(G->lmmanpad.burntime, hh, mm, secs);
 
-				sprintf(Buffer, "XXX%d:%02.0f BT", mm, secs);
-				skp->Text((int)(3.5 * W / 8), 14 * H / 26, Buffer, strlen(Buffer));
-
-				sprintf(Buffer, "XXX%03.0f R", G->lmmanpad.Att.x);
-				skp->Text((int)(3.5 * W / 8), 15 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f P", G->lmmanpad.Att.y);
-				skp->Text((int)(3.5 * W / 8), 16 * H / 26, Buffer, strlen(Buffer));
-
-				sprintf(Buffer, "%+07.1f DVX AGS N86", G->lmmanpad.dV_AGS.x);
-				skp->Text((int)(3.5 * W / 8), 17 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVY AGS", G->lmmanpad.dV_AGS.y);
-				skp->Text((int)(3.5 * W / 8), 18 * H / 26, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.1f DVZ AGS", G->lmmanpad.dV_AGS.z);
-				skp->Text((int)(3.5 * W / 8), 19 * H / 26, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(3.5 * W / 8), 14 * H / 26, "XXX%d:%02.0f BT", mm, secs);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 15 * H / 26, "XXX%03.0f R", G->lmmanpad.Att.x);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 16 * H / 26, "XXX%03.0f P", G->lmmanpad.Att.y);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 17 * H / 26, "%+07.1f DVX AGS N86", G->lmmanpad.dV_AGS.x);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 18 * H / 26, "%+07.1f DVY AGS", G->lmmanpad.dV_AGS.y);
+				skpTextFmt(skp, (int)(3.5 * W / 8), 19 * H / 26, "%+07.1f DVZ AGS", G->lmmanpad.dV_AGS.z);
 
 				if (G->lmmanpad.BSSStar == 0)
 				{
@@ -1211,12 +1093,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				}
 				else
 				{
-					sprintf(Buffer, "XXXX%02d BSS", G->lmmanpad.BSSStar);
-					skp->Text((int)(3.5 * W / 8), 20 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.2f SPA", G->lmmanpad.SPA);
-					skp->Text((int)(3.5 * W / 8), 21 * H / 26, Buffer, strlen(Buffer));
-					sprintf(Buffer, "%+07.3f SXP", G->lmmanpad.SXP);
-					skp->Text((int)(3.5 * W / 8), 22 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(3.5 * W / 8), 20 * H / 26, "XXXX%02d BSS", G->lmmanpad.BSSStar);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 21 * H / 26, "%+07.2f SPA", G->lmmanpad.SPA);
+					skpTextFmt(skp, (int)(3.5 * W / 8), 22 * H / 26, "%+07.3f SXP", G->lmmanpad.SXP);
 				}
 
 				skp->Text((int)(0.5 * W / 8), 24 * H / 26, G->lmmanpad.remarks, strlen(G->lmmanpad.remarks));
@@ -1233,19 +1112,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			skp->Text(7 * W / 8, 3 * H / 20, "N37", 3);
 
-			sprintf(Buffer, "%+06d HRS GETI", hh);
-			skp->Text(3 * W / 8, 3 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06d MIN", mm);
-			skp->Text(3 * W / 8, 4 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.0f SEC", secs * 100.0);
-			skp->Text(3 * W / 8, 5 * H / 20, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 3 * H / 20, "%+06d HRS GETI", hh);
+			skpTextFmt(skp, 3 * W / 8, 4 * H / 20, "%+06d MIN", mm);
+			skpTextFmt(skp, 3 * W / 8, 5 * H / 20, "%+06.0f SEC", secs * 100.0);
 
-			sprintf(Buffer, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
-			skp->Text(3 * W / 8, 6 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
-			skp->Text(3 * W / 8, 7 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
-			skp->Text(3 * W / 8, 8 * H / 20, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 6 * H / 20, "%+07.1f DVX", G->dV_LVLH.x / 0.3048);
+			skpTextFmt(skp, 3 * W / 8, 7 * H / 20, "%+07.1f DVY", G->dV_LVLH.y / 0.3048);
+			skpTextFmt(skp, 3 * W / 8, 8 * H / 20, "%+07.1f DVZ", G->dV_LVLH.z / 0.3048);
 
 			if (G->TPIPAD_dV_LOS.x > 0)
 			{
@@ -1275,16 +1148,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			skp->Text(3 * W / 8, 11 * H / 20, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "X%04.1f/%02.1f dH TPI/ddH", G->TPIPAD_dH, G->TPIPAD_ddH);
-			skp->Text(3 * W / 8, 12 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "X%06.2f R", G->TPIPAD_R);
-			skp->Text(3 * W / 8, 13 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f RDOT at TPI", G->TPIPAD_Rdot);
-			skp->Text(3 * W / 8, 14 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "X%06.2f EL minus 5 min", G->TPIPAD_ELmin5);
-			skp->Text(3 * W / 8, 15 * H / 20, Buffer, strlen(Buffer));
-			sprintf(Buffer, "X%06.2f AZ", G->TPIPAD_AZ);
-			skp->Text(3 * W / 8, 16 * H / 20, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 12 * H / 20, "X%04.1f/%02.1f dH TPI/ddH", G->TPIPAD_dH, G->TPIPAD_ddH);
+			skpTextFmt(skp, 3 * W / 8, 13 * H / 20, "X%06.2f R", G->TPIPAD_R);
+			skpTextFmt(skp, 3 * W / 8, 14 * H / 20, "%+07.1f RDOT at TPI", G->TPIPAD_Rdot);
+			skpTextFmt(skp, 3 * W / 8, 15 * H / 20, "X%06.2f EL minus 5 min", G->TPIPAD_ELmin5);
+			skpTextFmt(skp, 3 * W / 8, 16 * H / 20, "X%06.2f AZ", G->TPIPAD_AZ);
 
 		}
 		else
@@ -1294,41 +1162,28 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(4 * W / 8, (int)(0.5 * H / 14), "TLI PAD", 7);
 
 				GET_Display(Buffer, G->tlipad.TB6P);
-				sprintf(Buffer, "%s TB6p", Buffer);
-				skp->Text(3 * W / 8, 3 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 3 * H / 20, "%s TB6p", Buffer);
 
-				sprintf(Buffer, "XXX%03.0f R", G->tlipad.IgnATT.x);
-				skp->Text(3 * W / 8, 4 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f P", G->tlipad.IgnATT.y);
-				skp->Text(3 * W / 8, 5 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f Y", G->tlipad.IgnATT.z);
-				skp->Text(3 * W / 8, 6 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 4 * H / 20, "XXX%03.0f R", G->tlipad.IgnATT.x);
+				skpTextFmt(skp, 3 * W / 8, 5 * H / 20, "XXX%03.0f P", G->tlipad.IgnATT.y);
+				skpTextFmt(skp, 3 * W / 8, 6 * H / 20, "XXX%03.0f Y", G->tlipad.IgnATT.z);
 
 				double secs;
 				int mm, hh;
 				SStoHHMMSS(G->tlipad.BurnTime, hh, mm, secs);
 
-				sprintf(Buffer, "XXX%d:%02.0f BT", mm, secs);
-				skp->Text(3 * W / 8, 7 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 7 * H / 20, "XXX%d:%02.0f BT", mm, secs);
 
-				sprintf(Buffer, "%07.1f DVC", G->tlipad.dVC);
-				skp->Text(3 * W / 8, 8 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+06.0f VI", G->tlipad.VI);
-				skp->Text(3 * W / 8, 9 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 8 * H / 20, "%07.1f DVC", G->tlipad.dVC);
+				skpTextFmt(skp, 3 * W / 8, 9 * H / 20, "%+06.0f VI", G->tlipad.VI);
 
-				sprintf(Buffer, "XXX%03.0f R", G->tlipad.SepATT.x);
-				skp->Text(3 * W / 8, 10 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f P SEP", G->tlipad.SepATT.y);
-				skp->Text(3 * W / 8, 11 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f Y", G->tlipad.SepATT.z);
-				skp->Text(3 * W / 8, 12 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 10 * H / 20, "XXX%03.0f R", G->tlipad.SepATT.x);
+				skpTextFmt(skp, 3 * W / 8, 11 * H / 20, "XXX%03.0f P SEP", G->tlipad.SepATT.y);
+				skpTextFmt(skp, 3 * W / 8, 12 * H / 20, "XXX%03.0f Y", G->tlipad.SepATT.z);
 
-				sprintf(Buffer, "XXX%03.0f R", G->tlipad.ExtATT.x);
-				skp->Text(3 * W / 8, 13 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f P EXTRACTION", G->tlipad.ExtATT.y);
-				skp->Text(3 * W / 8, 14 * H / 20, Buffer, strlen(Buffer));
-				sprintf(Buffer, "XXX%03.0f Y", G->tlipad.ExtATT.z);
-				skp->Text(3 * W / 8, 15 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 13 * H / 20, "XXX%03.0f R", G->tlipad.ExtATT.x);
+				skpTextFmt(skp, 3 * W / 8, 14 * H / 20, "XXX%03.0f P EXTRACTION", G->tlipad.ExtATT.y);
+				skpTextFmt(skp, 3 * W / 8, 15 * H / 20, "XXX%03.0f Y", G->tlipad.ExtATT.z);
 			}
 			else
 			{
@@ -1348,16 +1203,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(5 * W / 8, 15 * H / 20, Buffer, strlen(Buffer));
 
 				skp->Text(4 * W / 8, 16 * H / 20, "Lat:", 4);
-				sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
-				skp->Text(5 * W / 8, 16 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 5 * W / 8, 16 * H / 20, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
 
 				skp->Text(4 * W / 8, 17 * H / 20, "Lng:", 4);
-				sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
-				skp->Text(5 * W / 8, 17 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 5 * W / 8, 17 * H / 20, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
 
 				skp->Text(4 * W / 8, 18 * H / 20, "Rad:", 4);
-				sprintf(Buffer, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
-				skp->Text(5 * W / 8, 18 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 5 * W / 8, 18 * H / 20, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
 
 				if (!G->PADSolGood)
 				{
@@ -1371,45 +1223,36 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 				skp->Text(3 * W / 8, 5 * H / 20, "HRS", 3);
 				skp->Text((int)(4.5 * W / 8), 5 * H / 20, "TIG", 3);
-				sprintf(Buffer, "%+06d", hh);
-				skp->Text(6 * W / 8, 5 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 5 * H / 20, "%+06d", hh);
 
 				skp->Text(3 * W / 8, 6 * H / 20, "MIN", 3);
 				skp->Text((int)(4.5 * W / 8), 6 * H / 20, "PDI", 3);
-				sprintf(Buffer, "%+06d", mm);
-				skp->Text(6 * W / 8, 6 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 6 * H / 20, "%+06d", mm);
 
 				skp->Text(3 * W / 8, 7 * H / 20, "SEC", 3);
-				sprintf(Buffer, "%+06.0f", secs * 100.0);
-				skp->Text(6 * W / 8, 7 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 7 * H / 20, "%+06.0f", secs * 100.0);
 
 				SStoHHMMSS(G->pdipad.t_go, hh, mm, secs);
 				skp->Text(3 * W / 8, 8 * H / 20, "TGO", 3);
 				skp->Text((int)(4.5 * W / 8), 8 * H / 20, "N61", 3);
-				sprintf(Buffer, "XX%02d:%02.0f", mm, secs);
-				skp->Text(6 * W / 8, 8 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 8 * H / 20, "XX%02d:%02.0f", mm, secs);
 
 				skp->Text(3 * W / 8, 9 * H / 20, "CROSSRANGE", 10);
-				sprintf(Buffer, "%07.1f", G->pdipad.CR);
-				skp->Text(6 * W / 8, 9 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 9 * H / 20, "%07.1f", G->pdipad.CR);
 
 				skp->Text(3 * W / 8, 10 * H / 20, "R", 1);
 				skp->Text((int)(4.5 * W / 8), 10 * H / 20, "FDAI", 4);
-				sprintf(Buffer, "XXX%03.0f", G->pdipad.Att.x);
-				skp->Text(6 * W / 8, 10 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 10 * H / 20, "XXX%03.0f", G->pdipad.Att.x);
 
 				skp->Text(3 * W / 8, 11 * H / 20, "P", 1);
 				skp->Text((int)(4.5 * W / 8), 11 * H / 20, "AT TIG", 6);
-				sprintf(Buffer, "XXX%03.0f", G->pdipad.Att.y);
-				skp->Text(6 * W / 8, 11 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 11 * H / 20, "XXX%03.0f", G->pdipad.Att.y);
 
 				skp->Text(3 * W / 8, 12 * H / 20, "Y", 1);
-				sprintf(Buffer, "XXX%03.0f", G->pdipad.Att.z);
-				skp->Text(6 * W / 8, 12 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 12 * H / 20, "XXX%03.0f", G->pdipad.Att.z);
 
 				skp->Text(3 * W / 8, 13 * H / 20, "DEDA 231 IF RQD", 15);
-				sprintf(Buffer, "%+06.0f", G->pdipad.DEDA231);
-				skp->Text(6 * W / 8, 13 * H / 20, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 6 * W / 8, 13 * H / 20, "%+06.0f", G->pdipad.DEDA231);
 			}
 		}
 	}
@@ -1424,99 +1267,72 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			skp->Text(7 * W / 16, 3 * H / 32, "PREBURN", 7);
 
-			sprintf(Buffer, "XX%+05.1f dV TO", G->earthentrypad.dVTO[0]);
-			skp->Text(3 * W / 8, 4 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 4 * H / 32, "XX%+05.1f dV TO", G->earthentrypad.dVTO[0]);
 
-			sprintf(Buffer, "XXX%03.0f R 0.05G", G->earthentrypad.Att400K[0].x);
-			skp->Text(3 * W / 8, 5 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "XXX%03.0f P 0.05G", G->earthentrypad.Att400K[0].y);
-			skp->Text(3 * W / 8, 6 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "XXX%03.0f Y 0.05G", G->earthentrypad.Att400K[0].z);
-			skp->Text(3 * W / 8, 7 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 5 * H / 32, "XXX%03.0f R 0.05G", G->earthentrypad.Att400K[0].x);
+			skpTextFmt(skp, 3 * W / 8, 6 * H / 32, "XXX%03.0f P 0.05G", G->earthentrypad.Att400K[0].y);
+			skpTextFmt(skp, 3 * W / 8, 7 * H / 32, "XXX%03.0f Y 0.05G", G->earthentrypad.Att400K[0].z);
 
-			sprintf(Buffer, "%+07.1f RTGO .05G", G->earthentrypad.RTGO[0]);
-			skp->Text(3 * W / 8, 8 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.0f VIO  .05G", G->earthentrypad.VIO[0]);
-			skp->Text(3 * W / 8, 9 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 8 * H / 32, "%+07.1f RTGO .05G", G->earthentrypad.RTGO[0]);
+			skpTextFmt(skp, 3 * W / 8, 9 * H / 32, "%+06.0f VIO  .05G", G->earthentrypad.VIO[0]);
 
 			double secs;
 			int mm, hh;
 
 			SStoHHMMSS(G->earthentrypad.Ret05[0], hh, mm, secs);
 
-			sprintf(Buffer, "XX%02d:%02.0f RET  .05G", mm, secs);
-			skp->Text(3 * W / 8, 10 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+07.2f LAT", G->earthentrypad.Lat[0]);
-			skp->Text(3 * W / 8, 11 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f LONG", G->earthentrypad.Lng[0]);
-			skp->Text(3 * W / 8, 12 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 10 * H / 32, "XX%02d:%02.0f RET  .05G", mm, secs);
+			skpTextFmt(skp, 3 * W / 8, 11 * H / 32, "%+07.2f LAT", G->earthentrypad.Lat[0]);
+			skpTextFmt(skp, 3 * W / 8, 12 * H / 32, "%+07.2f LONG", G->earthentrypad.Lng[0]);
 
 			SStoHHMMSS(G->earthentrypad.Ret2[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RET  .2G", mm, secs);
-			skp->Text(3 * W / 8, 13 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+07.1lf DRE (55°)  N66", G->earthentrypad.DRE[0]);
-			skp->Text(3 * W / 8, 14 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 13 * H / 32, "XX%02d:%02.0f RET  .2G", mm, secs);
+			skpTextFmt(skp, 3 * W / 8, 14 * H / 32, "%+07.1lf DRE (55°)  N66", G->earthentrypad.DRE[0]);
 
 			sprintf(Buffer, "RR55/55 BANK AN");
 			skp->Text(3 * W / 8, 15 * H / 32, Buffer, strlen(Buffer));
 
 			SStoHHMMSS(G->earthentrypad.RetRB[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RET RB", mm, secs);
-			skp->Text(3 * W / 8, 16 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 16 * H / 32, "XX%02d:%02.0f RET RB", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.RetBBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETBBO", mm, secs);
-			skp->Text(3 * W / 8, 17 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 17 * H / 32, "XX%02d:%02.0f RETBBO", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.RetEBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETEBO", mm, secs);
-			skp->Text(3 * W / 8, 18 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 18 * H / 32, "XX%02d:%02.0f RETEBO", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.RetDrog[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETDROG", mm, secs);
-			skp->Text(3 * W / 8, 19 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 19 * H / 32, "XX%02d:%02.0f RETDROG", mm, secs);
 
 			skp->Text(7 * W / 16, 20 * H / 32, "POSTBURN", 8);
 
-			sprintf(Buffer, "XXX%03.0f R 0.05G", G->earthentrypad.PB_R400K[0]);
-			skp->Text(3 * W / 8, 21 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f RTGO .05G", G->earthentrypad.PB_RTGO[0]);
-			skp->Text(3 * W / 8, 22 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.0f VIO  .05G", G->earthentrypad.PB_VIO[0]);
-			skp->Text(3 * W / 8, 23 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 21 * H / 32, "XXX%03.0f R 0.05G", G->earthentrypad.PB_R400K[0]);
+			skpTextFmt(skp, 3 * W / 8, 22 * H / 32, "%+07.1f RTGO .05G", G->earthentrypad.PB_RTGO[0]);
+			skpTextFmt(skp, 3 * W / 8, 23 * H / 32, "%+06.0f VIO  .05G", G->earthentrypad.PB_VIO[0]);
 
 			SStoHHMMSS(G->earthentrypad.PB_Ret05[0], hh, mm, secs);
 
-			sprintf(Buffer, "XX%02d:%02.0f RET  .05G", mm, secs);
-			skp->Text(3 * W / 8, 24 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 24 * H / 32, "XX%02d:%02.0f RET  .05G", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.PB_Ret2[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RET  .2G", mm, secs);
-			skp->Text(3 * W / 8, 25 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 25 * H / 32, "XX%02d:%02.0f RET  .2G", mm, secs);
 
-			sprintf(Buffer, "%+07.1lf DRE +/- 100nm  N66", G->earthentrypad.PB_DRE[0]);
-			skp->Text(3 * W / 8, 26 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 26 * H / 32, "%+07.1lf DRE +/- 100nm  N66", G->earthentrypad.PB_DRE[0]);
 
 			sprintf(Buffer, "RR55/55 BANK AN");
 			skp->Text(3 * W / 8, 27 * H / 32, Buffer, strlen(Buffer));
 
 			SStoHHMMSS(G->earthentrypad.PB_RetRB[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RET RB", mm, secs);
-			skp->Text(3 * W / 8, 28 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 28 * H / 32, "XX%02d:%02.0f RET RB", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.PB_RetBBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETBBO", mm, secs);
-			skp->Text(3 * W / 8, 29 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 29 * H / 32, "XX%02d:%02.0f RETBBO", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.PB_RetEBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETEBO", mm, secs);
-			skp->Text(3 * W / 8, 30 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 30 * H / 32, "XX%02d:%02.0f RETEBO", mm, secs);
 
 			SStoHHMMSS(G->earthentrypad.PB_RetDrog[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETDROG", mm, secs);
-			skp->Text(3 * W / 8, 31 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 31 * H / 32, "XX%02d:%02.0f RETDROG", mm, secs);
 
 			skp->Text(1 * W / 16, 6 * H / 21, "Deorbit:", 8);
 
@@ -1538,18 +1354,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(3 * W / 16, 11 * H / 21, Buffer, strlen(Buffer));
 
 			skp->Text(1 * W / 16, 12 * H / 21, "Initial Bank:", 13);
-			sprintf(Buffer, "%+.2lf°", GC->rtcc->RZC1RCNS.entry.GNInitialBank*DEG);
-			skp->Text(1 * W / 16, 13 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 21, "%+.2lf°", GC->rtcc->RZC1RCNS.entry.GNInitialBank* DEG);
 
 			skp->Text(1 * W / 16, 14 * H / 21, "G-Level:", 8);
-			sprintf(Buffer, "%+.2lf", GC->rtcc->RZC1RCNS.entry.GLevel);
-			skp->Text(1 * W / 16, 15 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 15 * H / 21, "%+.2lf", GC->rtcc->RZC1RCNS.entry.GLevel);
 
 			skp->Text(1 * W / 16, 16 * H / 21, "Splashdown:", 11);
-			sprintf(Buffer, "Lat:  %+.2f°", G->EntryLatcor*DEG);
-			skp->Text(1 * W / 16, 17 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "Long: %+.2f°", G->EntryLngcor*DEG);
-			skp->Text(1 * W / 16, 18 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 17 * H / 21, "Lat:  %+.2f°", G->EntryLatcor* DEG);
+			skpTextFmt(skp, 1 * W / 16, 18 * H / 21, "Long: %+.2f°", G->EntryLngcor* DEG);
 		}
 		else
 		{
@@ -1560,82 +1372,54 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			if (G->entryrange != 0)
 			{
 				skp->Text((int)(0.5 * W / 8), 6 * H / 14, "Desired Range:", 14);
-				sprintf(Buffer, "%.1f NM", G->entryrange);
-				skp->Text((int)(0.5 * W / 8), 7 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (int)(0.5 * W / 8), 7 * H / 14, "%.1f NM", G->entryrange);
 			}
 
-			sprintf(Buffer, "XXX%03.0f R 0.05G", G->lunarentrypad.Att05[0].x);
-			skp->Text(3 * W / 8, 5 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "XXX%03.0f P 0.05G", G->lunarentrypad.Att05[0].y);
-			skp->Text(3 * W / 8, 6 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "XXX%03.0f Y 0.05G", G->lunarentrypad.Att05[0].z);
-			skp->Text(3 * W / 8, 7 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 5 * H / 32, "XXX%03.0f R 0.05G", G->lunarentrypad.Att05[0].x);
+			skpTextFmt(skp, 3 * W / 8, 6 * H / 32, "XXX%03.0f P 0.05G", G->lunarentrypad.Att05[0].y);
+			skpTextFmt(skp, 3 * W / 8, 7 * H / 32, "XXX%03.0f Y 0.05G", G->lunarentrypad.Att05[0].z);
 
 			GET_Display(Buffer, G->lunarentrypad.GETHorCheck[0]);
 			skp->Text(3 * W / 8, 8 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "XXX%03.0f P HOR CK", G->lunarentrypad.PitchHorCheck[0]);
-			skp->Text(3 * W / 8, 9 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 9 * H / 32, "XXX%03.0f P HOR CK", G->lunarentrypad.PitchHorCheck[0]);
 
-			sprintf(Buffer, "%+07.2f LAT", G->lunarentrypad.Lat[0]);
-			skp->Text(3 * W / 8, 10 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f LONG", G->lunarentrypad.Lng[0]);
-			skp->Text(3 * W / 8, 11 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 10 * H / 32, "%+07.2f LAT", G->lunarentrypad.Lat[0]);
+			skpTextFmt(skp, 3 * W / 8, 11 * H / 32, "%+07.2f LONG", G->lunarentrypad.Lng[0]);
 
-			sprintf(Buffer, "XXX%04.1f MAX G", G->lunarentrypad.MaxG[0]);
-			skp->Text(3 * W / 8, 12 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 12 * H / 32, "XXX%04.1f MAX G", G->lunarentrypad.MaxG[0]);
 
-			sprintf(Buffer, "%+06.0f V400k", G->lunarentrypad.V400K[0]);
-			skp->Text(3 * W / 8, 13 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f y400k", G->lunarentrypad.Gamma400K[0]);
-			skp->Text(3 * W / 8, 14 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 13 * H / 32, "%+06.0f V400k", G->lunarentrypad.V400K[0]);
+			skpTextFmt(skp, 3 * W / 8, 14 * H / 32, "%+07.2f y400k", G->lunarentrypad.Gamma400K[0]);
 
-			sprintf(Buffer, "%+07.1f RTGO .05G", G->lunarentrypad.RTGO[0]);
-			skp->Text(3 * W / 8, 15 * H / 32, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.0f VIO  .05G", G->lunarentrypad.VIO[0]);
-			skp->Text(3 * W / 8, 16 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 15 * H / 32, "%+07.1f RTGO .05G", G->lunarentrypad.RTGO[0]);
+			skpTextFmt(skp, 3 * W / 8, 16 * H / 32, "%+06.0f VIO  .05G", G->lunarentrypad.VIO[0]);
 
 			GET_Display(Buffer, G->lunarentrypad.RRT[0]);
-			sprintf(Buffer, "%s RRT", Buffer);
-			skp->Text(3 * W / 8, 17 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 17 * H / 32, "%s RRT", Buffer);
 
 			double secs;
 			int mm, hh;
 
 			SStoHHMMSS(G->lunarentrypad.RET05[0], hh, mm, secs);
 
-			sprintf(Buffer, "XX%02d:%02.0f RET  .05G", mm, secs);
-			skp->Text(3 * W / 8, 18 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+07.2lf DL MAX", G->lunarentrypad.DLMax[0]);
-			skp->Text(3 * W / 8, 19 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+07.2lf DL MIN", G->lunarentrypad.DLMin[0]);
-			skp->Text(3 * W / 8, 20 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+06.0lf VL MAX", G->lunarentrypad.VLMax[0]);
-			skp->Text(3 * W / 8, 21 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%+06.0lf VL MIN", G->lunarentrypad.VLMin[0]);
-			skp->Text(3 * W / 8, 22 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "XXX%04.2f DO", G->lunarentrypad.DO[0]);
-			skp->Text(3 * W / 8, 23 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 18 * H / 32, "XX%02d:%02.0f RET  .05G", mm, secs);
+			skpTextFmt(skp, 3 * W / 8, 19 * H / 32, "%+07.2lf DL MAX", G->lunarentrypad.DLMax[0]);
+			skpTextFmt(skp, 3 * W / 8, 20 * H / 32, "%+07.2lf DL MIN", G->lunarentrypad.DLMin[0]);
+			skpTextFmt(skp, 3 * W / 8, 21 * H / 32, "%+06.0lf VL MAX", G->lunarentrypad.VLMax[0]);
+			skpTextFmt(skp, 3 * W / 8, 22 * H / 32, "%+06.0lf VL MIN", G->lunarentrypad.VLMin[0]);
+			skpTextFmt(skp, 3 * W / 8, 23 * H / 32, "XXX%04.2f DO", G->lunarentrypad.DO[0]);
 
 			SStoHHMMSS(G->lunarentrypad.RETVCirc[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RET V CIRC", mm, secs);
-			skp->Text(3 * W / 8, 24 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 24 * H / 32, "XX%02d:%02.0f RET V CIRC", mm, secs);
 
 			SStoHHMMSS(G->lunarentrypad.RETBBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETBBO", mm, secs);
-			skp->Text(3 * W / 8, 25 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 25 * H / 32, "XX%02d:%02.0f RETBBO", mm, secs);
 
 			SStoHHMMSS(G->lunarentrypad.RETEBO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETEBO", mm, secs);
-			skp->Text(3 * W / 8, 26 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 26 * H / 32, "XX%02d:%02.0f RETEBO", mm, secs);
 
 			SStoHHMMSS(G->lunarentrypad.RETDRO[0], hh, mm, secs);
-			sprintf(Buffer, "XX%02d:%02.0f RETDRO", mm, secs);
-			skp->Text(3 * W / 8, 27 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 27 * H / 32, "XX%02d:%02.0f RETDRO", mm, secs);
 
 			if (G->lunarentrypad.SXTS[0] == 0)
 			{
@@ -1648,22 +1432,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf(Buffer, "XXXX%02d SXTS", G->lunarentrypad.SXTS[0]);
-				skp->Text(3 * W / 8, 28 * H / 32, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.2f SFT", G->lunarentrypad.SFT[0]);
-				skp->Text(3 * W / 8, 29 * H / 32, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%+07.3f TRN", G->lunarentrypad.TRN[0]);
-				skp->Text(3 * W / 8, 30 * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 3 * W / 8, 28 * H / 32, "XXXX%02d SXTS", G->lunarentrypad.SXTS[0]);
+				skpTextFmt(skp, 3 * W / 8, 29 * H / 32, "%+07.2f SFT", G->lunarentrypad.SFT[0]);
+				skpTextFmt(skp, 3 * W / 8, 30 * H / 32, "%+07.3f TRN", G->lunarentrypad.TRN[0]);
 			}
 
-			sprintf(Buffer, "XXXX%s LIFT VECTOR", G->lunarentrypad.LiftVector[0]);
-			skp->Text(3 * W / 8, 31 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 8, 31 * H / 32, "XXXX%s LIFT VECTOR", G->lunarentrypad.LiftVector[0]);
 
 			skp->Text(1 * W / 16, 12 * H / 21, "Splashdown:", 11);
-			sprintf(Buffer, "Lat:  %+.2f°", G->EntryLatcor*DEG);
-			skp->Text(1 * W / 16, 13 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "Long: %+.2f°", G->EntryLngcor*DEG);
-			skp->Text(1 * W / 16, 14 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 21, "Lat:  %+.2f°", G->EntryLatcor* DEG);
+			skpTextFmt(skp, 1 * W / 16, 14 * H / 21, "Long: %+.2f°", G->EntryLngcor* DEG);
 		}
 	}
 	else if (screen == 11)
@@ -1683,36 +1461,29 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
 			GET_Display(Buffer2, G->GSAOSGET);
-			sprintf(Buffer, "AOS %s", Buffer2);
-			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "AOS %s", Buffer2);
 
 			GET_Display(Buffer2, G->GSLOSGET);
-			sprintf(Buffer, "LOS %s", Buffer2);
-			skp->Text(1 * W / 8, 7 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 7 * H / 14, "LOS %s", Buffer2);
 		}
 		else if (G->mappage == 1)
 		{
 			skp->Text(6 * W / 8, 4 * H / 14, "Moon", 4);
 
 			GET_Display(Buffer2, G->mapupdate.LOSGET);
-			sprintf(Buffer, "LOS %s", Buffer2);
-			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "LOS %s", Buffer2);
 
 			GET_Display(Buffer2, G->mapupdate.SRGET);
-			sprintf(Buffer, "SR  %s", Buffer2);
-			skp->Text(1 * W / 8, 5 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 5 * H / 14, "SR  %s", Buffer2);
 
 			GET_Display(Buffer2, G->mapupdate.PMGET);
-			sprintf(Buffer, "PM  %s", Buffer2);
-			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "PM  %s", Buffer2);
 
 			GET_Display(Buffer2, G->mapupdate.AOSGET);
-			sprintf(Buffer, "AOS %s", Buffer2);
-			skp->Text(1 * W / 8, 7 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 7 * H / 14, "AOS %s", Buffer2);
 
 			GET_Display(Buffer2, G->mapupdate.SSGET);
-			sprintf(Buffer, "SS  %s", Buffer2);
-			skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 8 * H / 14, "SS  %s", Buffer2);
 		}
 	}
 	else if (screen == 12)
@@ -1729,26 +1500,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 		}
 
-		sprintf(Buffer, "%.1lf NM", GC->rtcc->med_k18.HALOI1);
-		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1lf NM", GC->rtcc->med_k18.HPLOI1);
-		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.0lf ft/s", GC->rtcc->med_k18.DVMAXp);
-		skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.0lf ft/s", GC->rtcc->med_k18.DVMAXm);
-		skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1f°", GC->rtcc->med_k18.psi_MN);
-		skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1f°", GC->rtcc->med_k18.psi_DS);
-		skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1f°", GC->rtcc->med_k18.psi_MX);
-		skp->Text(5 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%.1lf NM", GC->rtcc->med_k18.HALOI1);
+		skpTextFmt(skp, 1 * W / 8, 8 * H / 14, "%.1lf NM", GC->rtcc->med_k18.HPLOI1);
+		skpTextFmt(skp, 1 * W / 8, 10 * H / 14, "%.0lf ft/s", GC->rtcc->med_k18.DVMAXp);
+		skpTextFmt(skp, 1 * W / 8, 12 * H / 14, "%.0lf ft/s", GC->rtcc->med_k18.DVMAXm);
+		skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.1f°", GC->rtcc->med_k18.psi_MN);
+		skpTextFmt(skp, 5 * W / 8, 6 * H / 14, "%.1f°", GC->rtcc->med_k18.psi_DS);
+		skpTextFmt(skp, 5 * W / 8, 8 * H / 14, "%.1f°", GC->rtcc->med_k18.psi_MX);
 	}
 	else if (screen == 13)
 	{
@@ -1757,17 +1515,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		GET_Display(Buffer, G->LmkTime);
 		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", G->LmkLat*DEG);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", G->LmkLng*DEG);
-		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "%.3f°", G->LmkLat * DEG);
+		skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%.3f°", G->LmkLng * DEG);
 
 		GET_Display(Buffer2, G->landmarkpad.T1[0]);
-		sprintf(Buffer, "T1: %s (HOR)", Buffer2);
-		skp->Text(4 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 6 * H / 14, "T1: %s (HOR)", Buffer2);
 		GET_Display(Buffer2, G->landmarkpad.T2[0]);
-		sprintf(Buffer, "T2: %s (35°)", Buffer2);
-		skp->Text(4 * W / 8, 7 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 7 * H / 14, "T2: %s (35°)", Buffer2);
 
 		if (G->landmarkpad.CRDist[0] > 0)
 		{
@@ -1780,12 +1534,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(4 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 		skp->Text(4 * W / 8, 9 * H / 14, "N89", 3);
-		sprintf(Buffer, "Lat %+07.3f°", G->landmarkpad.Lat[0]);
-		skp->Text(4 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "Long/2 %+07.3f°", G->landmarkpad.Lng05[0]);
-		skp->Text(4 * W / 8, 11 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "Alt %+07.2f NM", G->landmarkpad.Alt[0]);
-		skp->Text(4 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 10 * H / 14, "Lat %+07.3f°", G->landmarkpad.Lat[0]);
+		skpTextFmt(skp, 4 * W / 8, 11 * H / 14, "Long/2 %+07.3f°", G->landmarkpad.Lng05[0]);
+		skpTextFmt(skp, 4 * W / 8, 12 * H / 14, "Alt %+07.2f NM", G->landmarkpad.Alt[0]);
 	}
 	else if (screen == 14)
 	{
@@ -1861,12 +1612,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 		}
 
-		sprintf(Buffer, "%+07.2f R", G->VECangles.x*DEG);
-		skp->Text(6 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f P", G->VECangles.y*DEG);
-		skp->Text(6 * W / 8, 11 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f Y", G->VECangles.z*DEG);
-		skp->Text(6 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 6 * W / 8, 10 * H / 14, "%+07.2f R", G->VECangles.x * DEG);
+		skpTextFmt(skp, 6 * W / 8, 11 * H / 14, "%+07.2f P", G->VECangles.y * DEG);
+		skpTextFmt(skp, 6 * W / 8, 12 * H / 14, "%+07.2f Y", G->VECangles.z * DEG);
 	}
 	else if (screen == 16)
 	{
@@ -1948,8 +1696,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf(Buffer, "%d: Not Used", GC->rtcc->med_k16.Sequence);
-				skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%d: Not Used", GC->rtcc->med_k16.Sequence);
 			}
 		}
 		else if (GC->rtcc->med_k16.Mode == 4)
@@ -1975,8 +1722,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf(Buffer, "%d: Not Used", GC->rtcc->med_k16.Sequence);
-				skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%d: Not Used", GC->rtcc->med_k16.Sequence);
 			}
 		}
 		else if (GC->rtcc->med_k16.Mode == 6)
@@ -1989,8 +1735,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 10 * H / 14, "PPC", 3);
 		}
 
-		sprintf(Buffer, "%.3f NM", GC->rtcc->med_k16.DesiredHeight / 1852.0);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.3f NM", GC->rtcc->med_k16.DesiredHeight / 1852.0);
 
 		GET_Display(Buffer, GC->rtcc->med_k16.GETTH1, false);
 		skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
@@ -2017,12 +1762,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, G->P30TIG);
 			skp->Text(5 * W / 8, 16 * H / 21, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.x / 0.3048);
-			skp->Text(5 * W / 8, 17 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.y / 0.3048);
-			skp->Text(5 * W / 8, 18 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.z / 0.3048);
-			skp->Text(5 * W / 8, 19 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 17 * H / 21, "%+07.1f", G->dV_LVLH.x / 0.3048);
+			skpTextFmt(skp, 5 * W / 8, 18 * H / 21, "%+07.1f", G->dV_LVLH.y / 0.3048);
+			skpTextFmt(skp, 5 * W / 8, 19 * H / 21, "%+07.1f", G->dV_LVLH.z / 0.3048);
 		}
 
 		if (G->Skylabmaneuver < 7)
@@ -2046,23 +1788,19 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		if (G->Skylabmaneuver == 1 || G->Skylabmaneuver == 2)
 		{
-			sprintf(Buffer, "%.1f NM", G->SkylabDH2 / 1852.0);
-			skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 10 * H / 14, "%.1f NM", G->SkylabDH2 / 1852.0);
 
-			sprintf(Buffer, "%.2f°", G->Skylab_E_L*DEG);
-			skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 12 * H / 14, "%.2f°", G->Skylab_E_L* DEG);
 
 			skp->Text(4 * W / 8, 10 * H / 21, "NCC", 3);
 			GET_Display(Buffer, G->Skylab_t_NCC);
 			skp->Text(5 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f ft/s", G->Skylab_dv_NCC / 0.3048);
-			skp->Text(5 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 11 * H / 21, "%+07.1f ft/s", G->Skylab_dv_NCC / 0.3048);
 
 			skp->Text(4 * W / 8, 12 * H / 21, "NSR", 3);
 			GET_Display(Buffer, G->Skylab_t_NSR);
 			skp->Text(5 * W / 8, 12 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f ft/s", length(G->Skylab_dV_NSR) / 0.3048);
-			skp->Text(5 * W / 8, 13 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 13 * H / 21, "%+07.1f ft/s", length(G->Skylab_dV_NSR) / 0.3048);
 		}
 		if (G->Skylabmaneuver == 1)
 		{
@@ -2078,23 +1816,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, G->Skylab_t_NC1);
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%.1f", G->Skylab_n_C);
-			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%.1f NM", G->SkylabDH1 / 1852.0);
-			skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%.1f", G->Skylab_n_C);
+			skpTextFmt(skp, 1 * W / 8, 8 * H / 14, "%.1f NM", G->SkylabDH1 / 1852.0);
 
 			skp->Text(4 * W / 8, 7 * H / 21, "NC2", 3);
 			GET_Display(Buffer, G->Skylab_t_NC2);
 			skp->Text(5 * W / 8, 7 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f ft/s", G->Skylab_dv_NC2 / 0.3048);
-			skp->Text(5 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "DH: %.1f NM", G->Skylab_dH_NC2 / 1852.0);
-			skp->Text(5 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 8 * H / 21, "%+07.1f ft/s", G->Skylab_dv_NC2 / 0.3048);
+			skpTextFmt(skp, 5 * W / 8, 9 * H / 21, "DH: %.1f NM", G->Skylab_dH_NC2 / 1852.0);
 
 			skp->Text(4 * W / 8, 14 * H / 21, "DVT", 3);
-			sprintf(Buffer, "%+07.1f ft/s", (length(G->dV_LVLH) + G->Skylab_dv_NC2 + G->Skylab_dv_NCC + length(G->Skylab_dV_NSR)) / 0.3048);
-			skp->Text(5 * W / 8, 14 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 14 * H / 21, "%+07.1f ft/s", (length(G->dV_LVLH) + G->Skylab_dv_NC2 + G->Skylab_dv_NCC + length(G->Skylab_dV_NSR)) / 0.3048);
 		}
 		if (G->Skylabmaneuver == 2)
 		{
@@ -2111,8 +1843,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
 			skp->Text(4 * W / 8, 14 * H / 21, "DVT", 3);
-			sprintf(Buffer, "%+07.1f ft/s", (length(G->dV_LVLH) + G->Skylab_dv_NCC + length(G->Skylab_dV_NSR)) / 0.3048);
-			skp->Text(5 * W / 8, 14 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 14 * H / 21, "%+07.1f ft/s", (length(G->dV_LVLH) + G->Skylab_dv_NCC + length(G->Skylab_dV_NSR)) / 0.3048);
 		}
 		if (G->Skylabmaneuver == 3)
 		{
@@ -2121,21 +1852,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, G->Skylab_t_NCC);
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%.1f NM", G->SkylabDH2 / 1852.0);
-			skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 10 * H / 14, "%.1f NM", G->SkylabDH2 / 1852.0);
 
-			sprintf(Buffer, "%.2f°", G->Skylab_E_L*DEG);
-			skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 12 * H / 14, "%.2f°", G->Skylab_E_L * DEG);
 
 			skp->Text(4 * W / 8, 10 * H / 21, "NSR", 3);
 			GET_Display(Buffer, G->Skylab_t_NSR);
 			skp->Text(5 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->Skylab_dV_NSR.x / 0.3048);
-			skp->Text(5 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->Skylab_dV_NSR.y / 0.3048);
-			skp->Text(5 * W / 8, 12 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->Skylab_dV_NSR.z / 0.3048);
-			skp->Text(5 * W / 8, 13 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 11 * H / 21, "%+07.1f", G->Skylab_dV_NSR.x / 0.3048);
+			skpTextFmt(skp, 5 * W / 8, 12 * H / 21, "%+07.1f", G->Skylab_dV_NSR.y / 0.3048);
+			skpTextFmt(skp, 5 * W / 8, 13 * H / 21, "%+07.1f", G->Skylab_dV_NSR.z / 0.3048);
 		}
 		if (G->Skylabmaneuver == 4)
 		{
@@ -2144,8 +1870,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, G->Skylab_t_NSR);
 			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%.2f°", G->Skylab_E_L*DEG);
-			skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 12 * H / 14, "%.2f°", G->Skylab_E_L* DEG);
 		}
 		if (G->Skylabmaneuver == 5)
 		{
@@ -2153,15 +1878,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			skp->Text(1 * W / 8, 4 * H / 14, "Calculate TPI TIG", 17);
 
-			sprintf(Buffer, "%.2f°", G->Skylab_E_L*DEG);
-			skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 12 * H / 14, "%.2f°", G->Skylab_E_L * DEG);
 		}
 		if (G->Skylabmaneuver == 6)
 		{
 			skp->Text(1 * W / 8, 2 * H / 14, "TPM", 3);
 
-			sprintf(Buffer, "DT = %.1f mins", G->Skylab_dt_TPM / 60.0);
-			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "DT = %.1f mins", G->Skylab_dt_TPM / 60.0);
 		}
 		if (G->Skylabmaneuver == 7)
 		{
@@ -2183,16 +1906,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->GZGENCSN.LDPPAzimuth != 0.0)
 		{
-			sprintf(Buffer, "%.3f°", GC->rtcc->GZGENCSN.LDPPAzimuth*DEG);
-			skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 2 * H / 14, "%.3f°", GC->rtcc->GZGENCSN.LDPPAzimuth* DEG);
 		}
 		else
 		{
 			skp->Text(1 * W / 8, 2 * H / 14, "Optimum Azimuth", 15);
 		}
 
-		sprintf(Buffer, "%.0f ft", GC->rtcc->GZGENCSN.LDPPHeightofPDI / 0.3048);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "%.0f ft", GC->rtcc->GZGENCSN.LDPPHeightofPDI / 0.3048);
 
 		if (GC->rtcc->GZGENCSN.LDPPPoweredDescentSimFlag)
 		{
@@ -2206,37 +1927,22 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->GZGENCSN.LDPPTimeofPDI);
 		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%d", GC->rtcc->GZGENCSN.LDPPDwellOrbits);
-		skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.2f min", GC->rtcc->GZGENCSN.LDPPDescentFlightTime / 60.0);
-		skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.2f°", GC->rtcc->GZGENCSN.LDPPDescentFlightArc*DEG);
-		skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 10 * H / 14, "%d", GC->rtcc->GZGENCSN.LDPPDwellOrbits);
+		skpTextFmt(skp, 5 * W / 8, 2 * H / 14, "%.2f min", GC->rtcc->GZGENCSN.LDPPDescentFlightTime / 60.0);
+		skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.2f°", GC->rtcc->GZGENCSN.LDPPDescentFlightArc * DEG);
 	}
 	else if (screen == 19)
 	{
 		skp->Text(5 * W / 8, (int)(0.5 * H / 14), "Terrain Model", 13);
 
-		sprintf(Buffer, "%.3f°", G->TMLat*DEG);
-		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.3f°", G->TMLng*DEG);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.3f°", G->TMAzi*DEG);
-		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1f ft", G->TMDistance / 0.3048);
-		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1f ft", G->TMStepSize / 0.3048);
-		skp->Text(1 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 2 * H / 14, "%.3f°", G->TMLat* DEG);
+		skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "%.3f°", G->TMLng* DEG);
+		skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%.3f°", G->TMAzi* DEG);
+		skpTextFmt(skp, 1 * W / 8, 8 * H / 14, "%.1f ft", G->TMDistance / 0.3048);
+		skpTextFmt(skp, 1 * W / 8, 10 * H / 14, "%.1f ft", G->TMStepSize / 0.3048);
 
 		skp->Text(5 * W / 8, 9 * H / 14, "LS Height:", 10);
-		sprintf(Buffer, "%.2f NM", G->TMAlt / 1852.0);
-		skp->Text(5 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 10 * H / 14, "%.2f NM", G->TMAlt / 1852.0);
 	}
 	else if (screen == 20)
 	{
@@ -2332,8 +2038,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->PZMCCPLN.MidcourseGET);
 		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%d", GC->rtcc->PZMCCPLN.Column);
-		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 8 * H / 14, "%d", GC->rtcc->PZMCCPLN.Column);
 
 		if (GC->rtcc->PZMCCPLN.Config)
 		{
@@ -2356,8 +2061,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->PZMCCPLN.Mode == 7)
 		{
-			sprintf(Buffer, "%.2f NM", GC->rtcc->PZMCCPLN.h_PC / 1852.0);
-			skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.2f NM", GC->rtcc->PZMCCPLN.h_PC / 1852.0);
 		}
 		else if (GC->rtcc->PZMCCPLN.Mode >= 8)
 		{
@@ -2374,8 +2078,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->PZMCCPLN.Mode >= 8)
 		{
-			sprintf(Buffer, "%.2f°", GC->rtcc->PZMCCPLN.incl_fr*DEG);
-			skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 6 * H / 14, "%.2f°", GC->rtcc->PZMCCPLN.incl_fr* DEG);
 		}
 
 		if (GC->rtcc->PZMCCPLN.Mode == 5)
@@ -2435,8 +2138,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else
 		{
-			sprintf(Buffer, "%.1lf min", GC->rtcc->med_k15.CSI_Flag / 60.0);
-			skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.1lf min", GC->rtcc->med_k15.CSI_Flag / 60.0);
 		}
 
 		if (GC->rtcc->med_k15.CDH_Flag == 0)
@@ -2445,8 +2147,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else
 		{
-			sprintf(Buffer, "CDH %d half revs after CSI", GC->rtcc->med_k15.CDH_Flag);
-			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "CDH %d half revs after CSI", GC->rtcc->med_k15.CDH_Flag);
 		}
 
 		if (GC->MissionPlanningActive == false)
@@ -2464,8 +2165,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_k15.TPIDefinition == 1)
 		{
-			sprintf(Buffer, "TPI longitude: %.4lf°", GC->rtcc->med_k15.TPIValue*DEG);
-			skp->Text(8 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 8 * W / 16, 4 * H / 14, "TPI longitude: %.4lf°", GC->rtcc->med_k15.TPIValue* DEG);
 		}
 		else
 		{
@@ -2474,15 +2174,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_k15.DeltaHTFlag > 0)
 		{
-			sprintf(Buffer, "Launch window with %d heights", GC->rtcc->med_k15.DeltaHTFlag);
-			skp->Text(8 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 8 * W / 16, 6 * H / 14, "Launch window with %d heights", GC->rtcc->med_k15.DeltaHTFlag);
 		}
 		else
 		{
 			skp->Text(8 * W / 16, 6 * H / 14, "Calc using input heights", 24);
-
-			sprintf(Buffer, "%.2lf %.2lf %.2lf NM", GC->rtcc->med_k15.DH1 / 1852.0, GC->rtcc->med_k15.DH2 / 1852.0, GC->rtcc->med_k15.DH3 / 1852.0);
-			skp->Text(8 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 8 * W / 16, 8 * H / 14, "%.2lf %.2lf %.2lf NM", GC->rtcc->med_k15.DH1 / 1852.0, GC->rtcc->med_k15.DH2 / 1852.0, GC->rtcc->med_k15.DH3 / 1852.0);
 		}
 
 		/*if (G->LunarLiftoffTimeOption == 0)
@@ -2595,8 +2292,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(1 * W / 8, 2 * H / 14, "Program 99", 10);
 
-		sprintf(Buffer, "Uplink No. %d", G->EMPUplinkNumber);
-		skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 2 * H / 14, "Uplink No. %d", G->EMPUplinkNumber);
 
 	}
 	else if (screen == 25)
@@ -2606,14 +2302,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, G->navcheckpad.NavChk[0]);
 		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%+07.2f LAT", G->navcheckpad.lat[0]);
-		skp->Text(4 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%+07.2f LNG", G->navcheckpad.lng[0]);
-		skp->Text(4 * W / 8, 7 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%+07.1f ALT", G->navcheckpad.alt[0]);
-		skp->Text(4 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 8, 6 * H / 14, "%+07.2f LAT", G->navcheckpad.lat[0]);
+		skpTextFmt(skp, 4 * W / 8, 7 * H / 14, "%+07.2f LNG", G->navcheckpad.lng[0]);
+		skpTextFmt(skp, 4 * W / 8, 8 * H / 14, "%+07.1f ALT", G->navcheckpad.alt[0]);
 	}
 	else if (screen == 26)
 	{
@@ -2641,11 +2332,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%f °", GC->rtcc->RZJCTTC.R32_lng_T*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%f °", GC->rtcc->RZJCTTC.R32_lng_T* DEG);
 
-		sprintf(Buffer, "%.2lf NM", GC->rtcc->RZJCTTC.R32_MD);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.2lf NM", GC->rtcc->RZJCTTC.R32_MD);
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
@@ -2666,17 +2355,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 2 * H / 14, "Manual", 6);
 		}
 
-		sprintf(Buffer, "%d", GC->rtcc->med_f80.ASTCode);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%d", GC->rtcc->med_f80.ASTCode);
 
-		sprintf(Buffer, "%s", GC->rtcc->med_f80.REFSMMAT.c_str());
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		Text(skp, 1 * W / 16, 6 * H / 14, GC->rtcc->med_f80.REFSMMAT);
 
-		sprintf(Buffer, "%s", GC->rtcc->med_f80.ManeuverCode.c_str());
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		Text(skp, 1 * W / 16, 8 * H / 14, GC->rtcc->med_f80.ManeuverCode);
 
-		sprintf(Buffer, "%d quads %.1lf seconds", GC->rtcc->med_f80.NumQuads, GC->rtcc->med_f80.UllageDT);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%d quads %.1lf seconds", GC->rtcc->med_f80.NumQuads, GC->rtcc->med_f80.UllageDT);
 
 		if (GC->rtcc->med_f80.TrimAngleInd == -1)
 		{
@@ -2687,8 +2372,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 12 * H / 14, "Use system parameter", 20);
 		}
 
-		sprintf(Buffer, "%.2lf°", GC->rtcc->med_f80.DockingAngle*DEG);
-		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.2lf°", GC->rtcc->med_f80.DockingAngle* DEG);
 
 		if (GC->rtcc->med_f80.HeadsUp)
 		{
@@ -2766,46 +2450,32 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (tab->Error)
 			{
-				sprintf_s(Buffer, "Error: %d", tab->Error);
-				skp->Text((11 + 12 * i) * W / 32, 31 * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (11 + 12 * i) * W / 32, 31 * H / 32, "Error: %d", tab->Error);
 			}
 
 			if (tab->RTEDCode == "") continue;
 
-			sprintf_s(Buffer, "%s", tab->RTEDCode.c_str());
-			skp->Text((18 + 12 * i) * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
-
-			sprintf_s(Buffer, "%s", tab->StationID.c_str());
-			skp->Text((11 + 12 * i) * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%s", tab->ASTSolutionCode.c_str());
-			skp->Text((16 + 12 * i) * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
+			Text(skp, (18 + 12 * i) * W / 32, 6 * H / 32, tab->RTEDCode);
+			Text(skp, (11 + 12 * i) * W / 32, 7 * H / 32, tab->StationID);
+			Text(skp, (16 + 12 * i) * W / 32, 7 * H / 32, tab->ASTSolutionCode);
 
 			GET_Display(Buffer, tab->VectorGET, false);
 			skp->Text((12 + 12 * i) * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%s", tab->LandingSiteID.c_str());
-			skp->Text((12 + 12 * i) * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%s", tab->ManeuverCode.c_str());
-			skp->Text((15 + 12 * i) * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
+			Text(skp, (12 + 12 * i) * W / 32, 9 * H / 32, tab->LandingSiteID);
+			Text(skp, (15 + 12 * i) * W / 32, 9 * H / 32, tab->ManeuverCode);
 
-			sprintf_s(Buffer, "%s", tab->SpecifiedREFSMMAT.c_str());
-			skp->Text((11 + 12 * i) * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", tab->VehicleWeight *LBS*1000.0);
-			skp->Text((15 + 12 * i) * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
+			Text(skp, (11 + 12 * i) * W / 32, 10 * H / 32, tab->SpecifiedREFSMMAT);
+			skpTextFmt(skp, (15 + 12 * i) * W / 32, 10 * H / 32, "%.0lf", tab->VehicleWeight * LBS * 1000.0);
 
-			sprintf_s(Buffer, "%.0lf", tab->TrueAnomaly*DEG);
-			skp->Text((13 + 12 * i) * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%s", tab->PrimaryReentryMode.c_str());
-			skp->Text((15 + 12 * i) * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (13 + 12 * i) * W / 32, 11 * H / 32, "%.0lf", tab->TrueAnomaly * DEG);
+			Text(skp, (15 + 12 * i) * W / 32, 11 * H / 32, tab->PrimaryReentryMode);
 
 			skp->SetTextAlign(oapi::Sketchpad::RIGHT, oapi::Sketchpad::BASELINE);
 
-			sprintf_s(Buffer, "%.1lf", tab->LVLHAtt.x*DEG);
-			skp->Text((12 + 12 * i) * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->LVLHAtt.y*DEG);
-			skp->Text((15 + 12 * i) * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->LVLHAtt.z*DEG);
-			skp->Text((18 + 12 * i) * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (12 + 12 * i) * W / 32, 12 * H / 32, "%.1lf", tab->LVLHAtt.x * DEG);
+			skpTextFmt(skp, (15 + 12 * i) * W / 32, 12 * H / 32, "%.1lf", tab->LVLHAtt.y * DEG);
+			skpTextFmt(skp, (18 + 12 * i) * W / 32, 12 * H / 32, "%.1lf", tab->LVLHAtt.z * DEG);
 
 			FormatIMUAngle1(Buffer, tab->IMUAtt.x);
 			skp->Text((12 + 12 * i) * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
@@ -2814,17 +2484,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			FormatIMUAngle1(Buffer, tab->IMUAtt.z);
 			skp->Text((18 + 12 * i) * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%.1lf", tab->DVC / 0.3048);
-			skp->Text((13 + 12 * i) * W / 32, 14 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (13 + 12 * i) * W / 32, 14 * H / 32, "%.1lf", tab->DVC / 0.3048);
 			SStoHHMMSS(tab->dt, hh, mm, secs);
-			sprintf_s(Buffer, "%02d:%02.1lf", mm, secs);
-			skp->Text((18 + 12 * i) * W / 32, 14 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (18 + 12 * i) * W / 32, 14 * H / 32, "%02d:%02.1lf", mm, secs);
 
-			sprintf_s(Buffer, "%.1lf", tab->dv / 0.3048);
-			skp->Text((13 + 12 * i) * W / 32, 15 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (13 + 12 * i) * W / 32, 15 * H / 32, "%.1lf", tab->dv / 0.3048);
 			SStoHHMMSS(tab->dt_ullage, hh, mm, secs);
-			sprintf_s(Buffer, "%+d %02d:%02.1lf", tab->NumQuads, mm, secs);
-			skp->Text((18 + 12 * i) * W / 32, 15 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (18 + 12 * i) * W / 32, 15 * H / 32, "%+d %02d:%02.1lf", tab->NumQuads, mm, secs);
 
 			skp->SetTextAlign(oapi::Sketchpad::LEFT, oapi::Sketchpad::BASELINE);
 
@@ -2835,24 +2501,18 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display2(Buffer, tab->GMTI);
 			skp->Text((12 + 12 * i) * W / 32, 18 * H / 32, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%s", tab->BackupReentryMode.c_str());
-			skp->Text((9 + 12 * i) * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
+			Text(skp, (9 + 12 * i) * W / 32, 19 * H / 32, tab->BackupReentryMode);
 			GET_Display(Buffer, tab->RollPET, false);
 			skp->Text((12 + 12 * i) * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->LiftVectorOrientation*DEG);
-			skp->Text((17 + 12 * i) * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (17 + 12 * i) * W / 32, 19 * H / 32, "%.1lf", tab->LiftVectorOrientation * DEG);
 
-			sprintf_s(Buffer, "%.2lf", tab->GLevelRoll);
-			skp->Text((13 + 12 * i) * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", tab->MaxGLevelPrimary);
-			skp->Text((13 + 12 * i) * W / 32, 22 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (13 + 12 * i) * W / 32, 21 * H / 32, "%.2lf", tab->GLevelRoll);
+			skpTextFmt(skp, (13 + 12 * i) * W / 32, 22 * H / 32, "%.2lf", tab->MaxGLevelPrimary);
 			GET_Display(Buffer, tab->ReentryPET, false);
 			skp->Text((12 + 12 * i) * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%.0lf", tab->v_EI / 0.3048);
-			skp->Text((12 + 12 * i) * W / 32, 24 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", tab->gamma_EI*DEG);
-			skp->Text((16 + 12 * i) * W / 32, 24 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (12 + 12 * i) * W / 32, 24 * H / 32, "%.0lf", tab->v_EI / 0.3048);
+			skpTextFmt(skp, (16 + 12 * i) * W / 32, 24 * H / 32, "%.2lf", tab->gamma_EI * DEG);
 
 			FormatLatitude(Buffer, tab->lat_EI*DEG);
 			skp->Text((10 + 12 * i) * W / 32, 25 * H / 32, Buffer, strlen(Buffer));
@@ -2923,22 +2583,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
-		sprintf(Buffer, "%.0f", GC->rtcc->PZREAP.DVMAX);
-		skp->Text(10 * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 6 * H / 28, "%.0f", GC->rtcc->PZREAP.DVMAX);
 		GET_Display(Buffer, GC->rtcc->PZREAP.TZMIN*3600.0, false);
 		skp->Text(10 * W / 32, 8 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, GC->rtcc->PZREAP.TZMAX*3600.0, false);
 		skp->Text(10 * W / 32, 10 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", GC->rtcc->PZREAP.GMAX);
-		skp->Text(10 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", GC->rtcc->PZREAP.HMINMC);
-		skp->Text(10 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2f", GC->rtcc->PZREAP.IRMAX);
-		skp->Text(10 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.0f", GC->rtcc->PZREAP.RRBIAS);
-		skp->Text(10 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.0f", GC->rtcc->PZREAP.VRMAX);
-		skp->Text(10 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
+		
+		skpTextFmt(skp, 10 * W / 32, 12 * H / 28, "%.1f", GC->rtcc->PZREAP.GMAX);
+		skpTextFmt(skp, 10 * W / 32, 14 * H / 28, "%.1f", GC->rtcc->PZREAP.HMINMC);
+		skpTextFmt(skp, 10 * W / 32, 16 * H / 28, "%.2f", GC->rtcc->PZREAP.IRMAX);
+		skpTextFmt(skp, 10 * W / 32, 18 * H / 28, "%.0f", GC->rtcc->PZREAP.RRBIAS);
+		skpTextFmt(skp, 10 * W / 32, 20 * H / 28, "%.0f", GC->rtcc->PZREAP.VRMAX);
 
 		if (GC->rtcc->PZREAP.MOTION == 0)
 		{
@@ -2972,8 +2627,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				continue;
 			}
 
-			sprintf(Buffer, GC->rtcc->PZREAP.ATPSite[i].c_str());
-			skp->Text((11 + i * 4) * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
+			Text(skp, (11 + i * 4) * W / 32, 6 * H / 28, GC->rtcc->PZREAP.ATPSite[i]);
 			for (unsigned j = 0;j < 5;j++)
 			{
 				//If current element isn't valid, skip the rest
@@ -2982,10 +2636,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					break;
 				}
 
-				sprintf(Buffer, "%.2f", GC->rtcc->PZREAP.ATPCoordinates[i][2 * j] * DEG);
-				skp->Text((11 + i * 4) * W / 32, (7 + j * 2) * H / 28, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%.2f", GC->rtcc->PZREAP.ATPCoordinates[i][2 * j + 1] * DEG);
-				skp->Text((11 + i * 4) * W / 32, (8 + j * 2) * H / 28, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (11 + i * 4) * W / 32, (7 + j * 2) * H / 28, "%.2f", GC->rtcc->PZREAP.ATPCoordinates[i][2 * j] * DEG);
+				skpTextFmt(skp, (11 + i * 4) * W / 32, (8 + j * 2) * H / 28, "%.2f", GC->rtcc->PZREAP.ATPCoordinates[i][2 * j + 1] * DEG);
 			}
 		}
 
@@ -2999,23 +2651,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			sprintf(Buffer, GC->rtcc->PZREAP.PTPSite[i].c_str());
 			skp->Text((11 + i * 4) * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f", GC->rtcc->PZREAP.PTPLatitude[i] * DEG);
-			skp->Text((11 + i * 4) * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f", GC->rtcc->PZREAP.PTPLongitude[i] * DEG);
-			skp->Text((11 + i * 4) * W / 32, 22 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (11 + i * 4) * W / 32, 21 * H / 28, "%.2f", GC->rtcc->PZREAP.PTPLatitude[i] * DEG);
+			skpTextFmt(skp, (11 + i * 4) * W / 32, 22 * H / 28, "%.2f", GC->rtcc->PZREAP.PTPLongitude[i] * DEG);
 		}
 	}
 	else if (screen == 30)
 	{
 		skp->Text(6 * W / 8, (int)(0.5 * H / 14), "Entry Update", 12);
 
-		sprintf(Buffer, "Desired Range: %.1f NM", G->entryrange);
-		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "Lat:  %.2f °", G->EntryLatcor*DEG);
-		skp->Text(5 * W / 8, 5 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "Long: %.2f °", G->EntryLngcor*DEG);
-		skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 2 * H / 14, "Desired Range: %.1f NM", G->entryrange);
+		skpTextFmt(skp, 5 * W / 8, 5 * H / 14, "Lat:  %.2f °", G->EntryLatcor * DEG);
+		skpTextFmt(skp, 5 * W / 8, 6 * H / 14, "Long: %.2f °", G->EntryLngcor * DEG);
 	}
 	else if (screen == 31)
 	{
@@ -3046,8 +2692,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%.2f", GC->rtcc->med_k00.NH);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2f", GC->rtcc->med_k00.NH);
 
 		if (GC->rtcc->med_k00.I4)
 		{
@@ -3059,8 +2704,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}		
 		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%.0f", GC->rtcc->med_k00.MI);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.0f", GC->rtcc->med_k00.MI);
 
 		if (G->target != NULL)
 		{
@@ -3074,8 +2718,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_k00.NPC > 0)
 		{
-			sprintf(Buffer, "%.2f", GC->rtcc->med_k00.NPC);
-			skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%.2f", GC->rtcc->med_k00.NPC);
 		}
 		else
 		{
@@ -3134,19 +2777,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 		}
 
-		sprintf(Buffer, "%.1lf", GC->rtcc->med_k10.MLDValue);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%d", GC->rtcc->GZGENCSN.DKIPhaseAngleSetting);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.1lf", GC->rtcc->med_k10.MLDValue);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%d", GC->rtcc->GZGENCSN.DKIPhaseAngleSetting);
 
 		if (GC->rtcc->GZGENCSN.DKI_TP_Definition == 0)
 		{
 			sprintf(Buffer, "Input TPI phase angle");
 			skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%.1lf", GC->rtcc->GZGENCSN.DKI_TPDefinitionValue);
-			skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 2 * H / 14, "%.1lf", GC->rtcc->GZGENCSN.DKI_TPDefinitionValue);
 		}
 		else
 		{
@@ -3183,8 +2822,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf(Buffer, "%.0lf min", GC->rtcc->GZGENCSN.DKI_TPDefinitionValue);
-				skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.0lf min", GC->rtcc->GZGENCSN.DKI_TPDefinitionValue);
 			}
 		}
 	}
@@ -3192,22 +2830,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	{
 		skp->Text(5 * W / 8, (int)(0.5 * H / 14), "DAP PAD", 7);
 
-		sprintf(Buffer, "%+06.0f WT N47", G->DAP_PAD.ThisVehicleWeight);
-		skp->Text((int)(3.5 * W / 8), 5 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.0f", G->DAP_PAD.OtherVehicleWeight);
-		skp->Text((int)(3.5 * W / 8), 6 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, (int)(3.5 * W / 8), 5 * H / 21, "%+06.0f WT N47", G->DAP_PAD.ThisVehicleWeight);
+		skpTextFmt(skp, (int)(3.5 * W / 8), 6 * H / 21, "%+06.0f", G->DAP_PAD.OtherVehicleWeight);
 
-		sprintf(Buffer, "%+07.2f GMBL N48", G->DAP_PAD.PitchTrim);
-		skp->Text((int)(3.5 * W / 8), 7 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f", G->DAP_PAD.YawTrim);
-		skp->Text((int)(3.5 * W / 8), 8 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, (int)(3.5 * W / 8), 7 * H / 21, "%+07.2f GMBL N48", G->DAP_PAD.PitchTrim);
+		skpTextFmt(skp, (int)(3.5 * W / 8), 8 * H / 21, "%+07.2f", G->DAP_PAD.YawTrim);
 	}
 	else if (screen == 36)
 	{
 		skp->Text(6 * W / 8, (int)(0.5 * H / 14), "LVDC", 4);
 
-		sprintf(Buffer, "Launch Azimuth: %.4f°", G->LVDCLaunchAzimuth*DEG);
-		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 2 * H / 14, "Launch Azimuth: %.4f°", G->LVDCLaunchAzimuth* DEG);
 	}
 	else if (screen == 37)
 	{
@@ -3219,28 +2852,22 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 4 * H / 14, "TEphemZero:", 11);
 			skp->Text(1 * W / 8, 8 * H / 14, "TIMEM0:", 7);
 
-			sprintf(Buffer, "%d", G->AGCEphemBRCSEpoch);
-			skp->Text(4 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%f", G->AGCEphemTEphemZero);
-			skp->Text(4 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%f", G->AGCEphemTIMEM0);
-			skp->Text(4 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 8, 2 * H / 14, "%d", G->AGCEphemBRCSEpoch);
+			skpTextFmt(skp, 4 * W / 8, 4 * H / 14, "%f", G->AGCEphemTEphemZero);
+			skpTextFmt(skp, 4 * W / 8, 8 * H / 14, "%f", G->AGCEphemTIMEM0);
 		}
 		else
 		{
 			skp->Text(4 * W / 8, (int)(0.5 * H / 14), "AGC Correction Vectors", 23);
 
 			skp->Text(1 * W / 8, 6 * H / 14, "TEPHEM:", 7);
-			sprintf(Buffer, "%.4f", G->AGCEphemTEPHEM);
-			skp->Text(4 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 8, 6 * H / 14, "%.4f", G->AGCEphemTEPHEM);
 
 			skp->Text(1 * W / 8, 10 * H / 14, "TLAND:", 6);
-			sprintf(Buffer, "%+.2f Days", G->AGCEphemTLAND);
-			skp->Text(4 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 8, 10 * H / 14, "%+.2f Days", G->AGCEphemTLAND);
 
 			skp->Text(1 * W / 8, 12 * H / 14, "Mission:", 8);
-			sprintf(Buffer, "%d", G->AGCEphemMission);
-			skp->Text(4 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 8, 12 * H / 14, "%d", G->AGCEphemMission);
 
 			if (G->AGCEphemIsCMC)
 			{
@@ -3259,18 +2886,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display2(Buffer, G->t_LunarLiftoff);
 		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%+07.1f ft/s", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%+07.1f ft/s", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
-		skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "%+07.1f ft/s", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
+		skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%+07.1f ft/s", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
 
 		skp->Text(1 * W / 8, 8 * H / 14, "Powered Flight Arc:", 19);
-		sprintf(Buffer, "%.3f°", GC->rtcc->PZLTRT.PoweredFlightArc*DEG);
-		skp->Text(1 * W / 8, 9 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 9 * H / 14, "%.3f°", GC->rtcc->PZLTRT.PoweredFlightArc* DEG);
 		skp->Text(1 * W / 8, 10 * H / 14, "Powered Flight Time:", 20);
-		sprintf(Buffer, "%.1f s", GC->rtcc->PZLTRT.PoweredFlightTime);
-		skp->Text(1 * W / 8, 11 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 11 * H / 14, "%.1f s", GC->rtcc->PZLTRT.PoweredFlightTime);
 		skp->Text(1 * W / 8, 12 * H / 14, "Insertion GET:", 14);
 		double get = GC->rtcc->GETfromGMT(GC->rtcc->JZLAI.sv_Insertion.GMT);
 		if (get < 0)
@@ -3293,22 +2915,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 		}
 
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.R.x);
-		skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.R.y);
-		skp->Text(5 * W / 8, 5 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.R.z);
-		skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.R.x);
+		skpTextFmt(skp, 5 * W / 8, 5 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.R.y);
+		skpTextFmt(skp, 5 * W / 8, 6 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.R.z);
 
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.V.x);
-		skp->Text(5 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.V.y);
-		skp->Text(5 * W / 8, 9 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.V.z);
-		skp->Text(5 * W / 8, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 8 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.V.x);
+		skpTextFmt(skp, 5 * W / 8, 9 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.V.y);
+		skpTextFmt(skp, 5 * W / 8, 10 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.V.z);
 
-		sprintf(Buffer, "%f", GC->rtcc->JZLAI.sv_Insertion.GMT);
-		skp->Text(5 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 12 * H / 14, "%f", GC->rtcc->JZLAI.sv_Insertion.GMT);
 	}
 	else if (screen == 39)
 	{
@@ -3328,23 +2943,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		double secs;
 
 		SStoHHMMSS(G->t_LunarLiftoff, hh, mm, secs);
-		sprintf(Buffer, "%+06d HRS", hh);
-		skp->Text(2 * W / 8, 6 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06d MIN TIG", mm);
-		skp->Text(2 * W / 8, 7 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.0f SEC", secs * 100.0);
-		skp->Text(2 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 6 * H / 21, "%+06d HRS", hh);
+		skpTextFmt(skp, 2 * W / 8, 7 * H / 21, "%+06d MIN TIG", mm);
+		skpTextFmt(skp, 2 * W / 8, 8 * H / 21, "%+06.0f SEC", secs * 100.0);
 
-		sprintf(Buffer, "%+07.1f V (HOR)", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
-		skp->Text(2 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.1f V (VERT) N76", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
-		skp->Text(2 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.1f CROSSRANGE", G->lmascentpad.CR);
-		skp->Text(2 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06d DEDA 047", G->lmascentpad.DEDA047);
-		skp->Text(2 * W / 8, 12 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06d DEDA 053", G->lmascentpad.DEDA053);
-		skp->Text(2 * W / 8, 13 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 9 * H / 21, "%+07.1f V (HOR)", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
+		skpTextFmt(skp, 2 * W / 8, 10 * H / 21, "%+07.1f V (VERT) N76", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
+		skpTextFmt(skp, 2 * W / 8, 11 * H / 21, "%+07.1f CROSSRANGE", G->lmascentpad.CR);
+		skpTextFmt(skp, 2 * W / 8, 12 * H / 21, "%+06d DEDA 047", G->lmascentpad.DEDA047);
+		skpTextFmt(skp, 2 * W / 8, 13 * H / 21, "%+06d DEDA 053", G->lmascentpad.DEDA053);
 		if (GC->mission >= 14)
 		{
 			sprintf(Buffer, "%+06.0f DEDA 224/226", G->lmascentpad.DEDA225_226);
@@ -3354,8 +2961,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%+06.0f DEDA 225/226", G->lmascentpad.DEDA225_226);
 		}
 		skp->Text(2 * W / 8, 14 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.0f DEDA 231", G->lmascentpad.DEDA231);
-		skp->Text(2 * W / 8, 15 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 15 * H / 21, "%+06.0f DEDA 231", G->lmascentpad.DEDA231);
 
 	}
 	else if (screen == 40)
@@ -3387,58 +2993,40 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(1 * W / 8, 5 * H / 21, "PGNS Coefficients:", 18);
 		if (GC->mission <= 11)
 		{
-			sprintf(Buffer, "%e", G->PDAPABTCOF[0] / 0.3048);
-			skp->Text(1 * W / 8, 6 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%e", G->PDAPABTCOF[1] / 0.3048);
-			skp->Text(1 * W / 8, 7 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%e", G->PDAPABTCOF[2] / 0.3048);
-			skp->Text(1 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%f", G->PDAPABTCOF[3] / 0.3048);
-			skp->Text(1 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%e", G->PDAPABTCOF[4] / 0.3048);
-			skp->Text(1 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%e", G->PDAPABTCOF[5] / 0.3048);
-			skp->Text(1 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%e", G->PDAPABTCOF[6] / 0.3048);
-			skp->Text(1 * W / 8, 12 * H / 21, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%f", G->PDAPABTCOF[7] / 0.3048);
-			skp->Text(1 * W / 8, 13 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 6 * H / 21, "%e", G->PDAPABTCOF[0] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 7 * H / 21, "%e", G->PDAPABTCOF[1] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 8 * H / 21, "%e", G->PDAPABTCOF[2] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 9 * H / 21, "%f", G->PDAPABTCOF[3] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 10 * H / 21, "%e", G->PDAPABTCOF[4] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 11 * H / 21, "%e", G->PDAPABTCOF[5] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 12 * H / 21, "%e", G->PDAPABTCOF[6] / 0.3048);
+			skpTextFmt(skp, 1 * W / 8, 13 * H / 21, "%f", G->PDAPABTCOF[7] / 0.3048);
 		}
 		else
 		{
 			skp->Text(1 * W / 8, 6 * H / 21, "J1", 2);
-			sprintf(Buffer, "%.4f NM", G->PDAP_J1 / 1852.0);
-			skp->Text(2 * W / 8, 6 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 6 * H / 21, "%.4f NM", G->PDAP_J1 / 1852.0);
 			skp->Text(1 * W / 8, 7 * H / 21, "K1", 2);
-			sprintf(Buffer, "%.4f NM/DEG", G->PDAP_K1 / 1852.0 / DEG);
-			skp->Text(2 * W / 8, 7 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 7 * H / 21, "%.4f NM/DEG", G->PDAP_K1 / 1852.0 / DEG);
 			skp->Text(1 * W / 8, 8 * H / 21, "J2", 2);
-			sprintf(Buffer, "%.4f NM", G->PDAP_J2 / 1852.0);
-			skp->Text(2 * W / 8, 8 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 8 * H / 21, "%.4f NM", G->PDAP_J2 / 1852.0);
 			skp->Text(1 * W / 8, 9 * H / 21, "K2", 2);
-			sprintf(Buffer, "%.4f NM/DEG", G->PDAP_K2 / 1852.0 / DEG);
-			skp->Text(2 * W / 8, 9 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 9 * H / 21, "%.4f NM/DEG", G->PDAP_K2 / 1852.0 / DEG);
 			skp->Text(1 * W / 8, 10 * H / 21, "THET", 4);
-			sprintf(Buffer, "%.4f°", G->PDAP_Theta_LIM*DEG);
-			skp->Text(2 * W / 8, 10 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 10 * H / 21, "%.4f°", G->PDAP_Theta_LIM* DEG);
 			skp->Text(1 * W / 8, 11 * H / 21, "RMIN", 4);
-			sprintf(Buffer, "%.4f NM", G->PDAP_R_amin / 1852.0);
-			skp->Text(2 * W / 8, 11 * H / 21, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 8, 11 * H / 21, "%.4f NM", G->PDAP_R_amin / 1852.0);
 		}
 
 		skp->Text(1 * W / 8, 15 * H / 21, "AGS Coefficients:", 18);
 		skp->Text(1 * W / 8, 16 * H / 21, "224", 3);
-		sprintf(Buffer, "%+06.0f", G->DEDA224 / 0.3048 / 100.0);
-		skp->Text(2 * W / 8, 16 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 16 * H / 21, "%+06.0f", G->DEDA224 / 0.3048 / 100.0);
 		skp->Text(1 * W / 8, 17 * H / 21, "225", 3);
-		sprintf(Buffer, "%+06.0f", G->DEDA225 / 0.3048 / 100.0);
-		skp->Text(2 * W / 8, 17 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 17 * H / 21, "%+06.0f", G->DEDA225 / 0.3048 / 100.0);
 		skp->Text(1 * W / 8, 18 * H / 21, "226", 3);
-		sprintf(Buffer, "%+06.0f", G->DEDA226 / 0.3048 / 100.0);
-		skp->Text(2 * W / 8, 18 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 18 * H / 21, "%+06.0f", G->DEDA226 / 0.3048 / 100.0);
 		skp->Text(1 * W / 8, 19 * H / 21, "227", 3);
-		sprintf(Buffer, "%+06d", G->DEDA227);
-		skp->Text(2 * W / 8, 19 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 19 * H / 21, "%+06d", G->DEDA227);
 
 		if (G->target != NULL)
 		{
@@ -3447,12 +3035,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 
 		skp->Text(5 * W / 8, 15 * H / 21, "Landing Site:", 13);
-		sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(5 * W / 8, 16 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(5 * W / 8, 17 * H / 21, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
-		skp->Text(5 * W / 8, 18 * H / 21, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 16 * H / 21, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 5 * W / 8, 17 * H / 21, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 5 * W / 8, 18 * H / 21, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
 		skp->Text(5 * W / 8, 19 * H / 21, "TLAND:", 6);
 		GET_Display(Buffer, GC->rtcc->CZTDTGTU.GETTD);
 		skp->Text(5 * W / 8, 20 * H / 21, Buffer, strlen(Buffer));
@@ -3529,31 +3114,23 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(3 * W / 16, 3 * H / 28, Buffer, strlen(Buffer));
 		sprintf(Buffer, tab->VEHID);
 		skp->Text(3 * W / 16, 4 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%03d", tab->REV);
-		skp->Text(3 * W / 16, 5 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 3 * W / 16, 5 * H / 28, "%03d", tab->REV);
 		sprintf(Buffer, tab->REF);
 		skp->Text(3 * W / 16, 6 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, tab->GMTID, false);
 		skp->Text(3 * W / 16, 7 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, tab->GETID, false);
 		skp->Text(3 * W / 16, 8 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", tab->H);
-		skp->Text(3 * W / 16, 10 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.0f", tab->V);
-		skp->Text(3 * W / 16, 11 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.2f", tab->GAM);
-		skp->Text(3 * W / 16, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", tab->A);
-		skp->Text(3 * W / 16, 14 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%06.4f", tab->E);
-		skp->Text(3 * W / 16, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f", tab->I);
-		skp->Text(3 * W / 16, 16 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 3 * W / 16, 10 * H / 28, "%08.1f", tab->H);
+		skpTextFmt(skp, 3 * W / 16, 11 * H / 28, "%05.0f", tab->V);
+		skpTextFmt(skp, 3 * W / 16, 12 * H / 28, "%+06.2f", tab->GAM);
+		skpTextFmt(skp, 3 * W / 16, 14 * H / 28, "%08.1f", tab->A);
+		skpTextFmt(skp, 3 * W / 16, 15 * H / 28, "%06.4f", tab->E);
+		skpTextFmt(skp, 3 * W / 16, 16 * H / 28, "%05.2f", tab->I);
 
 		if (tab->E < 1.0)
 		{
-			sprintf(Buffer, "%08.1f", tab->HA);
-			skp->Text(3 * W / 16, 18 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 3 * W / 16, 18 * H / 28, "%08.1f", tab->HA);
 			if (tab->E > 0.0001)
 			{
 				if (tab->PA > 0)
@@ -3579,8 +3156,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 		}
 
-		sprintf(Buffer, "%08.1f", tab->HP);
-		skp->Text(3 * W / 16, 23 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 3 * W / 16, 23 * H / 28, "%08.1f", tab->HP);
 		if (tab->E > 0.0001)
 		{
 			if (tab->PP > 0)
@@ -3640,8 +3216,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		skp->Text(8 * W / 16, 7 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%04d", tab->REVL);
-		skp->Text(13 * W / 16, 3 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 16, 3 * H / 28, "%04d", tab->REVL);
 		GET_Display(Buffer, tab->GETL, false);
 		skp->Text(13 * W / 16, 4 * H / 28, Buffer, strlen(Buffer));
 		if (tab->L > 0)
@@ -3655,17 +3230,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(13 * W / 16, 5 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, tab->TO, false);
 		skp->Text(13 * W / 16, 6 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.1f", tab->K);
-		skp->Text(13 * W / 16, 7 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%07.1f", tab->ORBWT);
-		skp->Text(13 * W / 16, 8 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 16, 7 * H / 28, "%05.1f", tab->K);
+		skpTextFmt(skp, 13 * W / 16, 8 * H / 28, "%07.1f", tab->ORBWT);
 
 		sprintf(Buffer, tab->REFR);
 		skp->Text(12 * W / 16, 11 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, tab->GETBV, false);
 		skp->Text(12 * W / 16, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", tab->HAR);
-		skp->Text(12 * W / 16, 13 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 12 * W / 16, 13 * H / 28, "%08.1f", tab->HAR);
 		if (tab->PAR > 0)
 		{
 			sprintf(Buffer, "%06.2f N", tab->PAR);
@@ -3687,8 +3259,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, tab->GETAR, false);
 		skp->Text(12 * W / 16, 16 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%08.1f", tab->HPR);
-		skp->Text(12 * W / 16, 18 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 12 * W / 16, 18 * H / 28, "%08.1f", tab->HPR);
 		if (tab->PPR > 0)
 		{
 			sprintf(Buffer, "%06.2f N", tab->PPR);
@@ -3844,8 +3415,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(15 * W / 32, 6 * H / 28, "LAM", 3);
 		skp->Text(23 * W / 32, 6 * H / 28, "PSI", 3);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->EZSPACE.errormessage.c_str());
-		skp->Text(14 * W / 32, 27 * H / 28, Buffer, strlen(Buffer));
+		Text(skp, 14 * W / 32, 27 * H / 28, GC->rtcc->EZSPACE.errormessage);
 
 		sprintf_s(Buffer, "%s", GC->rtcc->EZSPACE.VecID);
 		skp->Text(5 * W / 32, 2 * H / 28, Buffer, strlen(Buffer));
@@ -3857,16 +3427,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		sprintf(Buffer, GC->rtcc->EZSPACE.REF);
 		skp->Text(4 * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%07.1f", GC->rtcc->EZSPACE.WEIGHT);
-		skp->Text(16 * W / 32, 2 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 16 * W / 32, 2 * H / 28, "%07.1f", GC->rtcc->EZSPACE.WEIGHT);
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETV, false);
 		skp->Text(14 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
 
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETR, false);
 		skp->Text(26 * W / 32, 2 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%05.0f", GC->rtcc->EZSPACE.V);
-		skp->Text(10 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 5 * H / 28, "%05.0f", GC->rtcc->EZSPACE.V);
 		if (GC->rtcc->EZSPACE.PHI > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PHI);
@@ -3876,13 +3444,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f S", abs(GC->rtcc->EZSPACE.PHI));
 		}
 		skp->Text(15 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%06.0f", GC->rtcc->EZSPACE.H);
-		skp->Text(21 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.ADA);
-		skp->Text(28 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 32, 5 * H / 28, "%06.0f", GC->rtcc->EZSPACE.H);
+		skpTextFmt(skp, 28 * W / 32, 5 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.ADA);
 
-		sprintf(Buffer, "%+06.1f°", GC->rtcc->EZSPACE.GAM);
-		skp->Text(11 * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 11 * W / 32, 6 * H / 28, "%+06.1f°", GC->rtcc->EZSPACE.GAM);
 		if (GC->rtcc->EZSPACE.LAM > 0)
 		{
 			sprintf(Buffer, "%06.2f E", GC->rtcc->EZSPACE.LAM);
@@ -3892,8 +3457,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LAM));
 		}
 		skp->Text(18 * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.1f°", GC->rtcc->EZSPACE.PSI);
-		skp->Text(25 * W / 32, 6 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 6 * H / 28, "%+06.1f°", GC->rtcc->EZSPACE.PSI);
 
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETVector1, false);
 		skp->Text(1 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
@@ -3908,20 +3472,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		sprintf(Buffer, GC->rtcc->EZSPACE.REF1);
 		skp->Text(10 * W / 64, 10 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.0f", GC->rtcc->EZSPACE.WT);
-		skp->Text(10 * W / 32, 10 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HA);
-		skp->Text(10 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HP);
-		skp->Text(10 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.H1);
-		skp->Text(10 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.0f", GC->rtcc->EZSPACE.V1);
-		skp->Text(10 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.1f°", GC->rtcc->EZSPACE.GAM1);
-		skp->Text(10 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.1f°", GC->rtcc->EZSPACE.PSI1);
-		skp->Text(10 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 10 * H / 28, "%05.0f", GC->rtcc->EZSPACE.WT);
+		skpTextFmt(skp, 10 * W / 32, 13 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HA);
+		skpTextFmt(skp, 10 * W / 32, 14 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HP);
+		skpTextFmt(skp, 10 * W / 32, 15 * H / 28, "%08.1f", GC->rtcc->EZSPACE.H1);
+		skpTextFmt(skp, 10 * W / 32, 16 * H / 28, "%05.0f", GC->rtcc->EZSPACE.V1);
+		skpTextFmt(skp, 10 * W / 32, 17 * H / 28, "%+06.1f°", GC->rtcc->EZSPACE.GAM1);
+		skpTextFmt(skp, 10 * W / 32, 18 * H / 28, "%+06.1f°", GC->rtcc->EZSPACE.PSI1);
 		if (GC->rtcc->EZSPACE.PHI1 > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PHI1);
@@ -3940,10 +3497,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LAM1));
 		}
 		skp->Text(10 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HS);
-		skp->Text(10 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HO);
-		skp->Text(10 * W / 32, 22 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 21 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HS);
+		skpTextFmt(skp, 10 * W / 32, 22 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HO);
 		if (GC->rtcc->EZSPACE.PHIO > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PHIO);
@@ -3953,35 +3508,25 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f S", abs(GC->rtcc->EZSPACE.PHIO));
 		}
 		skp->Text(10 * W / 32, 23 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.IEMP);
-		skp->Text(7 * W / 32, 24 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.W1);
-		skp->Text(7 * W / 32, 25 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.OMG);
-		skp->Text(7 * W / 32, 26 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.PRA);
-		skp->Text(7 * W / 32, 27 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 32, 24 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.IEMP);
+		skpTextFmt(skp, 7 * W / 32, 25 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.W1);
+		skpTextFmt(skp, 7 * W / 32, 26 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.OMG);
+		skpTextFmt(skp, 7 * W / 32, 27 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.PRA);
 
 		if (GC->rtcc->EZSPACE.A1 > 0)
 		{
-			sprintf(Buffer, "%06.0f", GC->rtcc->EZSPACE.A1);
-			skp->Text(13 * W / 32, 24 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 13 * W / 32, 24 * H / 28, "%06.0f", GC->rtcc->EZSPACE.A1);
 		}
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.L1);
-		skp->Text(13 * W / 32, 25 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.5f", GC->rtcc->EZSPACE.E1);
-		skp->Text(13 * W / 32, 26 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.I1);
-		skp->Text(13 * W / 32, 27 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 32, 25 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.L1);
+		skpTextFmt(skp, 13 * W / 32, 26 * H / 28, "%.5f", GC->rtcc->EZSPACE.E1);
+		skpTextFmt(skp, 13 * W / 32, 27 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.I1);
 
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETSI, false);
 		skp->Text(20 * W / 32, 10 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETCA, false);
 		skp->Text(20 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.0f", GC->rtcc->EZSPACE.VCA);
-		skp->Text(20 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HCA);
-		skp->Text(20 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 20 * W / 32, 12 * H / 28, "%05.0f", GC->rtcc->EZSPACE.VCA);
+		skpTextFmt(skp, 20 * W / 32, 13 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HCA);
 		if (GC->rtcc->EZSPACE.PCA > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PCA);
@@ -4000,12 +3545,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LCA));
 		}
 		skp->Text(20 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+06.1f°", GC->rtcc->EZSPACE.PSICA);
-		skp->Text(20 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 20 * W / 32, 16 * H / 28, "%+06.1f°", GC->rtcc->EZSPACE.PSICA);
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETMN, false);
 		skp->Text(20 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HMN);
-		skp->Text(20 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 20 * W / 32, 18 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HMN);
 		if (GC->rtcc->EZSPACE.PMN > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PMN);
@@ -4024,18 +3567,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LMN));
 		}
 		skp->Text(20 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%05.2f", GC->rtcc->EZSPACE.DMN);
-		skp->Text(20 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 20 * W / 32, 21 * H / 28, "%05.2f", GC->rtcc->EZSPACE.DMN);
 
 
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETSE, false);
 		skp->Text(30 * W / 32, 10 * H / 28, Buffer, strlen(Buffer));
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETEI, false);
 		skp->Text(30 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.2f", GC->rtcc->EZSPACE.VEI);
-		skp->Text(30 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f°", GC->rtcc->EZSPACE.GEI);
-		skp->Text(30 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 12 * H / 28, "%08.2f", GC->rtcc->EZSPACE.VEI);
+		skpTextFmt(skp, 30 * W / 32, 13 * H / 28, "%+07.2f°", GC->rtcc->EZSPACE.GEI);
 		if (GC->rtcc->EZSPACE.PEI > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PEI);
@@ -4054,14 +3594,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LEI));
 		}
 		skp->Text(30 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f°", GC->rtcc->EZSPACE.PSIEI);
-		skp->Text(30 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 16 * H / 28, "%+07.2f°", GC->rtcc->EZSPACE.PSIEI);
 		GET_Display(Buffer, GC->rtcc->EZSPACE.GETVP, false);
 		skp->Text(30 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.2f", GC->rtcc->EZSPACE.VVP);
-		skp->Text(30 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%08.1f", GC->rtcc->EZSPACE.HVP);
-		skp->Text(30 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 18 * H / 28, "%08.2f", GC->rtcc->EZSPACE.VVP);
+		skpTextFmt(skp, 30 * W / 32, 19 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HVP);
 		if (GC->rtcc->EZSPACE.PVP > 0)
 		{
 			sprintf(Buffer, "%06.2f N", GC->rtcc->EZSPACE.PVP);
@@ -4080,13 +3617,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%06.2f W", abs(GC->rtcc->EZSPACE.LVP));
 		}
 		skp->Text(30 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.2f°", GC->rtcc->EZSPACE.PSIVP);
-		skp->Text(30 * W / 32, 22 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 22 * H / 28, "%+07.2f°", GC->rtcc->EZSPACE.PSIVP);
 
-		sprintf(Buffer, "%05.2f°", GC->rtcc->EZSPACE.IE);
-		skp->Text(30 * W / 32, 26 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%06.2f°", GC->rtcc->EZSPACE.LN);
-		skp->Text(30 * W / 32, 27 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 26 * H / 28, "%05.2f°", GC->rtcc->EZSPACE.IE);
+		skpTextFmt(skp, 30 * W / 32, 27 * H / 28, "%06.2f°", GC->rtcc->EZSPACE.LN);
 	}
 	else if (screen == 44)
 	{
@@ -4134,26 +3668,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, GC->rtcc->MPTDISPLAY.man[i].GETBI.c_str());
 			skp->Text(5 * W / 32, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%07.1f", GC->rtcc->MPTDISPLAY.man[i].DELTAV);
-			skp->Text(14 * W / 32, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 14 * W / 32, (i * 2 + 9) * H / 28, "%07.1f", GC->rtcc->MPTDISPLAY.man[i].DELTAV);
+			skpTextFmt(skp, 18 * W / 32, (i * 2 + 9) * H / 28, "%.1f", GC->rtcc->MPTDISPLAY.man[i].DVREM);
+			skpTextFmt(skp, 43 * W / 64, (i * 2 + 9) * H / 28, "%06.1f", GC->rtcc->MPTDISPLAY.man[i].HA);
+			skpTextFmt(skp, 50 * W / 64, (i * 2 + 9) * H / 28, "%06.1f", GC->rtcc->MPTDISPLAY.man[i].HP);
 
-			sprintf(Buffer, "%.1f", GC->rtcc->MPTDISPLAY.man[i].DVREM);
-			skp->Text(18 * W / 32, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%06.1f", GC->rtcc->MPTDISPLAY.man[i].HA);
-			skp->Text(43 * W / 64, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, "%06.1f", GC->rtcc->MPTDISPLAY.man[i].HP);
-			skp->Text(50 * W / 64, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
-
-			sprintf(Buffer, GC->rtcc->MPTDISPLAY.man[i].code.c_str());
-			skp->Text(63 * W / 64, (i * 2 + 9) * H / 28, Buffer, strlen(Buffer));
+			Text(skp, 63 * W / 64, (i * 2 + 9) * H / 28, GC->rtcc->MPTDISPLAY.man[i].code);
 		}
 
 		for (unsigned i = 1;i < GC->rtcc->MPTDISPLAY.man.size();i++)
 		{
-			sprintf(Buffer, GC->rtcc->MPTDISPLAY.man[i].DT.c_str());
-			skp->Text(10 * W / 32, (i * 2 + 8) * H / 28, Buffer, strlen(Buffer));
+			Text(skp, 10 * W / 32, (i * 2 + 8) * H / 28, GC->rtcc->MPTDISPLAY.man[i].DT);
 		}
 
 	}
@@ -4209,8 +3734,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			for (i = 0;i < 6;i++)
 			{
-				sprintf_s(Buffer, GC->rtcc->NextStationContactsBuffer.STA[j][i].c_str());
-				skp->Text((4 + j * 31) * W / 64, (2*i + 11) * H / 28, Buffer, strlen(Buffer));
+				Text(skp, (4 + j * 31) * W / 64, (2*i + 11) * H / 28, GC->rtcc->NextStationContactsBuffer.STA[j][i]);
 
 				if (GC->rtcc->NextStationContactsBuffer.BestAvailableAOS[j][i])
 				{
@@ -4223,8 +3747,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				{
 					skp->Text((17 + j * 31) * W / 64, (2*i + 11) * H / 28, "*", 1);
 				}
-				sprintf_s(Buffer, "%.1f", GC->rtcc->NextStationContactsBuffer.EMAX[j][i]);
-				skp->Text((20 + j * 31) * W / 64, (2*i + 11) * H / 28, Buffer, strlen(Buffer));
+				skpTextFmt(skp, (20 + j * 31) * W / 64, (2*i + 11) * H / 28, "%.1f", GC->rtcc->NextStationContactsBuffer.EMAX[j][i]);
 
 				GET_Display4(Buffer, GC->rtcc->NextStationContactsBuffer.DTPASS[j][i]);
 				skp->Text((27 + j * 31) * W / 64, (2*i + 11) * H / 28, Buffer, strlen(Buffer));
@@ -4270,18 +3793,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(26 * W / 32, 5 * H / 28, "MAX ELEV", 8);
 		skp->Text(26 * W / 32, 6 * H / 28, "DEG", 3);
 
-		sprintf_s(Buffer, "PAGE %02d OF %02d", tab->curpage, tab->pages);
-		skp->Text(6 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "VEHICLE %s", tab->VEHICLE.c_str());
-		skp->Text(14 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 6 * W / 32, 3 * H / 28, "PAGE %02d OF %02d", tab->curpage, tab->pages);
+		skpTextFmt(skp, 14 * W / 32, 3 * H / 28, "VEHICLE %s", tab->VEHICLE.c_str());
 
 		for (unsigned i = 0;i < tab->numcontacts[tab->curpage - 1];i++)
 		{
-			sprintf_s(Buffer, "%03d", tab->REV[tab->curpage-1][i]);
-			skp->Text(4 * W / 32, (i + 7) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 32, (i + 7) * H / 28, "%03d", tab->REV[tab->curpage - 1][i]);
 
-			sprintf_s(Buffer, tab->STA[tab->curpage - 1][i].c_str());
-			skp->Text(10 * W / 32, (i + 7) * H / 28, Buffer, strlen(Buffer));
+			Text(skp, 10 * W / 32, (i + 7) * H / 28, tab->STA[tab->curpage - 1][i]);
 
 			if (tab->BestAvailableAOS[tab->curpage - 1][i])
 			{
@@ -4303,8 +3822,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				skp->Text(24 * W / 32, (i + 7) * H / 28, "*", 1);
 			}
-			sprintf_s(Buffer, "%04.1f", tab->ELMAX[tab->curpage - 1][i]);
-			skp->Text(26 * W / 32, (i + 7) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 26 * W / 32, (i + 7) * H / 28, "%04.1f", tab->ELMAX[tab->curpage - 1][i]);
 		}
 	}
 	else if (screen == 47)
@@ -4374,8 +3892,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, G->SVDesiredGET);
 		}
 		skp->Text(2 * W / 8, 4 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%04d", tab->SequenceNumber);
-		skp->Text(3 * W / 8, 5 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 3 * W / 8, 5 * H / 28, "%04d", tab->SequenceNumber);
 		if (tab->sv.RBI == BODY_EARTH)
 		{
 			skp->Text(2 * W / 8, 6 * H / 28, "Earth", 5);
@@ -4405,8 +3922,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 021;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 9) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 9) * H / 28, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 10 * H / 28, "INDEX", 5);
@@ -4429,8 +3945,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 021;i++)
 		{
-			sprintf(Buffer, "%05d", tab->Octals[i]);
-			skp->Text(15 * W / 32, (i + 10) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 10) * H / 28, "%05d", tab->Octals[i]);
 		}
 
 		if (tab->sv.RBI == BODY_EARTH)
@@ -4441,18 +3956,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			skp->Text(22 * W / 32, 11 * H / 28, "MOON", 4);
 		}
-		sprintf(Buffer, "%.1f", tab->sv.R.x);
-		skp->Text(22 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->sv.R.y);
-		skp->Text(22 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->sv.R.z);
-		skp->Text(22 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->sv.V.x);
-		skp->Text(22 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->sv.V.y);
-		skp->Text(22 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->sv.V.z);
-		skp->Text(22 * W / 32, 23 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 22 * W / 32, 13 * H / 28, "%.1f", tab->sv.R.x);
+		skpTextFmt(skp, 22 * W / 32, 15 * H / 28, "%.1f", tab->sv.R.y);
+		skpTextFmt(skp, 22 * W / 32, 17 * H / 28, "%.1f", tab->sv.R.z);
+		skpTextFmt(skp, 22 * W / 32, 19 * H / 28, "%.1f", tab->sv.V.x);
+		skpTextFmt(skp, 22 * W / 32, 21 * H / 28, "%.1f", tab->sv.V.y);
+		skpTextFmt(skp, 22 * W / 32, 23 * H / 28, "%.1f", tab->sv.V.z);
 		GET_Display(Buffer, tab->sv.GMT, false);
 		skp->Text(22 * W / 32, 25 * H / 28, Buffer, strlen(Buffer));
 	}
@@ -4470,14 +3979,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 2 * H / 14, "No Target!", 10);
 		}
 
-		sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.3f°", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.3f°", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2f NM", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
 	}
 	else if (screen == 50 || screen == 98)
 	{
@@ -4500,14 +4004,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(1 * W / 8, 4 * H / 14, "LAT", 3);
 		skp->Text(1 * W / 8, 5 * H / 14, "LNG", 3);
-		sprintf(Buffer, "%.3f°", tab->lat * DEG);
-		skp->Text(2 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3f°", tab->lng * DEG);
-		skp->Text(2 * W / 8, 5 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 8, 4 * H / 14, "%.3f°", tab->lat* DEG);
+		skpTextFmt(skp, 2 * W / 8, 5 * H / 14, "%.3f°", tab->lng* DEG);
 
 		skp->Text(4 * W / 8, 4 * H / 14, "RAD", 3);
-		sprintf(Buffer, "%.2f NM", tab->rad / 1852.0);
-		skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.2f NM", tab->rad / 1852.0);
 
 		skp->Text(5 * W / 32, 13 * H / 28, "OID", 3);
 		skp->Text(10 * W / 32, 13 * H / 28, "FCT", 3);
@@ -4516,8 +4017,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 010;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 14) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 14) * H / 28, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 15 * H / 28, "INDEX", 5);
@@ -4531,16 +4031,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 010;i++)
 		{
-			sprintf(Buffer, "%05d", tab->Octals[i]);
-			skp->Text(15 * W / 32, (i + 15) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 15) * H / 28, "%05d", tab->Octals[i]);
 		}
 
-		sprintf(Buffer, "%.1f", tab->R_LS.x);
-		skp->Text(22 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->R_LS.y);
-		skp->Text(22 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1f", tab->R_LS.z);
-		skp->Text(22 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 22 * W / 32, 17 * H / 28, "%.1f", tab->R_LS.x);
+		skpTextFmt(skp, 22 * W / 32, 19 * H / 28, "%.1f", tab->R_LS.y);
+		skpTextFmt(skp, 22 * W / 32, 21 * H / 28, "%.1f", tab->R_LS.z);
 	}
 	else if (screen == 51 || screen == 102)
 	{
@@ -4590,8 +4086,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 012;i++)
 		{
-			sprintf(Buffer, "%05d", tab->Octals[i]);
-			skp->Text(15 * W / 32, (i + 10) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 10) * H / 28, "%05d", tab->Octals[i]);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -4599,23 +4094,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(27 * W / 32, 8 * H / 28, "DECIMAL", 7);
 		if (GC->MissionPlanningActive)
 		{
-			sprintf(Buffer, "%+07.1f", tab->DV.x);
-			skp->Text(27 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", tab->DV.y);
-			skp->Text(27 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", tab->DV.z);
-			skp->Text(27 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 27 * W / 32, 12 * H / 28, "%+07.1f", tab->DV.x);
+			skpTextFmt(skp, 27 * W / 32, 14 * H / 28, "%+07.1f", tab->DV.y);
+			skpTextFmt(skp, 27 * W / 32, 16 * H / 28, "%+07.1f", tab->DV.z);
 			GET_Display2(Buffer, tab->GET);
 			skp->Text(27 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
 		}
 		else
 		{
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.x / 0.3048);
-			skp->Text(27 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.y / 0.3048);
-			skp->Text(27 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.1f", G->dV_LVLH.z / 0.3048);
-			skp->Text(27 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 27 * W / 32, 12 * H / 28, "%+07.1f", G->dV_LVLH.x / 0.3048);
+			skpTextFmt(skp, 27 * W / 32, 14 * H / 28, "%+07.1f", G->dV_LVLH.y / 0.3048);
+			skpTextFmt(skp, 27 * W / 32, 16 * H / 28, "%+07.1f", G->dV_LVLH.z / 0.3048);
 			GET_Display2(Buffer, G->P30TIG);
 			skp->Text(27 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
 		}
@@ -4635,8 +4124,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 016;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 9) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 9) * H / 28, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 10 * H / 28, "INDEX", 5);
@@ -4656,23 +4144,17 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 016;i++)
 		{
-			sprintf(Buffer, "%05d", GC->rtcc->CZREXTDV.Octals[i]);
-			skp->Text(15 * W / 32, (i + 10) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 10) * H / 28, "%05d", GC->rtcc->CZREXTDV.Octals[i]);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
 		skp->Text(27 * W / 32, 8 * H / 28, "DECIMAL", 7);
-		sprintf(Buffer, "%+.2f°", GC->rtcc->CZREXTDV.Lat);
-		skp->Text(27 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.2f°", GC->rtcc->CZREXTDV.Lng);
-		skp->Text(27 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.1f", GC->rtcc->CZREXTDV.DV.x);
-		skp->Text(27 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.1f", GC->rtcc->CZREXTDV.DV.y);
-		skp->Text(27 * W / 32, 18 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+07.1f", GC->rtcc->CZREXTDV.DV.z);
-		skp->Text(27 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 27 * W / 32, 12 * H / 28, "%+.2f°", GC->rtcc->CZREXTDV.Lat);
+		skpTextFmt(skp, 27 * W / 32, 14 * H / 28, "%+.2f°", GC->rtcc->CZREXTDV.Lng);
+		skpTextFmt(skp, 27 * W / 32, 16 * H / 28, "%+07.1f", GC->rtcc->CZREXTDV.DV.x);
+		skpTextFmt(skp, 27 * W / 32, 18 * H / 28, "%+07.1f", GC->rtcc->CZREXTDV.DV.y);
+		skpTextFmt(skp, 27 * W / 32, 20 * H / 28, "%+07.1f", GC->rtcc->CZREXTDV.DV.z);
 		GET_Display2(Buffer, GC->rtcc->CZREXTDV.GET_TIG);
 		skp->Text(27 * W / 32, 22 * H / 28, Buffer, strlen(Buffer));
 
@@ -4722,12 +4204,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
 		skp->Text(5 * W / 32, 6 * H / 32, "ID:", 3);
-		sprintf(Buffer, "%s", block->MatrixID.c_str());
-		skp->Text(7 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 7 * W / 32, 6 * H / 32, block->MatrixID);
 
 		skp->Text(12 * W / 32, 6 * H / 32, "LOAD:", 5);
-		sprintf(Buffer, "%d", block->UpdateNo);
-		skp->Text(16 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 16 * W / 32, 6 * H / 32, "%d", block->UpdateNo);
 
 		skp->Text(5 * W / 32, 8 * H / 32, "OID", 3);
 		skp->Text(10 * W / 32, 8 * H / 32, "FCT", 3);
@@ -4735,8 +4215,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 024;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 9) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 9) * H / 32, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 10 * H / 32, "INDEX", 5);
@@ -4762,21 +4241,18 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 024;i++)
 		{
-			sprintf(Buffer, "%05d", block->Octals[i]);
-			skp->Text(15 * W / 32, (i + 10) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 10) * H / 32, "%05d", block->Octals[i]);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
 		for (int i = 0;i < 9;i++)
 		{
-			sprintf(Buffer, "%.8lf", block->REFSMMAT.data[i]);
-			skp->Text(27 * W / 32, (i * 2 + 12) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 27 * W / 32, (i * 2 + 12) * H / 32, "%.8lf", block->REFSMMAT.data[i]);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		sprintf(Buffer, "%s", block->error.c_str());
-		skp->Text(16 * W / 32, 31 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 16 * W / 32, 31 * H / 32, block->error);
 	}
 	else if (screen == 54)
 	{
@@ -4795,8 +4271,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 8, 2 * H / 14, "Corrective Combination", 22);
 		}
 
-		sprintf(Buffer, "%d", GC->rtcc->med_m72.Plan);
-		skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 8, 4 * H / 14, "%d", GC->rtcc->med_m72.Plan);
 
 		ThrusterName(Buffer, GC->rtcc->med_m72.Thruster);
 		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
@@ -4820,10 +4295,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m72.Thruster == RTCC_ENGINETYPE_LMDPS)
 		{
-			sprintf_s(Buffer, "%.1f s", GC->rtcc->med_m72.TenPercentDT);
-			skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3f", GC->rtcc->med_m72.DPSThrustFactor);
-			skp->Text(5 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.1f s", GC->rtcc->med_m72.TenPercentDT);
+			skpTextFmt(skp, 5 * W / 8, 6 * H / 14, "%.3f", GC->rtcc->med_m72.DPSThrustFactor);
 		}
 
 		if (GC->rtcc->med_m72.Iteration)
@@ -4954,10 +4427,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m70.Thruster == RTCC_ENGINETYPE_LMDPS)
 		{
-			sprintf_s(Buffer, "%.1f s", GC->rtcc->med_m70.TenPercentDT);
-			skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3f", GC->rtcc->med_m70.DPSThrustFactor);
-			skp->Text(5 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 8, 2 * H / 14, "%.1f s", GC->rtcc->med_m70.TenPercentDT);
+			skpTextFmt(skp, 5 * W / 8, 4 * H / 14, "%.3f", GC->rtcc->med_m70.DPSThrustFactor);
 		}
 
 		if (GC->MissionPlanningActive == false)
@@ -5000,8 +4471,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else
 		{
-			sprintf_s(Buffer, "%d", GC->rtcc->med_m66.ReplaceCode);
-			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%d", GC->rtcc->med_m66.ReplaceCode);
 		}
 
 		GET_Display(Buffer, GC->rtcc->med_m66.GETBI);
@@ -5029,29 +4499,25 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				sprintf(Buffer2, "XBT");
 			}
-			sprintf(Buffer, "%.1f ft/s, %s, %.1f s", GC->rtcc->PZBURN.P1_DV / 0.3048, Buffer2, GC->rtcc->PZBURN.P1_DT);
-			skp->Text(1 * W / 16, 13 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 14, "%.1f ft/s, %s, %.1f s", GC->rtcc->PZBURN.P1_DV / 0.3048, Buffer2, GC->rtcc->PZBURN.P1_DT);
 		}
 		else if (GC->rtcc->med_m66.BurnParamNo == 2)
 		{
 			skp->Text(1 * W / 16, 12 * H / 14, "P2: DV Vector (AGC)", 19);
 
-			sprintf(Buffer, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P2_DV.x / 0.3048, GC->rtcc->PZBURN.P2_DV.y / 0.3048, GC->rtcc->PZBURN.P2_DV.z / 0.3048);
-			skp->Text(1 * W / 16, 13 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 14, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P2_DV.x / 0.3048, GC->rtcc->PZBURN.P2_DV.y / 0.3048, GC->rtcc->PZBURN.P2_DV.z / 0.3048);
 		}
 		else if (GC->rtcc->med_m66.BurnParamNo == 3)
 		{
 			skp->Text(1 * W / 16, 12 * H / 14, "P3: DV Vector (IMU)", 19);
 
-			sprintf(Buffer, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P3_DV.x / 0.3048, GC->rtcc->PZBURN.P3_DV.y / 0.3048, GC->rtcc->PZBURN.P3_DV.z / 0.3048);
-			skp->Text(1 * W / 16, 13 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 14, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P3_DV.x / 0.3048, GC->rtcc->PZBURN.P3_DV.y / 0.3048, GC->rtcc->PZBURN.P3_DV.z / 0.3048);
 		}
 		else if (GC->rtcc->med_m66.BurnParamNo == 4)
 		{
 			skp->Text(1 * W / 16, 12 * H / 14, "P4: DV Vector (LVLH)", 20);
 
-			sprintf(Buffer, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P4_DV.x / 0.3048, GC->rtcc->PZBURN.P4_DV.y / 0.3048, GC->rtcc->PZBURN.P4_DV.z / 0.3048);
-			skp->Text(1 * W / 16, 13 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 13 * H / 14, "%+.1f %+.1f %+.1f", GC->rtcc->PZBURN.P4_DV.x / 0.3048, GC->rtcc->PZBURN.P4_DV.y / 0.3048, GC->rtcc->PZBURN.P4_DV.z / 0.3048);
 		}
 		else if (GC->rtcc->med_m66.BurnParamNo == 5)
 		{
@@ -5072,8 +4538,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				skp->Text(7 * W / 16, 2 * H / 14, "FDAI", 4);
 			}
-			sprintf(Buffer, "%06.2f°P %06.2f°Y %06.2f°R", GC->rtcc->med_m66.Att.x*DEG, GC->rtcc->med_m66.Att.y*DEG, GC->rtcc->med_m66.Att.z*DEG);
-			skp->Text(7 * W / 16, 3 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 7 * W / 16, 3 * H / 14, "%06.2f°P %06.2f°Y %06.2f°R", GC->rtcc->med_m66.Att.x* DEG, GC->rtcc->med_m66.Att.y* DEG, GC->rtcc->med_m66.Att.z* DEG);
 		}
 
 		if (GC->rtcc->med_m66.AttitudeOpt >= 3)
@@ -5090,11 +4555,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m66.Thruster == RTCC_ENGINETYPE_LMDPS)
 		{
-			sprintf_s(Buffer, "%.1lf s", GC->rtcc->med_m66.TenPercentDT);
-			skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->med_m66.DPSThrustFactor);
-			skp->Text(10 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%.1lf s", GC->rtcc->med_m66.TenPercentDT);
+			skpTextFmt(skp, 10 * W / 16, 8 * H / 14, "%.3lf", GC->rtcc->med_m66.DPSThrustFactor);
 		}
 
 		skp->Text(10 * W / 16, 10 * H / 14, "Page 1/2", 8);
@@ -5124,8 +4586,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%d", GC->rtcc->med_m65.ReplaceCode);
-				skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%d", GC->rtcc->med_m65.ReplaceCode);
 			}
 		}
 
@@ -5167,11 +4628,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (GC->rtcc->med_m65.Thruster == RTCC_ENGINETYPE_LMDPS)
 			{
-				sprintf_s(Buffer, "%lf s", GC->rtcc->med_m65.TenPercentDT);
-				skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-
-				sprintf_s(Buffer, "%lf", GC->rtcc->med_m65.DPSThrustFactor);
-				skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%lf s", GC->rtcc->med_m65.TenPercentDT);
+				skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%lf", GC->rtcc->med_m65.DPSThrustFactor);
 			}
 
 			if (GC->rtcc->med_m65.TimeFlag)
@@ -5223,8 +4681,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 32, 5 * H / 28, GC->rtcc->EZCHECKDIS.VEH, 3);
 
 		skp->Text(9 * W / 32, 3 * H / 28, "R-DAY", 5);
-		sprintf(Buffer, "%02d:%02d:%04d", GC->rtcc->EZCHECKDIS.R_Day[0], GC->rtcc->EZCHECKDIS.R_Day[1], GC->rtcc->EZCHECKDIS.R_Day[2]);
-		skp->Text(13 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 32, 3 * H / 28, "%02d:%02d:%04d", GC->rtcc->EZCHECKDIS.R_Day[0], GC->rtcc->EZCHECKDIS.R_Day[1], GC->rtcc->EZCHECKDIS.R_Day[2]);
 		skp->Text(9 * W / 32, 4 * H / 28, "VID", 3);
 		skp->Text(11 * W / 32, 4 * H / 28, GC->rtcc->EZCHECKDIS.VID, strlen(GC->rtcc->EZCHECKDIS.VID));
 		skp->Text(7 * W / 32, 5 * H / 28, "XT", 2);
@@ -5240,25 +4697,19 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(26 * W / 32, 7 * H / 28, "NV", 2);
 		if (GC->rtcc->EZCHECKDIS.NV > 0)
 		{
-			sprintf(Buffer, "%d", GC->rtcc->EZCHECKDIS.NV);
-			skp->Text(29 * W / 32, 7 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 29 * W / 32, 7 * H / 28, "%d", GC->rtcc->EZCHECKDIS.NV);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
-		sprintf(Buffer, "%.2f", GC->rtcc->EZCHECKDIS.K_Fac);
-		skp->Text(25 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2f", GC->rtcc->EZCHECKDIS.A);
-		skp->Text(25 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 3 * H / 28, "%.2f", GC->rtcc->EZCHECKDIS.K_Fac);
+		skpTextFmt(skp, 25 * W / 32, 4 * H / 28, "%.2f", GC->rtcc->EZCHECKDIS.A);
 
 		if (GC->rtcc->EZCHECKDIS.U_T.x > -1)
 		{
-			sprintf(Buffer, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.x);
-			skp->Text(13 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.y);
-			skp->Text(21 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.z);
-			skp->Text(29 * W / 32, 5 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 13 * W / 32, 5 * H / 28, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.x);
+			skpTextFmt(skp, 21 * W / 32, 5 * H / 28, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.y);
+			skpTextFmt(skp, 29 * W / 32, 5 * H / 28, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.z);
 		}
 
 		skp->Text(30 * W / 32, 4 * H / 28, GC->rtcc->EZCHECKDIS.CFG, 3);
@@ -5273,33 +4724,21 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->EZCHECKDIS.unit == 0)
 		{
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.x);
-			skp->Text(10 * W / 32, 7 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.y);
-			skp->Text(10 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.z);
-			skp->Text(10 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.x);
-			skp->Text(10 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.y);
-			skp->Text(10 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.z);
-			skp->Text(10 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 32, 7 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.x);
+			skpTextFmt(skp, 10 * W / 32, 9 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.y);
+			skpTextFmt(skp, 10 * W / 32, 11 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Pos.z);
+			skpTextFmt(skp, 10 * W / 32, 13 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.x);
+			skpTextFmt(skp, 10 * W / 32, 15 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.y);
+			skpTextFmt(skp, 10 * W / 32, 17 * H / 28, "%+013.9f", GC->rtcc->EZCHECKDIS.Vel.z);
 		}
 		else
 		{
-			sprintf(Buffer, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.x);
-			skp->Text(10 * W / 32, 7 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.y);
-			skp->Text(10 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.z);
-			skp->Text(10 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.x);
-			skp->Text(10 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.y);
-			skp->Text(10 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.z);
-			skp->Text(10 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 32, 7 * H / 28, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.x);
+			skpTextFmt(skp, 10 * W / 32, 9 * H / 28, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.y);
+			skpTextFmt(skp, 10 * W / 32, 11 * H / 28, "%+012.0f", GC->rtcc->EZCHECKDIS.Pos.z);
+			skpTextFmt(skp, 10 * W / 32, 13 * H / 28, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.x);
+			skpTextFmt(skp, 10 * W / 32, 15 * H / 28, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.y);
+			skpTextFmt(skp, 10 * W / 32, 17 * H / 28, "%+013.6f", GC->rtcc->EZCHECKDIS.Vel.z);
 		}
 
 		skp->Text(4 * W / 32, 19 * H / 28, "LO/C", 4);
@@ -5334,129 +4773,99 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 
 		skp->Text(13 * W / 32, 7 * H / 28, "V", 1);
-		sprintf(Buffer, "%07.1f", GC->rtcc->EZCHECKDIS.V_i);
-		skp->Text(17 * W / 32, 7 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 7 * H / 28, "%07.1f", GC->rtcc->EZCHECKDIS.V_i);
 		skp->Text(13 * W / 32, 9 * H / 28, "PTH", 3);
-		sprintf(Buffer, "%+07.3f", GC->rtcc->EZCHECKDIS.gamma_i);
-		skp->Text(17 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 9 * H / 28, "%+07.3f", GC->rtcc->EZCHECKDIS.gamma_i);
 		skp->Text(13 * W / 32, 11 * H / 28, "AZ", 2);
-		sprintf(Buffer, "%+07.3f", GC->rtcc->EZCHECKDIS.psi);
-		skp->Text(17 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 11 * H / 28, "%+07.3f", GC->rtcc->EZCHECKDIS.psi);
 		skp->Text(13 * W / 32, 13 * H / 28, "LATC", 4);
-		sprintf(Buffer, "%+07.4f", GC->rtcc->EZCHECKDIS.phi_c);
-		skp->Text(17 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 13 * H / 28, "%+07.4f", GC->rtcc->EZCHECKDIS.phi_c);
 		skp->Text(13 * W / 32, 15 * H / 28, "LONC", 4);
-		sprintf(Buffer, "%+07.3f", GC->rtcc->EZCHECKDIS.lambda);
-		skp->Text(17 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 15 * H / 28, "%+07.3f", GC->rtcc->EZCHECKDIS.lambda);
 		skp->Text(12 * W / 32, 17 * H / 28, "HS", 2);
-		sprintf(Buffer, "%07.2f", GC->rtcc->EZCHECKDIS.h_s);
-		skp->Text(17 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 17 * H / 28, "%07.2f", GC->rtcc->EZCHECKDIS.h_s);
 
 		skp->Text(19 * W / 32, 7 * H / 28, "A", 1);
-		sprintf(Buffer, "%08.2f", GC->rtcc->EZCHECKDIS.a);
-		skp->Text(24 * W / 32, 7 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 7 * H / 28, "%08.2f", GC->rtcc->EZCHECKDIS.a);
 		skp->Text(20 * W / 32, 9 * H / 28, "E", 1);
-		sprintf(Buffer, "%07.5f", GC->rtcc->EZCHECKDIS.e);
-		skp->Text(24 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 9 * H / 28, "%07.5f", GC->rtcc->EZCHECKDIS.e);
 		skp->Text(20 * W / 32, 11 * H / 28, "I", 1);
-		sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.i);
-		skp->Text(24 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 11 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.i);
 		skp->Text(20 * W / 32, 13 * H / 28, "AP", 2);
-		sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.omega_p);
-		skp->Text(24 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 13 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.omega_p);
 		skp->Text(20 * W / 32, 15 * H / 28, "RAN", 3);
-		sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.Omega);
-		skp->Text(24 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 15 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.Omega);
 		skp->Text(20 * W / 32, 17 * H / 28, "TA", 2);
 		skp->Text(21 * W / 32, 19 * H / 28, "MA", 2);
 		if (GC->rtcc->EZCHECKDIS.TABlank == false)
 		{
-			sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.nu);
-			skp->Text(24 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 24 * W / 32, 17 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.nu);
 		}
 		if (GC->rtcc->EZCHECKDIS.MABlank == false)
 		{
-			sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.m);
-			skp->Text(25 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 25 * W / 32, 19 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.m);
 		}
 		skp->Text(27 * W / 32, 9 * H / 28, "WT", 2);
-		sprintf(Buffer, "%06.0f", GC->rtcc->EZCHECKDIS.WT);
-		skp->Text(31 * W / 32, 9 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 9 * H / 28, "%06.0f", GC->rtcc->EZCHECKDIS.WT);
 		skp->Text(27 * W / 32, 10 * H / 28, "WC", 2);
-		sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.WC);
-		skp->Text(31 * W / 32, 10 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 10 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.WC);
 		skp->Text(27 * W / 32, 11 * H / 28, "SPS", 3);
 		if (GC->rtcc->EZCHECKDIS.SPS >= 0)
 		{
-			sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.SPS);
-			skp->Text(31 * W / 32, 11 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 11 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.SPS);
 		}
 		skp->Text(27 * W / 32, 12 * H / 28, "RCSC", 4);
 		if (GC->rtcc->EZCHECKDIS.RCS_C >= 0)
 		{
-			sprintf(Buffer, "%04.0f", GC->rtcc->EZCHECKDIS.RCS_C);
-			skp->Text(31 * W / 32, 12 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 12 * H / 28, "%04.0f", GC->rtcc->EZCHECKDIS.RCS_C);
 		}
 		skp->Text(27 * W / 32, 13 * H / 28, "WL", 2);
 		if (GC->rtcc->EZCHECKDIS.WL >= 0)
 		{
-			sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.WL);
-			skp->Text(31 * W / 32, 13 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 13 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.WL);
 		}
 		skp->Text(27 * W / 32, 14 * H / 28, "APS", 3);
 		if (GC->rtcc->EZCHECKDIS.APS >= 0)
 		{
-			sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.APS);
-			skp->Text(31 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 14 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.APS);
 		}
 		skp->Text(27 * W / 32, 15 * H / 28, "DPS", 3);
 		if (GC->rtcc->EZCHECKDIS.DPS >= 0)
 		{
-			sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.DPS);
-			skp->Text(31 * W / 32, 15 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 15 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.DPS);
 		}
 		skp->Text(27 * W / 32, 16 * H / 28, "RCSL", 4);
 		if (GC->rtcc->EZCHECKDIS.RCS_L >= 0)
 		{
-			sprintf(Buffer, "%04.0f", GC->rtcc->EZCHECKDIS.RCS_L);
-			skp->Text(31 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 16 * H / 28, "%04.0f", GC->rtcc->EZCHECKDIS.RCS_L);
 		}
 		skp->Text(27 * W / 32, 17 * H / 28, "J2", 2);
 		if (GC->rtcc->EZCHECKDIS.J2 >= 0)
 		{
-			sprintf(Buffer, "%05.0f", GC->rtcc->EZCHECKDIS.J2);
-			skp->Text(31 * W / 32, 17 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, 17 * H / 28, "%05.0f", GC->rtcc->EZCHECKDIS.J2);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
 		skp->Text(11 * W / 32, 19 * H / 28, "HA", 2);
-		sprintf(Buffer, "%07.2f", GC->rtcc->EZCHECKDIS.h_a);
-		skp->Text(15 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 19 * H / 28, "%07.2f", GC->rtcc->EZCHECKDIS.h_a);
 		skp->Text(11 * W / 32, 20 * H / 28, "HP", 2);
-		sprintf(Buffer, "%07.2f", GC->rtcc->EZCHECKDIS.h_p);
-		skp->Text(15 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 20 * H / 28, "%07.2f", GC->rtcc->EZCHECKDIS.h_p);
 		skp->Text(11 * W / 32, 21 * H / 28, "HO", 2);
 		skp->Text(11 * W / 32, 22 * H / 28, "HO", 2);
 		if (GC->rtcc->EZCHECKDIS.HOBlank == false)
 		{
-			sprintf(Buffer, "%07.2f", GC->rtcc->EZCHECKDIS.h_o_NM);
-			skp->Text(15 * W / 32, 21 * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%07.0f", GC->rtcc->EZCHECKDIS.h_o_ft);
-			skp->Text(15 * W / 32, 22 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, 21 * H / 28, "%07.2f", GC->rtcc->EZCHECKDIS.h_o_NM);
+			skpTextFmt(skp, 15 * W / 32, 22 * H / 28, "%07.0f", GC->rtcc->EZCHECKDIS.h_o_ft);
 		}
 		skp->Text(11 * W / 32, 23 * H / 28, "LATD", 4);
-		sprintf(Buffer, "%+07.3f", GC->rtcc->EZCHECKDIS.phi_D);
-		skp->Text(15 * W / 32, 23 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 23 * H / 28, "%+07.3f", GC->rtcc->EZCHECKDIS.phi_D);
 		skp->Text(11 * W / 32, 24 * H / 28, "LOND", 4);
-		sprintf(Buffer, "%07.3f", GC->rtcc->EZCHECKDIS.lambda_D);
-		skp->Text(15 * W / 32, 24 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 24 * H / 28, "%07.3f", GC->rtcc->EZCHECKDIS.lambda_D);
 		skp->Text(11 * W / 32, 25 * H / 28, "R", 1);
-		sprintf(Buffer, "%+09.2f", GC->rtcc->EZCHECKDIS.R);
-		skp->Text(15 * W / 32, 25 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 25 * H / 28, "%+09.2f", GC->rtcc->EZCHECKDIS.R);
 		skp->Text(11 * W / 32, 26 * H / 28, "DECL", 4);
-		sprintf(Buffer, "%+07.3f", GC->rtcc->EZCHECKDIS.deltaL);
-		skp->Text(15 * W / 32, 26 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 26 * H / 28, "%+07.3f", GC->rtcc->EZCHECKDIS.deltaL);
 		skp->Text(11 * W / 32, 27 * H / 28, "LSB", 3);
 		skp->Text(20 * W / 32, 27 * H / 28, "LLS", 3);
 		if (GC->rtcc->EZCHECKDIS.LSTBlank == false)
@@ -5467,8 +4876,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(24 * W / 32, 27 * H / 28, Buffer, strlen(Buffer));
 		}
 
-		sprintf(Buffer, "%s", GC->rtcc->EZCHECKDIS.ErrorMessage.c_str());
-		skp->Text(28 * W / 32, 24 * H / 28, Buffer, strlen(Buffer));
+		Text(skp, 28 * W / 32, 24 * H / 28, GC->rtcc->EZCHECKDIS.ErrorMessage);
 	}
 	else if (screen == 59)
 	{
@@ -5557,18 +4965,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			MissionPlanTable *mpt = GC->rtcc->GetMPTPointer(GC->rtcc->med_m49.Table);
 
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.SPSFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 6 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.CSMRCSFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.SIVBFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 8 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.LMAPSFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 9 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.LMRCSFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 10 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.0f lbs", mpt->CommonBlock.LMDPSFuelRemaining / 0.45359237);
-			skp->Text(10 * W / 16, 11 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 16, "%.0f lbs", mpt->CommonBlock.SPSFuelRemaining / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 7 * H / 16, "%.0f lbs", mpt->CommonBlock.CSMRCSFuelRemaining / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 8 * H / 16, "%.0f lbs", mpt->CommonBlock.SIVBFuelRemaining / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 9 * H / 16, "%.0f lbs", mpt->CommonBlock.LMAPSFuelRemaining / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 10 * H / 16, "%.0f lbs", mpt->CommonBlock.LMRCSFuelRemaining / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 11 * H / 16, "%.0f lbs", mpt->CommonBlock.LMDPSFuelRemaining / 0.45359237);
 		}
 		else if (G->mptinitmode == 1)
 		{
@@ -5628,17 +5030,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			MissionPlanTable *mpt = GC->rtcc->GetMPTPointer(GC->rtcc->med_m50.Table);
 
-			sprintf(Buffer, "CSM %.0f lbs", mpt->CommonBlock.CSMMass / 0.45359237);
-			skp->Text(10 * W / 16, 6 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "S-IVB %.0f lbs", mpt->CommonBlock.SIVBMass / 0.45359237);
-			skp->Text(10 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "LM ASC %.0f lbs", mpt->CommonBlock.LMAscentMass / 0.45359237);
-			skp->Text(10 * W / 16, 8 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "LM DSC %.0f lbs", mpt->CommonBlock.LMDescentMass / 0.45359237);
-			skp->Text(10 * W / 16, 9 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 16, "CSM %.0f lbs", mpt->CommonBlock.CSMMass / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 7 * H / 16, "S-IVB %.0f lbs", mpt->CommonBlock.SIVBMass / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 8 * H / 16, "LM ASC %.0f lbs", mpt->CommonBlock.LMAscentMass / 0.45359237);
+			skpTextFmt(skp, 10 * W / 16, 9 * H / 16, "LM DSC %.0f lbs", mpt->CommonBlock.LMDescentMass / 0.45359237);
 
-			sprintf(Buffer, "Total %.0f lbs", mpt->TotalInitMass / 0.45359237);
-			skp->Text(10 * W / 16, 12 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 12 * H / 16, "Total %.0f lbs", mpt->TotalInitMass / 0.45359237);
 		}
 		else if (G->mptinitmode == 2)
 		{
@@ -5653,32 +5050,21 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(2 * W / 16, 5 * H / 16, "Table: CSM", 10);
 			}
 
-			sprintf(Buffer, "CSM %.2f sq ft", GC->rtcc->med_m51.CSMArea / 0.3048 / 0.3048);
-			skp->Text(2 * W / 16, 6 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "S-IVB %.2f sq ft", GC->rtcc->med_m51.SIVBArea / 0.3048 / 0.3048);
-			skp->Text(2 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "LM ASC %.2f sq ft", GC->rtcc->med_m51.LMAscentArea / 0.3048 / 0.3048);
-			skp->Text(2 * W / 16, 8 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "LM DSC %.2f sq ft", GC->rtcc->med_m51.LMDescentArea / 0.3048 / 0.3048);
-			skp->Text(2 * W / 16, 9 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "K-Factor %.2f", GC->rtcc->med_m51.KFactor);
-			skp->Text(2 * W / 16, 10 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 16, 6 * H / 16, "CSM %.2f sq ft", GC->rtcc->med_m51.CSMArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 2 * W / 16, 7 * H / 16, "S-IVB %.2f sq ft", GC->rtcc->med_m51.SIVBArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 2 * W / 16, 8 * H / 16, "LM ASC %.2f sq ft", GC->rtcc->med_m51.LMAscentArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 2 * W / 16, 9 * H / 16, "LM DSC %.2f sq ft", GC->rtcc->med_m51.LMDescentArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 2 * W / 16, 10 * H / 16, "K-Factor %.2f", GC->rtcc->med_m51.KFactor);
 
 			MissionPlanTable *mpt = GC->rtcc->GetMPTPointer(GC->rtcc->med_m51.Table);
 
-			sprintf(Buffer, "%.2f sq ft", mpt->CommonBlock.CSMArea / 0.3048 / 0.3048);
-			skp->Text(10 * W / 16, 6 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f sq ft", mpt->CommonBlock.SIVBArea / 0.3048 / 0.3048);
-			skp->Text(10 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f sq ft", mpt->CommonBlock.LMAscentArea / 0.3048 / 0.3048);
-			skp->Text(10 * W / 16, 8 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f sq ft", mpt->CommonBlock.LMDescentArea / 0.3048 / 0.3048);
-			skp->Text(10 * W / 16, 9 * H / 16, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%.2f", mpt->KFactor);
-			skp->Text(10 * W / 16, 10 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 16, "%.2f sq ft", mpt->CommonBlock.CSMArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 10 * W / 16, 7 * H / 16, "%.2f sq ft", mpt->CommonBlock.SIVBArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 10 * W / 16, 8 * H / 16, "%.2f sq ft", mpt->CommonBlock.LMAscentArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 10 * W / 16, 9 * H / 16, "%.2f sq ft", mpt->CommonBlock.LMDescentArea / 0.3048 / 0.3048);
+			skpTextFmt(skp, 10 * W / 16, 10 * H / 16, "%.2f", mpt->KFactor);
 
-			sprintf(Buffer, "Total %.2f sq ft", mpt->ConfigurationArea / 0.3048 / 0.3048);
-			skp->Text(10 * W / 16, 12 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 12 * H / 16, "Total %.2f sq ft", mpt->ConfigurationArea / 0.3048 / 0.3048);
 		}
 		else
 		{
@@ -5742,8 +5128,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, mpt->SIVBVentingBeginGET);
 			skp->Text(10 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%.2f°", mpt->DeltaDockingAngle*DEG);
-			skp->Text(10 * W / 16, 8 * H / 16, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 8 * H / 16, "%.2f°", mpt->DeltaDockingAngle* DEG);
 		}
 
 		if (GC->pMPTVessel != NULL)
@@ -5774,13 +5159,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(1 * W / 32, 3 * H / 28, "STA ID", 6);
 		skp->Text(1 * W / 32, 4 * H / 28, "LM WT", 5);
-		sprintf(Buffer, "%07.1f", GC->rtcc->PZLDPDIS.LMWT);
-		skp->Text(5 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 32, 4 * H / 28, "%07.1f", GC->rtcc->PZLDPDIS.LMWT);
 		skp->Text(9 * W / 32, 3 * H / 28, "GMTV", 4);
 		skp->Text(9 * W / 32, 4 * H / 28, "GETV", 4);
 		skp->Text(17 * W / 32, 3 * H / 28, "MODE", 4);
-		sprintf(Buffer, "%d", GC->rtcc->PZLDPDIS.MODE);
-		skp->Text(21 * W / 32, 3 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 32, 3 * H / 28, "%d", GC->rtcc->PZLDPDIS.MODE);
 		skp->Text(17 * W / 32, 4 * H / 28, "TL", 2);
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -5812,14 +5195,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		skp->Text(31 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%07.3f°", GC->rtcc->PZLDPDIS.DescAsc);
-		skp->Text(30 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 30 * W / 32, 20 * H / 28, "%07.3f°", GC->rtcc->PZLDPDIS.DescAsc);
 
 		sprintf(Buffer, GC->rtcc->PZLDPDIS.DescAzMode);
 		skp->Text(27 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%+06.2f", GC->rtcc->PZLDPDIS.PD_ThetaIgn);
-		skp->Text(10 * W / 32, 20 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 20 * H / 28, "%+06.2f", GC->rtcc->PZLDPDIS.PD_ThetaIgn);
 
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
@@ -5848,18 +5229,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				sprintf(Buffer, "%06.2f°W", abs(GC->rtcc->PZLDPDIS.LIG[i]));
 			}
 			skp->Text(12 * W / 32, (7 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%06.2f", GC->rtcc->PZLDPDIS.DV[i]);
-			skp->Text(12 * W / 32, (8 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f", GC->rtcc->PZLDPDIS.AC[i]);
-			skp->Text(17 * W / 32, (7 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+07.2f", GC->rtcc->PZLDPDIS.HPC[i]);
-			skp->Text(17 * W / 32, (8 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].x);
-			skp->Text(25 * W / 32, (7 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].y);
-			skp->Text(25 * W / 32, (8 + 3 * i) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].z);
-			skp->Text(29 * W / 32, (7 + 3 * i) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 12 * W / 32, (8 + 3 * i) * H / 28, "%06.2f", GC->rtcc->PZLDPDIS.DV[i]);
+			skpTextFmt(skp, 17 * W / 32, (7 + 3 * i) * H / 28, "%+07.2f", GC->rtcc->PZLDPDIS.AC[i]);
+			skpTextFmt(skp, 17 * W / 32, (8 + 3 * i) * H / 28, "%+07.2f", GC->rtcc->PZLDPDIS.HPC[i]);
+			skpTextFmt(skp, 25 * W / 32, (7 + 3 * i) * H / 28, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].x);
+			skpTextFmt(skp, 25 * W / 32, (8 + 3 * i) * H / 28, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].y);
+			skpTextFmt(skp, 29 * W / 32, (7 + 3 * i) * H / 28, "%+06.1f", GC->rtcc->PZLDPDIS.DVVector[i].z);
 		}
 
 		skp->Text(1 * W / 32, 19 * H / 28, "POWERED DESCENT", 15);
@@ -5892,8 +5267,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->CZTDTGTU.GETTD);
 		skp->Text(3 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
 		skp->Text(1 * W / 8, 5 * H / 14, "LOAD NO", 7);
-		sprintf(Buffer, "%d", GC->rtcc->CZTDTGTU.SequenceNumber);
-		skp->Text(3 * W / 8, 5 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 3 * W / 8, 5 * H / 14, "%d", GC->rtcc->CZTDTGTU.SequenceNumber);
 
 		skp->Text(5 * W / 32, 13 * H / 28, "OID", 3);
 		skp->Text(10 * W / 32, 13 * H / 28, "FCT", 3);
@@ -5901,8 +5275,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 5;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 14) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 14) * H / 28, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 15 * H / 28, "INDEX", 5);
@@ -5913,8 +5286,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 5;i++)
 		{
-			sprintf(Buffer, "%05d", GC->rtcc->CZTDTGTU.Octals[i]);
-			skp->Text(15 * W / 32, (i + 15) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 15) * H / 28, "%05d", GC->rtcc->CZTDTGTU.Octals[i]);
 		}
 	}
 	else if (screen == 62)
@@ -5961,28 +5333,23 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 8;i++)
 		{
-			sprintf(Buffer, "%02d", GC->rtcc->EZSSTAB.data[i].REV);
-			skp->Text(1 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 32, (i + 8) * H / 28, "%02d", GC->rtcc->EZSSTAB.data[i].REV);
 
 			GET_Display(Buffer, GC->rtcc->EZSSTAB.data[i].GETTR, false);
 			skp->Text(3 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->EZSSTAB.data[i].GETSR, false);
 			skp->Text(8 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZSSTAB.data[i].theta_SR);
-			skp->Text(13 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZSSTAB.data[i].psi_SR);
-			skp->Text(15 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 13 * W / 32, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZSSTAB.data[i].theta_SR);
+			skpTextFmt(skp, 15 * W / 32, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZSSTAB.data[i].psi_SR);
 
 			GET_Display(Buffer, GC->rtcc->EZSSTAB.data[i].GETTS, false);
 			skp->Text(35 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->EZSSTAB.data[i].GETSS, false);
 			skp->Text(45 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZSSTAB.data[i].theta_SS);
-			skp->Text(55 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZSSTAB.data[i].psi_SS);
-			skp->Text(59 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 55 * W / 64, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZSSTAB.data[i].theta_SS);
+			skpTextFmt(skp, 59 * W / 64, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZSSTAB.data[i].psi_SS);
 		}
 	}
 	else if (screen == 63)
@@ -6029,28 +5396,23 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 8;i++)
 		{
-			sprintf(Buffer, "%02d", GC->rtcc->EZMMTAB.data[i].REV);
-			skp->Text(1 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 32, (i + 8) * H / 28, "%02d", GC->rtcc->EZMMTAB.data[i].REV);
 
 			GET_Display(Buffer, GC->rtcc->EZMMTAB.data[i].GETTR, false);
 			skp->Text(3 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->EZMMTAB.data[i].GETSR, false);
 			skp->Text(8 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZMMTAB.data[i].theta_SR);
-			skp->Text(13 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZMMTAB.data[i].psi_SR);
-			skp->Text(15 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 13 * W / 32, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZMMTAB.data[i].theta_SR);
+			skpTextFmt(skp, 15 * W / 32, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZMMTAB.data[i].psi_SR);
 
 			GET_Display(Buffer, GC->rtcc->EZMMTAB.data[i].GETTS, false);
 			skp->Text(35 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->EZMMTAB.data[i].GETSS, false);
 			skp->Text(45 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZMMTAB.data[i].theta_SS);
-			skp->Text(55 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%03.0f", GC->rtcc->EZMMTAB.data[i].psi_SS);
-			skp->Text(59 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 55 * W / 64, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZMMTAB.data[i].theta_SS);
+			skpTextFmt(skp, 59 * W / 64, (i + 8) * H / 28, "%03.0f", GC->rtcc->EZMMTAB.data[i].psi_SS);
 		}
 	}
 	//FDO Launch Analog No. 1
@@ -6277,8 +5639,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				skp->Text(1 * W / 16, 2 * H / 14, "Near-Earth", 11);
 
-				sprintf(Buffer, "%s", GC->rtcc->med_f70.Site.c_str());
-				skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+				Text(skp, 1 * W / 16, 6 * H / 14, GC->rtcc->med_f70.Site);
 				GET_Display(Buffer, GC->rtcc->med_f70.T_V *3600.0, false);
 				skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 				GET_Display(Buffer, GC->rtcc->med_f70.T_omin*3600.0, false);
@@ -6299,10 +5660,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				skp->Text(1 * W / 16, 2 * H / 14, "Remote-Earth", 13);
 
-				sprintf(Buffer, "%d", GC->rtcc->med_f71.Page);
-				skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-				sprintf(Buffer, "%s", GC->rtcc->med_f71.Site.c_str());
-				skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%d", GC->rtcc->med_f71.Page);
+				Text(skp, 1 * W / 16, 6 * H / 14, GC->rtcc->med_f71.Site);
 				GET_Display(Buffer, GC->rtcc->med_f71.T_V *3600.0, false);
 				skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 				GET_Display(Buffer, GC->rtcc->med_f71.T_omin*3600.0, false);
@@ -6336,29 +5695,20 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			unsigned p = RTETradeoffScreen - 1;
 
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[0]);
-			skp->Text(4 * W / 40, 23 * H / 24, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[1]);
-			skp->Text(21 * W / 40, 23 * H / 24, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[2]);
-			skp->Text(38 * W / 40, 23 * H / 24, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 40, 23 * H / 24, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[0]);
+			skpTextFmt(skp, 21 * W / 40, 23 * H / 24, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[1]);
+			skpTextFmt(skp, 38 * W / 40, 23 * H / 24, "%d", GC->rtcc->RTETradeoffTableBuffer[p].XLabels[2]);
 
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[2]);
-			skp->Text(1 * W / 16, 6 * H / 40, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[1]);
-			skp->Text(1 * W / 16, 21 * H / 40, Buffer, strlen(Buffer));
-			sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[0]);
-			skp->Text(1 * W / 16, 36 * H / 40, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 6 * H / 40, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[2]);
+			skpTextFmt(skp, 1 * W / 16, 21 * H / 40, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[1]);
+			skpTextFmt(skp, 1 * W / 16, 36 * H / 40, "%d", GC->rtcc->RTETradeoffTableBuffer[p].YLabels[0]);
 
-			sprintf(Buffer, "Site: %s", GC->rtcc->RTETradeoffTableBuffer[p].Site.c_str());
-			skp->Text(12 * W / 40, 23 * H / 24, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 12 * W / 40, 23 * H / 24, "Site: %s", GC->rtcc->RTETradeoffTableBuffer[p].Site.c_str());
 
-			sprintf(Buffer, "%s", GC->rtcc->RTETradeoffTableBuffer[p].XAxisName.c_str());
-			skp->Text(29 * W / 40, 23 * H / 24, Buffer, strlen(Buffer));
+			Text(skp, 29 * W / 40, 23 * H / 24, GC->rtcc->RTETradeoffTableBuffer[p].XAxisName);
 
 			skp->SetFont(font2vert);
-			sprintf(Buffer, "%s", GC->rtcc->RTETradeoffTableBuffer[p].YAxisName.c_str());
-			skp->Text(1 * W / 32, 14 * H / 40, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 32, 14 * H / 40, GC->rtcc->RTETradeoffTableBuffer[p].YAxisName);
 			skp->SetFont(font2);
 
 			skp->SetPen(pen);
@@ -6367,8 +5717,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				if (GC->rtcc->RTETradeoffTableBuffer[p].TZDisplay[i] >= 0)
 				{
-					sprintf(Buffer, "%d", GC->rtcc->RTETradeoffTableBuffer[p].TZDisplay[i]);
-					skp->Text((int)(GC->rtcc->RTETradeoffTableBuffer[p].TZxval[i] * W), (int)(GC->rtcc->RTETradeoffTableBuffer[p].TZyval[i] * H), Buffer, strlen(Buffer));
+					skpTextFmt(skp, (int)(GC->rtcc->RTETradeoffTableBuffer[p].TZxval[i] * W), (int)(GC->rtcc->RTETradeoffTableBuffer[p].TZyval[i] * H), 
+								"%d", GC->rtcc->RTETradeoffTableBuffer[p].TZDisplay[i]);
 				}
 
 				for (unsigned j = 0;j < GC->rtcc->RTETradeoffTableBuffer[p].NumInCurve[i] - 1;j++)
@@ -6381,8 +5731,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->SetFont(font2);
 
-		sprintf(Buffer, "%d/5", RTETradeoffScreen);
-		skp->Text(15 * W / 16, 1 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 16, 1 * H / 14, "%d/5", RTETradeoffScreen);
 	}
 	//Detailed Maneuver Table 1 and 2
 	else if (screen == 67 || screen == 68)
@@ -6549,42 +5898,29 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display3(Buffer, tab->GETR);
 		skp->Text(51 * W / 64, 8 * H / 32, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%07.1f", tab->WT);
-		skp->Text(63 * W / 64, 5 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%07.1f", tab->WC);
-		skp->Text(63 * W / 64, 6 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%07.1f", tab->WL);
-		skp->Text(63 * W / 64, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%07.1f", tab->WF);
-		skp->Text(63 * W / 64, 8 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 63 * W / 64, 5 * H / 32, "%07.1f", tab->WT);
+		skpTextFmt(skp, 63 * W / 64, 6 * H / 32, "%07.1f", tab->WC);
+		skpTextFmt(skp, 63 * W / 64, 7 * H / 32, "%07.1f", tab->WL);
+		skpTextFmt(skp, 63 * W / 64, 8 * H / 32, "%07.1f", tab->WF);
 
 		GET_Display3(Buffer, tab->GETI);
 		skp->Text(17 * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
 		GET_Display3(Buffer, tab->PETI);
 		skp->Text(17 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->DVM);
-		skp->Text(15 * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->DVREM);
-		skp->Text(15 * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->DVC);
-		skp->Text(15 * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 64, 12 * H / 32, "%.1f", tab->DVM);
+		skpTextFmt(skp, 15 * W / 64, 13 * H / 32, "%.1f", tab->DVREM);
+		skpTextFmt(skp, 15 * W / 64, 14 * H / 32, "%.1f", tab->DVC);
 
 		int hh, mm;
 		double ss;
 		SStoHHMMSS(tab->DT_B, hh, mm, ss);
-		sprintf_s(Buffer, "%d:%04.1f", mm, ss);
-		skp->Text(28 * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->DT_U);
-		skp->Text(28 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->VG.x);
-		skp->Text(28 * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->VG.y);
-		skp->Text(28 * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->VG.z);
-		skp->Text(28 * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 28 * W / 64, 10 * H / 32, "%d:%04.1f", mm, ss);
+		skpTextFmt(skp, 28 * W / 64, 11 * H / 32, "%.2f", tab->DT_U);
+		skpTextFmt(skp, 28 * W / 64, 12 * H / 32, "%.1f", tab->VG.x);
+		skpTextFmt(skp, 28 * W / 64, 13 * H / 32, "%.1f", tab->VG.y);
+		skpTextFmt(skp, 28 * W / 64, 14 * H / 32, "%.1f", tab->VG.z);
 
-		sprintf_s(Buffer, "%.2f", tab->DT_TO);
-		skp->Text(40 * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 40 * W / 64, 10 * H / 32, "%.2f", tab->DT_TO);
 		if (tab->DV_TO >= 10.0)
 		{
 			sprintf_s(Buffer, "%.1f", tab->DV_TO);
@@ -6594,52 +5930,32 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf_s(Buffer, "%.2f", tab->DV_TO);
 		}
 		skp->Text(40 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->IMUAtt.x);
-		skp->Text(39 * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->IMUAtt.y);
-		skp->Text(39 * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->IMUAtt.z);
-		skp->Text(39 * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 39 * W / 64, 12 * H / 32, "%.1f", tab->IMUAtt.x);
+		skpTextFmt(skp, 39 * W / 64, 13 * H / 32, "%.1f", tab->IMUAtt.y);
+		skpTextFmt(skp, 39 * W / 64, 14 * H / 32, "%.1f", tab->IMUAtt.z);
 
 		sprintf_s(Buffer, "%s", tab->REFSMMAT_Code);
 		skp->Text(50 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->FDAIAtt.x);
-		skp->Text(51 * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->FDAIAtt.y);
-		skp->Text(51 * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->FDAIAtt.z);
-		skp->Text(51 * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 51 * W / 64, 12 * H / 32, "%.1f", tab->FDAIAtt.x);
+		skpTextFmt(skp, 51 * W / 64, 13 * H / 32, "%.1f", tab->FDAIAtt.y);
+		skpTextFmt(skp, 51 * W / 64, 14 * H / 32, "%.1f", tab->FDAIAtt.z);
 
-		sprintf_s(Buffer, "%5.2f", tab->DEL_P);
-		skp->Text(63 * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%5.2f", tab->DEL_Y);
-		skp->Text(63 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->LVLHAtt.x);
-		skp->Text(63 * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->LVLHAtt.y);
-		skp->Text(63 * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f", tab->LVLHAtt.z);
-		skp->Text(63 * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 63 * W / 64, 10 * H / 32, "%5.2f", tab->DEL_P);
+		skpTextFmt(skp, 63 * W / 64, 11 * H / 32, "%5.2f", tab->DEL_Y);
+		skpTextFmt(skp, 63 * W / 64, 12 * H / 32, "%.1f", tab->LVLHAtt.x);
+		skpTextFmt(skp, 63 * W / 64, 13 * H / 32, "%.1f", tab->LVLHAtt.y);
+		skpTextFmt(skp, 63 * W / 64, 14 * H / 32, "%.1f", tab->LVLHAtt.z);
 
-		sprintf_s(Buffer, "%.2f", tab->VF);
-		skp->Text(15 * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->VS);
-		skp->Text(15 * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->VD);
-		skp->Text(15 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->DH);
-		skp->Text(15 * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3f", tab->PHASE);
-		skp->Text(19 * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3f", tab->PHASE_DOT);
-		skp->Text(19 * W / 64, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3f", tab->WEDGE_ANG);
-		skp->Text(19 * W / 64, 22 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.4f", tab->YD);
-		skp->Text(19 * W / 64, 23 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 64, 16 * H / 32, "%.2f", tab->VF);
+		skpTextFmt(skp, 15 * W / 64, 17 * H / 32, "%.2f", tab->VS);
+		skpTextFmt(skp, 15 * W / 64, 18 * H / 32, "%.2f", tab->VD);
+		skpTextFmt(skp, 15 * W / 64, 19 * H / 32, "%.2f", tab->DH);
+		skpTextFmt(skp, 19 * W / 64, 20 * H / 32, "%.3f", tab->PHASE);
+		skpTextFmt(skp, 19 * W / 64, 21 * H / 32, "%.3f", tab->PHASE_DOT);
+		skpTextFmt(skp, 19 * W / 64, 22 * H / 32, "%.3f", tab->WEDGE_ANG);
+		skpTextFmt(skp, 19 * W / 64, 23 * H / 32, "%.4f", tab->YD);
 
-		sprintf_s(Buffer, "%.1f", tab->H_BI);
-		skp->Text(28 * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 28 * W / 64, 16 * H / 32, "%.1f", tab->H_BI);
 		if (tab->P_BI > 0)
 		{
 			sprintf_s(Buffer, "%.2f N", tab->P_BI);
@@ -6658,13 +5974,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf_s(Buffer, "%.2f W", abs(tab->L_BI));
 		}
 		skp->Text(28 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->F_BI);
-		skp->Text(28 * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 28 * W / 64, 19 * H / 32, "%.2f", tab->F_BI);
 
-		sprintf_s(Buffer, "%.3f", tab->HA);
-		skp->Text(41 * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3f", tab->HP);
-		skp->Text(41 * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 41 * W / 64, 16 * H / 32, "%.3f", tab->HA);
+		skpTextFmt(skp, 41 * W / 64, 17 * H / 32, "%.3f", tab->HP);
 		if (tab->L_AN > 0)
 		{
 			sprintf_s(Buffer, "%.2f E", tab->L_AN);
@@ -6674,19 +5987,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf_s(Buffer, "%.2f W", abs(tab->L_AN));
 		}
 		skp->Text(41 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.8f", tab->E);
-		skp->Text(41 * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.4f", tab->I);
-		skp->Text(41 * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.4f", tab->WP);
-		skp->Text(41 * W / 64, 21 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 41 * W / 64, 19 * H / 32, "%.8f", tab->E);
+		skpTextFmt(skp, 41 * W / 64, 20 * H / 32, "%.4f", tab->I);
+		skpTextFmt(skp, 41 * W / 64, 21 * H / 32, "%.4f", tab->WP);
 
-		sprintf_s(Buffer, "%.2f", tab->VP);
-		skp->Text(57 * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->THETA_P);
-		skp->Text(57 * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->DELTA_P);
-		skp->Text(57 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 57 * W / 64, 16 * H / 32, "%.2f", tab->VP);
+		skpTextFmt(skp, 57 * W / 64, 17 * H / 32, "%.2f", tab->THETA_P);
+		skpTextFmt(skp, 57 * W / 64, 18 * H / 32, "%.2f", tab->DELTA_P);
 		if (tab->P_LLS > 0)
 		{
 			sprintf_s(Buffer, "%.2f N", tab->P_LLS);
@@ -6705,8 +6012,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf_s(Buffer, "%.2f W", abs(tab->L_LLS));
 		}
 		skp->Text(57 * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f", tab->R_LLS);
-		skp->Text(57 * W / 64, 21 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 57 * W / 64, 21 * H / 32, "%.2f", tab->R_LLS);
 
 		if (tab->Attitude == RTCC_ATTITUDE_SIVB_IGM)
 		{
@@ -6717,40 +6023,29 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			GET_Display3(Buffer, tab->PGNS_GETI);
 			skp->Text(17 * W / 64, 27 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->PGNS_DV.x);
-			skp->Text(17 * W / 64, 28 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->PGNS_DV.y);
-			skp->Text(17 * W / 64, 29 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->PGNS_DV.z);
-			skp->Text(17 * W / 64, 30 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 17 * W / 64, 28 * H / 32, "%.4f", tab->PGNS_DV.x);
+			skpTextFmt(skp, 17 * W / 64, 29 * H / 32, "%.4f", tab->PGNS_DV.y);
+			skpTextFmt(skp, 17 * W / 64, 30 * H / 32, "%.4f", tab->PGNS_DV.z);
 
 			GET_Display3(Buffer, tab->AGS_GETI);
 			skp->Text(34 * W / 64, 27 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->AGS_DV.x);
-			skp->Text(34 * W / 64, 28 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->AGS_DV.y);
-			skp->Text(34 * W / 64, 29 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4f", tab->AGS_DV.z);
-			skp->Text(34 * W / 64, 30 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 34 * W / 64, 28 * H / 32, "%.4f", tab->AGS_DV.x);
+			skpTextFmt(skp, 34 * W / 64, 29 * H / 32, "%.4f", tab->AGS_DV.y);
+			skpTextFmt(skp, 34 * W / 64, 30 * H / 32, "%.4f", tab->AGS_DV.z);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		sprintf_s(Buffer, "%s", tab->error.c_str());
-		skp->Text(32 * W / 64, 31 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 32 * W / 64, 31 * H / 32, tab->error);
 	}
 	else if (screen == 69)
 	{
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->Text(4 * W / 8, 1 * H / 14, "SPQ Initialization (MED K06)", 28);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
-		sprintf_s(Buffer, "%.1f NM", GC->rtcc->GZGENCSN.SPQDeltaH / 1852.0);
-		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f°", GC->rtcc->GZGENCSN.SPQElevationAngle*DEG);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f°", GC->rtcc->GZGENCSN.SPQTerminalPhaseAngle*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f NM", GC->rtcc->GZGENCSN.SPQMinimumPerifocus / 1852.0);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 2 * H / 14, "%.1f NM", GC->rtcc->GZGENCSN.SPQDeltaH / 1852.0);
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.2f°", GC->rtcc->GZGENCSN.SPQElevationAngle * DEG);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2f°", GC->rtcc->GZGENCSN.SPQTerminalPhaseAngle * DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.1f NM", GC->rtcc->GZGENCSN.SPQMinimumPerifocus / 1852.0);
 		if (GC->rtcc->GZGENCSN.TPIDefinition == 1)
 		{
 			skp->Text(1 * W / 16, 10 * H / 14, "Chaser Day/Night Time", 21);
@@ -6810,21 +6105,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 		if (GC->rtcc->med_k00.I4)
 		{
-			sprintf_s(Buffer, "NCC DH: %.1f NM", GC->rtcc->GZGENCSN.DKIDeltaH_NCC / 1852.0);
-			skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 2 * H / 14, "NCC DH: %.1f NM", GC->rtcc->GZGENCSN.DKIDeltaH_NCC / 1852.0);
 		}
-		sprintf_s(Buffer, "NSR DH: %.1f NM", GC->rtcc->GZGENCSN.DKIDeltaH_NSR / 1852.0);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f°", GC->rtcc->GZGENCSN.DKIElevationAngle*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2f°", GC->rtcc->GZGENCSN.DKITerminalPhaseAngle*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1f NM", GC->rtcc->GZGENCSN.DKIMinPerigee / 1852.0);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "NSR DH: %.1f NM", GC->rtcc->GZGENCSN.DKIDeltaH_NSR / 1852.0);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2f°", GC->rtcc->GZGENCSN.DKIElevationAngle* DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2f°", GC->rtcc->GZGENCSN.DKITerminalPhaseAngle* DEG);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.1f NM", GC->rtcc->GZGENCSN.DKIMinPerigee / 1852.0);
 		if (GC->rtcc->med_k00.I4)
 		{
-			sprintf_s(Buffer, "%.1f min", GC->rtcc->med_k00.dt_NCC_NSR / 60.0);
-			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.1f min", GC->rtcc->med_k00.dt_NCC_NSR / 60.0);
 		}
 	}
 	else if (screen == 75)
@@ -6886,13 +6175,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%d", GC->rtcc->med_m78.ReplaceCode);
-				skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%d", GC->rtcc->med_m78.ReplaceCode);
 			}
 		}
 
-		sprintf_s(Buffer, "%d", GC->rtcc->med_m78.ManeuverNumber);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%d", GC->rtcc->med_m78.ManeuverNumber);
 
 		ThrusterName(Buffer, GC->rtcc->med_m78.Thruster);
 		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
@@ -6930,11 +6217,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (GC->rtcc->med_m78.Thruster == RTCC_ENGINETYPE_LMDPS)
 			{
-				sprintf_s(Buffer, "%lf s", GC->rtcc->med_m78.TenPercentDT);
-				skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-
-				sprintf_s(Buffer, "%lf", GC->rtcc->med_m78.DPSThrustFactor);
-				skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%lf s", GC->rtcc->med_m78.TenPercentDT);
+				skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%lf", GC->rtcc->med_m78.DPSThrustFactor);
 			}
 
 			if (GC->rtcc->med_m78.TimeFlag)
@@ -7015,54 +6299,36 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].GMTTimeFlag);
 		skp->Text(25 * W / 32, 6 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%d", GC->rtcc->PZSFPTAB.blocks[i].mode);
-		skp->Text(25 * W / 32, 7 * H / 35, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 7 * H / 35, "%d", GC->rtcc->PZSFPTAB.blocks[i].mode);
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].GMT_pc1);
 		skp->Text(25 * W / 32, 8 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_pc1*DEG);
-		skp->Text(25 * W / 32, 9 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_pc1*DEG);
-		skp->Text(25 * W / 32, 10 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_pc1 / 1852.0);
-		skp->Text(25 * W / 32, 11 * H / 35, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 9 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_pc1 * DEG);
+		skpTextFmt(skp, 25 * W / 32, 10 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_pc1 * DEG);
+		skpTextFmt(skp, 25 * W / 32, 11 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_pc1 / 1852.0);
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].GMT_pc2);
 		skp->Text(25 * W / 32, 12 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_pc2*DEG);
-		skp->Text(25 * W / 32, 13 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_pc2*DEG);
-		skp->Text(25 * W / 32, 14 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_pc2 / 1852.0);
-		skp->Text(25 * W / 32, 15 * H / 35, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 13 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_pc2 * DEG);
+		skpTextFmt(skp, 25 * W / 32, 14 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_pc2 * DEG);
+		skpTextFmt(skp, 25 * W / 32, 15 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_pc2 / 1852.0);
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].GET_TLI);
 		skp->Text(25 * W / 32, 16 * H / 35, Buffer, strlen(Buffer));
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].GMT_nd);
 		skp->Text(25 * W / 32, 17 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_nd*DEG);
-		skp->Text(25 * W / 32, 18 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_nd*DEG);
-		skp->Text(25 * W / 32, 19 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_nd / 1852.0);
-		skp->Text(25 * W / 32, 20 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dpsi_loi*DEG);
-		skp->Text(25 * W / 32, 21 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].gamma_loi*DEG);
-		skp->Text(25 * W / 32, 22 * H / 35, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 18 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_nd * DEG);
+		skpTextFmt(skp, 25 * W / 32, 19 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_nd * DEG);
+		skpTextFmt(skp, 25 * W / 32, 20 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].h_nd / 1852.0);
+		skpTextFmt(skp, 25 * W / 32, 21 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dpsi_loi * DEG);
+		skpTextFmt(skp, 25 * W / 32, 22 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].gamma_loi * DEG);
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].T_lo);
 		skp->Text(25 * W / 32, 23 * H / 35, Buffer, strlen(Buffer));
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].dt_lls);
 		skp->Text(25 * W / 32, 24 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].psi_lls*DEG);
-		skp->Text(25 * W / 32, 25 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_lls*DEG);
-		skp->Text(25 * W / 32, 26 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_lls*DEG);
-		skp->Text(25 * W / 32, 27 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].rad_lls / 1852.0);
-		skp->Text(25 * W / 32, 28 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dpsi_tei*DEG);
-		skp->Text(25 * W / 32, 29 * H / 35, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dv_tei / 0.3048);
-		skp->Text(25 * W / 32, 30 * H / 35, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 25 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].psi_lls* DEG);
+		skpTextFmt(skp, 25 * W / 32, 26 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lat_lls* DEG);
+		skpTextFmt(skp, 25 * W / 32, 27 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].lng_lls* DEG);
+		skpTextFmt(skp, 25 * W / 32, 28 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].rad_lls / 1852.0);
+		skpTextFmt(skp, 25 * W / 32, 29 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dpsi_tei* DEG);
+		skpTextFmt(skp, 25 * W / 32, 30 * H / 35, "%.3lf", GC->rtcc->PZSFPTAB.blocks[i].dv_tei / 0.3048);
 		GET_Display2(Buffer, GC->rtcc->PZSFPTAB.blocks[i].T_te);
 		skp->Text(25 * W / 32, 31 * H / 35, Buffer, strlen(Buffer));
 	}
@@ -7118,8 +6384,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				continue;
 			}
 
-			sprintf_s(Buffer, "%d", GC->rtcc->PZMCCDIS.data[i].Mode);
-			skp->Text((26 + 11 * i) * W / 64, 7 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 7 * H / 32, "%d", GC->rtcc->PZMCCDIS.data[i].Mode);
 			if (GC->rtcc->PZMCCDIS.data[i].Return == 0)
 			{
 				sprintf_s(Buffer, "N/A");
@@ -7133,48 +6398,31 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				sprintf_s(Buffer, "FREE");
 			}
 			skp->Text((26 + 11 * i) * W / 64, 8 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_min*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 9 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_max*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", (GC->rtcc->PZMCCDIS.data[i].CSMWT + GC->rtcc->PZMCCDIS.data[i].LMWT) / 0.45359237);
-			skp->Text((26 + 11 * i) * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 9 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_min* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 10 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_max* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 11 * H / 32, "%.0lf", (GC->rtcc->PZMCCDIS.data[i].CSMWT + GC->rtcc->PZMCCDIS.data[i].LMWT) / 0.45359237);
 			GET_Display(Buffer, GC->rtcc->PZMCCDIS.data[i].GET_MCC, false);
 			skp->Text((26 + 11 * i) * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_MCC) / 0.3048);
-			skp->Text((26 + 11 * i) * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].YAW_MCC*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].h_PC / 1852.0);
-			skp->Text((26 + 11 * i) * W / 64, 15 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 13 * H / 32, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_MCC) / 0.3048);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 14 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].YAW_MCC* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 15 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].h_PC / 1852.0);
 			GET_Display(Buffer, GC->rtcc->PZMCCDIS.data[i].GET_LOI, false);
 			skp->Text((26 + 11 * i) * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_LOI) / 0.3048);
-			skp->Text((26 + 11 * i) * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_act*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].incl_fr*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].incl_pr*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZMCCDIS.data[i].v_EI / 0.3048);
-			skp->Text((26 + 11 * i) * W / 64, 21 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].gamma_EI*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 22 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 17 * H / 32, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_LOI) / 0.3048);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 18 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].AZ_act* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 19 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].incl_fr* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 20 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].incl_pr* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 21 * H / 32, "%.1lf", GC->rtcc->PZMCCDIS.data[i].v_EI / 0.3048);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 22 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].gamma_EI* DEG);
 			GET_Display(Buffer, GC->rtcc->PZMCCDIS.data[i].GET_TEI, false);
 			skp->Text((26 + 11 * i) * W / 64, 23 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_TEI) / 0.3048);
-			skp->Text((26 + 11 * i) * W / 64, 24 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZMCCDIS.data[i].DV_REM / 0.3048);
-			skp->Text((26 + 11 * i) * W / 64, 25 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 24 * H / 32, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_TEI) / 0.3048);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 25 * H / 32, "%.1lf", GC->rtcc->PZMCCDIS.data[i].DV_REM / 0.3048);
 			GET_Display(Buffer, GC->rtcc->PZMCCDIS.data[i].GET_LC, false);
 			skp->Text((26 + 11 * i) * W / 64, 26 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].lat_IP*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 27 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZMCCDIS.data[i].lng_IP*DEG);
-			skp->Text((26 + 11 * i) * W / 64, 28 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_LOPC / 0.3048));
-			skp->Text((26 + 11 * i) * W / 64, 29 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 27 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].lat_IP* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 28 * H / 32, "%.3lf", GC->rtcc->PZMCCDIS.data[i].lng_IP* DEG);
+			skpTextFmt(skp, (26 + 11 * i) * W / 64, 29 * H / 32, "%.1lf", length(GC->rtcc->PZMCCDIS.data[i].DV_LOPC / 0.3048));
 		}
 	}
 	else if (screen == 79)
@@ -7201,10 +6449,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(1 * W / 16, 4 * H / 28, "MED F22", 7);
 		skp->Text(1 * W / 16, 5 * H / 28, "Azimuth Constraints (Modes 3/5)", 31);
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZMCCPLN.AZ_min*DEG);
-		skp->Text(2 * W / 16, 6 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZMCCPLN.AZ_max*DEG);
-		skp->Text(2 * W / 16, 7 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 16, 6 * H / 28, "%.2lf°", GC->rtcc->PZMCCPLN.AZ_min* DEG);
+		skpTextFmt(skp, 2 * W / 16, 7 * H / 28, "%.2lf°", GC->rtcc->PZMCCPLN.AZ_max* DEG);
 
 		skp->Text(1 * W / 16, 9 * H / 28, "MED F23", 7);
 		skp->Text(1 * W / 16, 10 * H / 28, "Min/Max GET at Node (Modes 4/5)", 31);
@@ -7215,47 +6461,31 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(1 * W / 16, 14 * H / 28, "MED F24", 7);
 		skp->Text(1 * W / 16, 15 * H / 28, "Gamma and Reentry Range", 23);
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZMCCPLN.gamma_reentry*DEG);
-		skp->Text(2 * W / 16, 16 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.0lf NM", GC->rtcc->PZMCCPLN.Reentry_range);
-		skp->Text(2 * W / 16, 17 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 16, 16 * H / 28, "%.2lf°", GC->rtcc->PZMCCPLN.gamma_reentry* DEG);
+		skpTextFmt(skp, 2 * W / 16, 17 * H / 28, "%.0lf NM", GC->rtcc->PZMCCPLN.Reentry_range);
 
 		skp->Text(1 * W / 16, 19 * H / 28, "MED F29", 7);
 		skp->Text(1 * W / 16, 20 * H / 28, "Pericynthion height limits (Mode 9)", 35);
-		sprintf_s(Buffer, "Min: %.0lf NM", GC->rtcc->PZMCCPLN.H_PCYN_MIN / 1852.0);
-		skp->Text(2 * W / 16, 21 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Max: %.0lf NM", GC->rtcc->PZMCCPLN.H_PCYN_MAX / 1852.0);
-		skp->Text(2 * W / 16, 22 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 16, 21 * H / 28, "Min: %.0lf NM", GC->rtcc->PZMCCPLN.H_PCYN_MIN / 1852.0);
+		skpTextFmt(skp, 2 * W / 16, 22 * H / 28, "Max: %.0lf NM", GC->rtcc->PZMCCPLN.H_PCYN_MAX / 1852.0);
 
 		skp->Text(1 * W / 16, 24 * H / 28, "Latitude Bias (Modes 8/9)", 25);
-		sprintf_s(Buffer, "%.1lf°", GC->rtcc->PZMCCPLN.LATBIAS*DEG);
-		skp->Text(2 * W / 16, 25 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 2 * W / 16, 25 * H / 28, "%.1lf°", GC->rtcc->PZMCCPLN.LATBIAS* DEG);
 
 		skp->Text(8 * W / 16, 4 * H / 28, "LOI/DOI Geometry (Modes 2/4)", 28);
-		sprintf_s(Buffer, "HALOI1 %.1lf", GC->rtcc->PZMCCPLN.H_A_LPO1 / 1852.0);
-		skp->Text(9 * W / 16, 5 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "HPLOI1 %.1lf", GC->rtcc->PZMCCPLN.H_P_LPO1 / 1852.0);
-		skp->Text(9 * W / 16, 6 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "HALOI2 %.1lf", GC->rtcc->PZMCCPLN.H_A_LPO2 / 1852.0);
-		skp->Text(9 * W / 16, 7 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "HPLOI2 %.2lf", GC->rtcc->PZMCCPLN.H_P_LPO2 / 1852.0);
-		skp->Text(9 * W / 16, 8 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "REVS1 %.2lf", GC->rtcc->PZMCCPLN.REVS1);
-		skp->Text(9 * W / 16, 9 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "REVS2 %d", GC->rtcc->PZMCCPLN.REVS2);
-		skp->Text(9 * W / 16, 10 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "SITEROT %.1lf°", GC->rtcc->PZMCCPLN.SITEROT*DEG);
-		skp->Text(9 * W / 16, 11 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "ETA1 %.3lf°", GC->rtcc->PZMCCPLN.ETA1*DEG);
-		skp->Text(9 * W / 16, 12 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 9 * W / 16, 5 * H / 28, "HALOI1 %.1lf", GC->rtcc->PZMCCPLN.H_A_LPO1 / 1852.0);
+		skpTextFmt(skp, 9 * W / 16, 6 * H / 28, "HPLOI1 %.1lf", GC->rtcc->PZMCCPLN.H_P_LPO1 / 1852.0);
+		skpTextFmt(skp, 9 * W / 16, 7 * H / 28, "HALOI2 %.1lf", GC->rtcc->PZMCCPLN.H_A_LPO2 / 1852.0);
+		skpTextFmt(skp, 9 * W / 16, 8 * H / 28, "HPLOI2 %.2lf", GC->rtcc->PZMCCPLN.H_P_LPO2 / 1852.0);
+		skpTextFmt(skp, 9 * W / 16, 9 * H / 28, "REVS1 %.2lf", GC->rtcc->PZMCCPLN.REVS1);
+		skpTextFmt(skp, 9 * W / 16, 10 * H / 28, "REVS2 %d", GC->rtcc->PZMCCPLN.REVS2);
+		skpTextFmt(skp, 9 * W / 16, 11 * H / 28, "SITEROT %.1lf°", GC->rtcc->PZMCCPLN.SITEROT* DEG);
+		skpTextFmt(skp, 9 * W / 16, 12 * H / 28, "ETA1 %.3lf°", GC->rtcc->PZMCCPLN.ETA1* DEG);
 
 		skp->Text(8 * W / 16, 14 * H / 28, "Mission Constants", 17);
-		sprintf_s(Buffer, "M %d", GC->rtcc->PZMCCPLN.LOPC_M);
-		skp->Text(9 * W / 16, 15 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "N %d", GC->rtcc->PZMCCPLN.LOPC_N);
-		skp->Text(9 * W / 16, 16 * H / 28, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "I PR MAX %.3lf°", GC->rtcc->PZMCCPLN.INCL_PR_MAX*DEG);
-		skp->Text(9 * W / 16, 17 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 9 * W / 16, 15 * H / 28, "M %d", GC->rtcc->PZMCCPLN.LOPC_M);
+		skpTextFmt(skp, 9 * W / 16, 16 * H / 28, "N %d", GC->rtcc->PZMCCPLN.LOPC_N);
+		skpTextFmt(skp, 9 * W / 16, 17 * H / 28, "I PR MAX %.3lf°", GC->rtcc->PZMCCPLN.INCL_PR_MAX* DEG);
 
 	}
 	else if (screen == 81)
@@ -7275,18 +6505,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		GET_Display3(Buffer, G->NodeConvGET);
 		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf°", G->NodeConvLat*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf°", G->NodeConvLng*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf NM", G->NodeConvHeight / 1852.0);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.3lf°", G->NodeConvLat* DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.3lf°", G->NodeConvLng* DEG);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.3lf NM", G->NodeConvHeight / 1852.0);
 
 		skp->Text(9 * W / 16, 8 * H / 14, "Result:", 7);
-		sprintf_s(Buffer, "%.3lf° Lat", G->NodeConvResLat*DEG);
-		skp->Text(9 * W / 16, 9 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.3lf° Lng", G->NodeConvResLng*DEG);
-		skp->Text(9 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 9 * W / 16, 9 * H / 14, "%.3lf° Lat", G->NodeConvResLat* DEG);
+		skpTextFmt(skp, 9 * W / 16, 10 * H / 14, "%.3lf° Lng", G->NodeConvResLng* DEG);
 	}
 	else if (screen == 82)
 	{
@@ -7294,21 +6519,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 1 * H / 14, "LOI Initialization", 18);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
-		sprintf_s(Buffer, "%.1lf NM", GC->rtcc->PZLOIPLN.HA_LLS);
-		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf NM", GC->rtcc->PZLOIPLN.HP_LLS);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf°", GC->rtcc->PZLOIPLN.DW);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLOIPLN.REVS1);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%d", GC->rtcc->PZLOIPLN.REVS2);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf°", GC->rtcc->PZLOIPLN.eta_1);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 2 * H / 14, "%.1lf NM", GC->rtcc->PZLOIPLN.HA_LLS);
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.2lf NM", GC->rtcc->PZLOIPLN.HP_LLS);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.1lf°", GC->rtcc->PZLOIPLN.DW);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2lf", GC->rtcc->PZLOIPLN.REVS1);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%d", GC->rtcc->PZLOIPLN.REVS2);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.1lf°", GC->rtcc->PZLOIPLN.eta_1);
 
-		sprintf_s(Buffer, "%.1lf NM", GC->rtcc->PZLOIPLN.dh_bias);
-		skp->Text(5 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 8, 2 * H / 14, "%.1lf NM", GC->rtcc->PZLOIPLN.dh_bias);
 
 		if (GC->rtcc->PZLOIPLN.PlaneSolnForInterSoln)
 		{
@@ -7334,8 +6552,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(5 * W / 32, 4 * H / 32, "CSM STA", 7);
 		skp->Text(6 * W / 32, 5 * H / 32, "GET VECTOR", 10);
 
-		sprintf(Buffer, "%s", GC->rtcc->PZLRBTI.StaID.c_str());
-		skp->Text(12 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 12 * W / 32, 4 * H / 32, GC->rtcc->PZLRBTI.StaID);
 		GET_Display(Buffer, GC->rtcc->PZLRBTI.VectorGET, false);
 		skp->Text(12 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
 
@@ -7361,8 +6578,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "%.4lfW", -GC->rtcc->PZLRBTI.lng_lls);
 		}
 		skp->Text(13 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.4lf", GC->rtcc->PZLRBTI.R_lls);
-		skp->Text(13 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 32, 9 * H / 32, "%.4lf", GC->rtcc->PZLRBTI.R_lls);
 
 		skp->Text(18 * W / 32, 7 * H / 32, "REVS1", 5);
 		skp->Text(18 * W / 32, 8 * H / 32, "REVS2", 5);
@@ -7376,53 +6592,39 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(18 * W / 32, 10 * H / 32, "MIN THETA", 9);
 		}
 
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZLRBTI.REVS1);
-		skp->Text(21 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%d", GC->rtcc->PZLRBTI.REVS2);
-		skp->Text(21 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.1lf", GC->rtcc->PZLRBTI.DHBIAS);
-		skp->Text(21 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 32, 7 * H / 32, "%.2lf", GC->rtcc->PZLRBTI.REVS1);
+		skpTextFmt(skp, 21 * W / 32, 8 * H / 32, "%d", GC->rtcc->PZLRBTI.REVS2);
+		skpTextFmt(skp, 21 * W / 32, 9 * H / 32, "%+.1lf", GC->rtcc->PZLRBTI.DHBIAS);
 
 		skp->Text(27 * W / 32, 7 * H / 32, "HALOI1", 6);
 		skp->Text(27 * W / 32, 8 * H / 32, "HPLOI1", 6);
 		skp->Text(27 * W / 32, 9 * H / 32, "HALOI2", 6);
 		skp->Text(27 * W / 32, 10 * H / 32, "HPLOI2", 6);
 
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.HALOI1);
-		skp->Text(31 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.HPLOI1);
-		skp->Text(31 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.HALOI2);
-		skp->Text(31 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZLRBTI.HPLOI2);
-		skp->Text(31 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 7 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.HALOI1);
+		skpTextFmt(skp, 31 * W / 32, 8 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.HPLOI1);
+		skpTextFmt(skp, 31 * W / 32, 9 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.HALOI2);
+		skpTextFmt(skp, 31 * W / 32, 10 * H / 32, "%.2lf", GC->rtcc->PZLRBTI.HPLOI2);
 
 		skp->Text(6 * W / 32, 12 * H / 32, "AZMN FND", 8);
 		skp->Text(6 * W / 32, 13 * H / 32, "AZMX FND", 8);
 
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.AZMN_f_ND);
-		skp->Text(10 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.AZMX_f_ND);
-		skp->Text(10 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 32, 12 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.AZMN_f_ND);
+		skpTextFmt(skp, 10 * W / 32, 13 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.AZMX_f_ND);
 
 		skp->Text(17 * W / 32, 12 * H / 32, "AZLLS", 5);
 		skp->Text(17 * W / 32, 13 * H / 32, "FLLS", 4);
 
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.AZ_LLS);
-		skp->Text(21 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.f_LLS);
-		skp->Text(21 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 32, 12 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.AZ_LLS);
+		skpTextFmt(skp, 21 * W / 32, 13 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.f_LLS);
 
 		skp->Text(27 * W / 32, 12 * H / 32, "DVMAX+", 6);
 		skp->Text(27 * W / 32, 13 * H / 32, "DVMAX-", 6);
 		skp->Text(27 * W / 32, 14 * H / 32, "RA-RP GT", 8);
 
-		sprintf(Buffer, "%.0lf", GC->rtcc->PZLRBTI.DVMAXp);
-		skp->Text(31 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.0lf", GC->rtcc->PZLRBTI.DVMAXm);
-		skp->Text(31 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.1lf", GC->rtcc->PZLRBTI.RARPGT);
-		skp->Text(31 * W / 32, 14 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 12 * H / 32, "%.0lf", GC->rtcc->PZLRBTI.DVMAXp);
+		skpTextFmt(skp, 31 * W / 32, 13 * H / 32, "%.0lf", GC->rtcc->PZLRBTI.DVMAXm);
+		skpTextFmt(skp, 31 * W / 32, 14 * H / 32, "%.1lf", GC->rtcc->PZLRBTI.RARPGT);
 
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->Text(2 * W / 32, 16 * H / 32, "CODE", 4);
@@ -7458,50 +6660,34 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 4;i++)
 		{
-			sprintf_s(Buffer, "%d", 2 * i + 1);
-			skp->Text(2 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%d", 2 * i + 2);
-			skp->Text(2 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skp->Text(2 * W / 32, (38 + 7 * i) * H / 64, "%d", 2 * i + 1);
+			skp->Text(2 * W / 32, (40 + 7 * i) * H / 64, "%d", 2 * i + 2);
 
 			GET_Display_HHMM(Buffer, GC->rtcc->PZLRBTI.sol[2 * i].GETLOI);
 			skp->Text(7 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
 			GET_Display_HHMM(Buffer, GC->rtcc->PZLRBTI.sol[2 * i + 1].GETLOI);
 			skp->Text(7 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].DVLOI1);
-			skp->Text(11 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].DVLOI1);
-			skp->Text(11 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 11 * W / 32, (38 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].DVLOI1);
+			skpTextFmt(skp, 11 * W / 32, (40 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].DVLOI1);
 
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].DVLOI2);
-			skp->Text(15 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].DVLOI2);
-			skp->Text(15 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (38 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].DVLOI2);
+			skpTextFmt(skp, 15 * W / 32, (40 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].DVLOI2);
 
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].H_ND);
-			skp->Text(18 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].H_ND);
-			skp->Text(18 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 18 * W / 32, (38 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].H_ND);
+			skpTextFmt(skp, 18 * W / 32, (40 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].H_ND);
 
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].f_ND_H);
-			skp->Text(21 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].f_ND_H);
-			skp->Text(21 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 21 * W / 32, (38 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].f_ND_H);
+			skpTextFmt(skp, 21 * W / 32, (40 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].f_ND_H);
 
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].H_PC);
-			skp->Text(24 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].H_PC);
-			skp->Text(24 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 24 * W / 32, (38 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i].H_PC);
+			skpTextFmt(skp, 24 * W / 32, (40 + 7 * i) * H / 64, "%.0lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].H_PC);
 
-			sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLRBTI.sol[2 * i].Theta);
-			skp->Text(28 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].Theta);
-			skp->Text(28 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 28 * W / 32, (38 + 7 * i) * H / 64, "%.2lf", GC->rtcc->PZLRBTI.sol[2 * i].Theta);
+			skpTextFmt(skp, 28 * W / 32, (40 + 7 * i) * H / 64, "%.2lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].Theta);
 
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].f_ND_E);
-			skp->Text(31 * W / 32, (38 + 7 * i) * H / 64, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].f_ND_E);
-			skp->Text(31 * W / 32, (40 + 7 * i) * H / 64, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 31 * W / 32, (38 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i].f_ND_E);
+			skpTextFmt(skp, 31 * W / 32, (40 + 7 * i) * H / 64, "%.1lf", GC->rtcc->PZLRBTI.sol[2 * i + 1].f_ND_E);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -7551,12 +6737,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				skp->Text(1 * W / 16, 8 * H / 14, "Docking", 7);
 			}
 
-			sprintf_s(Buffer, GC->rtcc->med_m66.FinalConfig.c_str());
-			skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 16, 10 * H / 14, GC->rtcc->med_m66.FinalConfig);
 		}
 
-		sprintf_s(Buffer, "%+.1lf° Delta Docking Angle", GC->rtcc->med_m66.DeltaDA*DEG);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%+.1lf° Delta Docking Angle", GC->rtcc->med_m66.DeltaDA* DEG);
 
 		if (GC->rtcc->med_m66.TrimAngleIndicator == 0)
 		{
@@ -7587,16 +6771,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(24 * W / 32, 6 * H / 28, "GETCA", 5);
 		skp->Text(29 * W / 32, 6 * H / 28, "GETLOS", 8);
 
-		sprintf_s(Buffer, "PAGE %02d OF %02d", GC->rtcc->EZDPSAD2.curpage, GC->rtcc->EZDPSAD2.pages);
-		skp->Text(6 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 6 * W / 32, 4 * H / 28, "PAGE %02d OF %02d", GC->rtcc->EZDPSAD2.curpage, GC->rtcc->EZDPSAD2.pages);
 
 		for (unsigned i = 0;i < GC->rtcc->EZDPSAD2.numcontacts[GC->rtcc->EZDPSAD2.curpage - 1];i++)
 		{
-			sprintf_s(Buffer, "%03d", GC->rtcc->EZDPSAD2.REV[GC->rtcc->EZDPSAD2.curpage - 1][i]);
-			skp->Text(2 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 32, (i + 8) * H / 28, "%03d", GC->rtcc->EZDPSAD2.REV[GC->rtcc->EZDPSAD2.curpage - 1][i]);
 
-			sprintf_s(Buffer, GC->rtcc->EZDPSAD2.STA[GC->rtcc->EZDPSAD2.curpage - 1][i].c_str());
-			skp->Text(5 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			Text(skp, 5 * W / 32, (i + 8) * H / 28, GC->rtcc->EZDPSAD2.STA[GC->rtcc->EZDPSAD2.curpage - 1][i]);
 
 			if (GC->rtcc->EZDPSAD2.BestAvailableAOS[GC->rtcc->EZDPSAD2.curpage - 1][i])
 			{
@@ -7605,18 +6786,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, GC->rtcc->EZDPSAD2.GETAOS[GC->rtcc->EZDPSAD2.curpage - 1][i], false);
 			skp->Text(9 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%.1f", GC->rtcc->EZDPSAD2.GNDRNG[GC->rtcc->EZDPSAD2.curpage - 1][i]);
-			skp->Text(14 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 14 * W / 32, (i + 8) * H / 28, "%.1f", GC->rtcc->EZDPSAD2.GNDRNG[GC->rtcc->EZDPSAD2.curpage - 1][i]);
 
-			sprintf_s(Buffer, "%04.1f", GC->rtcc->EZDPSAD2.ALT[GC->rtcc->EZDPSAD2.curpage - 1][i]);
-			skp->Text(17 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 17 * W / 32, (i + 8) * H / 28, "%04.1f", GC->rtcc->EZDPSAD2.ALT[GC->rtcc->EZDPSAD2.curpage - 1][i]);
 
 			if (GC->rtcc->EZDPSAD2.BestAvailableEMAX[GC->rtcc->EZDPSAD2.curpage - 1][i])
 			{
 				skp->Text(19 * W / 32, (i + 8) * H / 28, "*", 1);
 			}
-			sprintf_s(Buffer, "%04.1f", GC->rtcc->EZDPSAD2.ELMAX[GC->rtcc->EZDPSAD2.curpage - 1][i]);
-			skp->Text(20 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 20 * W / 32, (i + 8) * H / 28, "%04.1f", GC->rtcc->EZDPSAD2.ELMAX[GC->rtcc->EZDPSAD2.curpage - 1][i]);
 
 			GET_Display(Buffer, GC->rtcc->EZDPSAD2.GETCA[GC->rtcc->EZDPSAD2.curpage - 1][i], false);
 			skp->Text(24 * W / 32, (i + 8) * H / 28, Buffer, strlen(Buffer));
@@ -7635,8 +6813,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 2 * H / 32, "RELATIVE MOTION DIGITALS (MSK 0060)", 35);
 		skp->SetFont(font2);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->EZRMDT.error.c_str());
-		skp->Text(16 * W / 32, 31 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 16 * W / 32, 31 * H / 32, GC->rtcc->EZRMDT.error);
 
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 		skp->Text(1 * W / 32, 4 * H / 32, "CSM STAID", 9);
@@ -7647,10 +6824,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->EZRMDT.CSMGETV, false);
 		skp->Text(4 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
 		skp->Text(1 * W / 32, 7 * H / 32, "MODE", 4);
-		sprintf_s(Buffer, "%c", GC->rtcc->EZRMDT.Mode);
-		skp->Text(4 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "GET%s", GC->rtcc->EZRMDT.PETorSH.c_str());
-		skp->Text(5 * W / 128, 8 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 4 * W / 32, 7 * H / 32, "%c", GC->rtcc->EZRMDT.Mode);
+		skpTextFmt(skp, 5 * W / 128, 8 * H / 32, "GET%s", GC->rtcc->EZRMDT.PETorSH.c_str());
 
 		skp->Text(10 * W / 32, 4 * H / 32, "LM STAID", 8);
 		skp->Text(10 * W / 32, 5 * H / 32, "GMTV", 4);
@@ -7664,15 +6839,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->EZRMDT.GETR, false);
 		skp->Text(22 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
 		skp->Text(19 * W / 32, 5 * H / 32, "VEH", 3);
-		sprintf_s(Buffer, "%s", GC->rtcc->EZRMDT.VEH.c_str());
-		skp->Text(43 * W / 64, 5 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 43 * W / 64, 5 * H / 32, GC->rtcc->EZRMDT.VEH);
 
-		sprintf_s(Buffer, "%c", GC->rtcc->EZRMDT.AXIS);
-		skp->Text(25 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 25 * W / 32, 5 * H / 32, "%c", GC->rtcc->EZRMDT.AXIS);
 		skp->Text(26 * W / 32, 5 * H / 32, "AXIS AT TGT", 11);
 		skp->Text(19 * W / 32, 6 * H / 32, "REFSMMAT NO", 11);
-		sprintf_s(Buffer, "%s", GC->rtcc->EZRMDT.REFSMMAT.c_str());
-		skp->Text(53 * W / 64, 6 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 53 * W / 64, 6 * H / 32, GC->rtcc->EZRMDT.REFSMMAT);
 
 		skp->SetPen(pen2);
 		skp->Line(5 * W / 32, 15 * H / 64, W, 15 * H / 64);
@@ -7685,8 +6857,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Line(56 * W / 64, 15 * H / 64, 56 * W / 64, 62 * H / 64);
 
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
-		sprintf_s(Buffer, "R%s", GC->rtcc->EZRMDT.YDotorT.c_str());
-		skp->Text(29 * W / 128, 8 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 29 * W / 128, 8 * H / 32, "R%s", GC->rtcc->EZRMDT.YDotorT.c_str());
 		if (GC->rtcc->EZRMDT.Mode == '1')
 		{
 			skp->Text(62 * W / 256, 57 * H / 256, ".", 1);
@@ -7695,12 +6866,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(22 * W / 64, 8 * H / 32, "R/PB", 4);
 		skp->Text(59 * W / 128, 8 * H / 32, "AZ/YB", 5);
 		skp->Text(73 * W / 128, 8 * H / 32, "EL/RB", 5);
-		sprintf_s(Buffer, "X/P%c", GC->rtcc->EZRMDT.Pitch);
-		skp->Text(89 * W / 128, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Z/Y%c", GC->rtcc->EZRMDT.Yaw);
-		skp->Text(26 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Y/R%c", GC->rtcc->EZRMDT.Roll);
-		skp->Text(30 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 89 * W / 128, 8 * H / 32, "X/P%c", GC->rtcc->EZRMDT.Pitch);
+		skpTextFmt(skp, 26 * W / 32, 8 * H / 32, "Z/Y%c", GC->rtcc->EZRMDT.Yaw);
+		skpTextFmt(skp, 30 * W / 32, 8 * H / 32, "Y/R%c", GC->rtcc->EZRMDT.Roll);
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 		for (int i = 0;i < GC->rtcc->EZRMDT.solns;i++)
@@ -7726,52 +6894,38 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				if (abs(GC->rtcc->EZRMDT.data[i].YdotorTrun) <= 999.9)
 				{
-					sprintf_s(Buffer, "%+.1lf", GC->rtcc->EZRMDT.data[i].YdotorTrun);
-					skp->Text(35 * W / 128, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+					skpTextFmt(skp, 35 * W / 128, (10 + i * 2) * H / 32, "%+.1lf", GC->rtcc->EZRMDT.data[i].YdotorTrun);
 				}
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].YdotorTrun);
-				skp->Text(35 * W / 128, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 35 * W / 128, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].YdotorTrun);
 			}
 			
 			if (abs(GC->rtcc->EZRMDT.data[i].RDOT) <= 999.9)
 			{
-				sprintf_s(Buffer, "%+.1lf", GC->rtcc->EZRMDT.data[i].RDOT);
-				skp->Text(25 * W / 64, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 25 * W / 64, (9 + i * 2) * H / 32, "%+.1lf", GC->rtcc->EZRMDT.data[i].RDOT);
 			}
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].PB);
-			skp->Text(25 * W / 64, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].AZH);
-			skp->Text(32 * W / 64, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].YB);
-			skp->Text(32 * W / 64, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].EL);
-			skp->Text(39 * W / 64, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].RB);
-			skp->Text(39 * W / 64, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 25 * W / 64, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].PB);
+			skpTextFmt(skp, 32 * W / 64, (9 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].AZH);
+			skpTextFmt(skp, 32 * W / 64, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].YB);
+			skpTextFmt(skp, 39 * W / 64, (9 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].EL);
+			skpTextFmt(skp, 39 * W / 64, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].RB);
 			if (GC->rtcc->EZRMDT.Mode == '1' && abs(GC->rtcc->EZRMDT.data[i].X) <= 9999.9)
 			{
-				sprintf_s(Buffer, "%.1lf%c", GC->rtcc->EZRMDT.data[i].X, GC->rtcc->EZRMDT.data[i].XInd);
-				skp->Text(95 * W / 128, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 95 * W / 128, (9 + i * 2) * H / 32, "%.1lf%c", GC->rtcc->EZRMDT.data[i].X, GC->rtcc->EZRMDT.data[i].XInd);
 			}
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].Pitch);
-			skp->Text(95 * W / 128, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 95 * W / 128, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].Pitch);
 			if (GC->rtcc->EZRMDT.Mode == '1' && abs(GC->rtcc->EZRMDT.data[i].Z) <= 9999.9)
 			{
-				sprintf_s(Buffer, "%.1lf%c", GC->rtcc->EZRMDT.data[i].Z, GC->rtcc->EZRMDT.data[i].ZInd);
-				skp->Text(111 * W / 128, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 111 * W / 128, (9 + i * 2) * H / 32, "%.1lf%c", GC->rtcc->EZRMDT.data[i].Z, GC->rtcc->EZRMDT.data[i].ZInd);
 			}
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].Yaw);
-			skp->Text(111 * W / 128, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 111 * W / 128, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].Yaw);
 			if (GC->rtcc->EZRMDT.Mode == '1' && abs(GC->rtcc->EZRMDT.data[i].Y) <= 999.9)
 			{
-				sprintf_s(Buffer, "%.1lf%c", GC->rtcc->EZRMDT.data[i].Y, GC->rtcc->EZRMDT.data[i].YInd);
-				skp->Text(63 * W / 64, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 63 * W / 64, (9 + i * 2) * H / 32, "%.1lf%c", GC->rtcc->EZRMDT.data[i].Y, GC->rtcc->EZRMDT.data[i].YInd);
 			}
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].Roll);
-			skp->Text(63 * W / 64, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 63 * W / 64, (10 + i * 2) * H / 32, "%.1lf", GC->rtcc->EZRMDT.data[i].Roll);
 		}
 	}
 	else if (screen == 87)
@@ -7779,8 +6933,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->Text(4 * W / 8, 2 * H / 32, "RENDEZVOUS EVALUATION DISPLAY (MSK 0058)", 40);
 
-		sprintf_s(Buffer, GC->rtcc->PZREDT.ErrorMessage.c_str());
-		skp->Text(32 * W / 64, 30 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 32 * W / 64, 30 * H / 32, GC->rtcc->PZREDT.ErrorMessage);
 		skp->SetFont(font2);
 
 		skp->Text(6 * W / 32, 4 * H / 32, "ID", 2);
@@ -7803,12 +6956,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(30 * W / 64, 19 * H / 32, "VY", 2);
 		skp->Text(38 * W / 64, 19 * H / 32, "VZ", 2);
 
-		sprintf_s(Buffer, "%d", GC->rtcc->PZREDT.ID);
-		skp->Text(8 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 8 * W / 32, 4 * H / 32, "%d", GC->rtcc->PZREDT.ID);
 		if (GC->rtcc->PZREDT.isDKI)
 		{
-			sprintf_s(Buffer, "%d", GC->rtcc->PZREDT.M);
-			skp->Text(14 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 14 * W / 32, 4 * H / 32, "%d", GC->rtcc->PZREDT.M);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
@@ -7821,36 +6972,23 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				GET_Display3(Buffer, GC->rtcc->PZREDT.DT[i]);
 				skp->Text(20 * W / 64, (6 + i * 2) * H / 32, Buffer, strlen(Buffer));
 			}
-			sprintf_s(Buffer, "%.2lf", GC->rtcc->PZREDT.DV[i]);
-			skp->Text(24 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, GC->rtcc->PZREDT.VEH[i].c_str());
-			skp->Text(29 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, GC->rtcc->PZREDT.PURP[i].c_str());
-			skp->Text(35 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 24 * W / 64, (7 + i * 2) * H / 32, "%.2lf", GC->rtcc->PZREDT.DV[i]);
+			Text(skp, 29 * W / 64, (7 + i * 2) * H / 32, GC->rtcc->PZREDT.VEH[i]);
+			Text(skp, 35 * W / 64, (7 + i * 2) * H / 32, GC->rtcc->PZREDT.PURP[i]);
 			if (GC->rtcc->PZREDT.isDKI)
 			{
-				//sprintf_s(Buffer, "%.2lf", GC->rtcc->PZREDT.CODE[i]);
-				//skp->Text(40 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
+				//skpTextFmt(skp, 40 * W / 64, (7 + i * 2) * H / 32, "%.2lf", GC->rtcc->PZREDT.CODE[i]);
 			}
-			sprintf_s(Buffer, "%.4lf", GC->rtcc->PZREDT.PHASE[i]);
-			skp->Text(43 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.4lf", GC->rtcc->PZREDT.HEIGHT[i]);
-			skp->Text(51 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", GC->rtcc->PZREDT.HA[i]);
-			skp->Text(57 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", GC->rtcc->PZREDT.HP[i]);
-			skp->Text(63 * W / 64, (7 + i * 2) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 43 * W / 64, (7 + i * 2) * H / 32, "%.4lf", GC->rtcc->PZREDT.PHASE[i]);
+			skpTextFmt(skp, 51 * W / 64, (7 + i * 2) * H / 32, "%.4lf", GC->rtcc->PZREDT.HEIGHT[i]);
+			skpTextFmt(skp, 57 * W / 64, (7 + i * 2) * H / 32, "%.2lf", GC->rtcc->PZREDT.HA[i]);
+			skpTextFmt(skp, 63 * W / 64, (7 + i * 2) * H / 32, "%.2lf", GC->rtcc->PZREDT.HP[i]);
 
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZREDT.Pitch[i]);
-			skp->Text(8 * W / 64, (20 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZREDT.Yaw[i]);
-			skp->Text(16 * W / 64, (20 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZREDT.DVVector[i].x);
-			skp->Text(24 * W / 64, (20 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZREDT.DVVector[i].y);
-			skp->Text(32 * W / 64, (20 + i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->PZREDT.DVVector[i].z);
-			skp->Text(40 * W / 64, (20 + i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 8 * W / 64, (20 + i) * H / 32, "%.3lf", GC->rtcc->PZREDT.Pitch[i]);
+			skpTextFmt(skp, 16 * W / 64, (20 + i) * H / 32, "%.3lf", GC->rtcc->PZREDT.Yaw[i]);
+			skpTextFmt(skp, 24 * W / 64, (20 + i) * H / 32, "%.3lf", GC->rtcc->PZREDT.DVVector[i].x);
+			skpTextFmt(skp, 32 * W / 64, (20 + i) * H / 32, "%.3lf", GC->rtcc->PZREDT.DVVector[i].y);
+			skpTextFmt(skp, 40 * W / 64, (20 + i) * H / 32, "%.3lf", GC->rtcc->PZREDT.DVVector[i].z);
 		}
 	}
 	else if (screen == 88)
@@ -7859,26 +6997,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 2 * H / 32, "Init for LM Targeting and Launch Window (K13)", 45);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
-		sprintf_s(Buffer, "%.3lf°", GC->rtcc->PZLTRT.PoweredFlightArc*DEG);
-		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf s", GC->rtcc->PZLTRT.PoweredFlightTime);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.0lf ft", GC->rtcc->PZLTRT.InsertionHeight / 0.3048);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf ft/s", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf ft/s", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZLTRT.YawSteerCap*DEG);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf hrs", GC->rtcc->PZLTRT.MaxAscLifetime / 3600.0);
-		skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf NM", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
-		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf ft/s", GC->rtcc->PZLTRT.LMMaxDeltaV / 0.3048);
-		skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf ft/s", GC->rtcc->PZLTRT.CSMMaxDeltaV / 0.3048);
-		skp->Text(10 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 2 * H / 14, "%.3lf°", GC->rtcc->PZLTRT.PoweredFlightArc* DEG);
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.1lf s", GC->rtcc->PZLTRT.PoweredFlightTime);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.0lf ft", GC->rtcc->PZLTRT.InsertionHeight / 0.3048);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.1lf ft/s", GC->rtcc->PZLTRT.InsertionHorizontalVelocity / 0.3048);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.1lf ft/s", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.2lf°", GC->rtcc->PZLTRT.YawSteerCap* DEG);
+		skpTextFmt(skp, 10 * W / 16, 2 * H / 14, "%.2lf hrs", GC->rtcc->PZLTRT.MaxAscLifetime / 3600.0);
+		skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.2lf NM", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
+		skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%.2lf ft/s", GC->rtcc->PZLTRT.LMMaxDeltaV / 0.3048);
+		skpTextFmt(skp, 10 * W / 16, 8 * H / 14, "%.2lf ft/s", GC->rtcc->PZLTRT.CSMMaxDeltaV / 0.3048);
 	}
 	else if (screen == 89)
 	{
@@ -7887,20 +7015,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
 		skp->Text(1 * W / 16, 2 * H / 14, "Targeting Parameters", 34);
-		sprintf_s(Buffer, "%.1lf min", GC->rtcc->PZLTRT.dt_bias / 60.0);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZLTRT.ElevationAngle*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZLTRT.TerminalPhaseTravelAngle*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf NM", GC->rtcc->PZLTRT.TPF_Height_Offset / 1852.0);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->PZLTRT.TPF_Phase_Offset*DEG);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf NM", GC->rtcc->PZLTRT.Height_Diff_Begin / 1852.0);
-		skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf NM", GC->rtcc->PZLTRT.Height_Diff_Incr / 1852.0);
-		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.1lf min", GC->rtcc->PZLTRT.dt_bias / 60.0);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2lf°", GC->rtcc->PZLTRT.ElevationAngle* DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2lf°", GC->rtcc->PZLTRT.TerminalPhaseTravelAngle* DEG);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.2lf NM", GC->rtcc->PZLTRT.TPF_Height_Offset / 1852.0);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.2lf°", GC->rtcc->PZLTRT.TPF_Phase_Offset* DEG);
+		skpTextFmt(skp, 10 * W / 16, 2 * H / 14, "%.2lf NM", GC->rtcc->PZLTRT.Height_Diff_Begin / 1852.0);
+		skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.2lf NM", GC->rtcc->PZLTRT.Height_Diff_Incr / 1852.0);
 	}
 	else if (screen == 90)
 	{
@@ -7964,10 +7085,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(8 * W / 32, 7 * H / 32, "LEM", 3);
 		}
 
-		sprintf_s(Buffer, "%+.4lf", GC->rtcc->BZLAND.lat[0] * DEG);
-		skp->Text(31 * W / 64, 5 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.4lf", GC->rtcc->BZLAND.lng[0] * DEG);
-		skp->Text(31 * W / 64, 6 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 64, 5 * H / 32, "%+.4lf", GC->rtcc->BZLAND.lat[0] * DEG);
+		skpTextFmt(skp, 31 * W / 64, 6 * H / 32, "%+.4lf", GC->rtcc->BZLAND.lng[0] * DEG);
 		GET_Display(Buffer, GC->rtcc->med_k15.ThresholdTime, false);
 		skp->Text(31 * W / 64, 7 * H / 32, Buffer, strlen(Buffer));
 
@@ -7977,8 +7096,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(24 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
 		}
 
-		sprintf_s(Buffer, "%.1lf h", GC->rtcc->PZLTRT.MaxAscLifetime / 3600.0);
-		skp->Text(31 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 4 * H / 32, "%.1lf h", GC->rtcc->PZLTRT.MaxAscLifetime / 3600.0);
 		if (GC->rtcc->med_k15.Chaser == 1)
 		{
 			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLTRT.CSMMaxDeltaV / 0.3048);
@@ -7988,39 +7106,30 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLTRT.LMMaxDeltaV / 0.3048);
 		}
 		skp->Text(31 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
-		skp->Text(31 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 6 * H / 32, "%.1lf", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
 
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		
 		for (int i = 0;i < GC->rtcc->PZLRPT.plans;i++)
 		{
-			sprintf_s(Buffer, "%d", GC->rtcc->PZLRPT.data[i].ID);
-			skp->Text(2 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%d", GC->rtcc->PZLRPT.data[i].N);
-			skp->Text(4 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DH);
-			skp->Text(6 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 32, (12 + 3 * i) * H / 32, "%d", GC->rtcc->PZLRPT.data[i].ID);
+			skpTextFmt(skp, 4 * W / 32, (12 + 3 * i) * H / 32, "%d", GC->rtcc->PZLRPT.data[i].N);
+			skpTextFmt(skp, 6 * W / 32, (12 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DH);
 			GET_Display(Buffer, GC->rtcc->PZLRPT.data[i].GETLO, false);
 			skp->Text(10 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->PZLRPT.data[i].T_INS, false);
 			skp->Text(10 * W / 32, (13 + 3 * i) * H / 32, Buffer, strlen(Buffer));
 			GET_Display(Buffer, GC->rtcc->PZLRPT.data[i].T_CSI, false);
 			skp->Text(15 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DVCSI);
-			skp->Text(15 * W / 32, (13 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (13 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DVCSI);
 			GET_Display(Buffer, GC->rtcc->PZLRPT.data[i].T_CDH, false);
 			skp->Text(20 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DVCDH);
-			skp->Text(20 * W / 32, (13 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 20 * W / 32, (13 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DVCDH);
 			GET_Display(Buffer, GC->rtcc->PZLRPT.data[i].T_TPI, false);
 			skp->Text(25 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DVTPI);
-			skp->Text(25 * W / 32, (13 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DVTPF);
-			skp->Text(30 * W / 32, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLRPT.data[i].DVT);
-			skp->Text(30 * W / 32, (13 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 25 * W / 32, (13 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DVTPI);
+			skpTextFmt(skp, 30 * W / 32, (12 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DVTPF);
+			skpTextFmt(skp, 30 * W / 32, (13 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZLRPT.data[i].DVT);
 		}
 	}
 	else if (screen == 91)
@@ -8107,79 +7216,49 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->med_k50.GETTH, false);
 		skp->Text(9 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%+.4lf", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(31 * W / 32, 4 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.4lf", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
-		skp->Text(31 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.4lf", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
-		skp->Text(31 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 4 * H / 32, "%+.4lf", GC->rtcc->BZLAND.lat[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 31 * W / 32, 5 * H / 32, "%+.4lf", GC->rtcc->BZLAND.lng[RTCC_LMPOS_BEST] * DEG);
+		skpTextFmt(skp, 31 * W / 32, 6 * H / 32, "%.4lf", GC->rtcc->BZLAND.rad[RTCC_LMPOS_BEST] / 1852.0);
 
-		sprintf_s(Buffer, "%.3lf", GC->rtcc->PZLTRT.PoweredFlightArc*DEG);
-		skp->Text(8 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLTRT.PoweredFlightTime);
-		skp->Text(8 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLTRT.InsertionHeight / 0.3048);
-		skp->Text(8 * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
-		skp->Text(8 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLTRT.YawSteerCap*DEG);
-		skp->Text(8 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 8 * W / 32, 9 * H / 32, "%.3lf", GC->rtcc->PZLTRT.PoweredFlightArc* DEG);
+		skpTextFmt(skp, 8 * W / 32, 10 * H / 32, "%.2lf", GC->rtcc->PZLTRT.PoweredFlightTime);
+		skpTextFmt(skp, 8 * W / 32, 11 * H / 32, "%.0lf", GC->rtcc->PZLTRT.InsertionHeight / 0.3048);
+		skpTextFmt(skp, 8 * W / 32, 12 * H / 32, "%+.1lf", GC->rtcc->PZLTRT.InsertionRadialVelocity / 0.3048);
+		skpTextFmt(skp, 8 * W / 32, 13 * H / 32, "%.2lf", GC->rtcc->PZLTRT.YawSteerCap* DEG);
 
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLTRT.DT_Ins_TPI / 60.0);
-		skp->Text(20 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->PZLTRT.DT_Ins_TPI_NOM / 60.0);
-		skp->Text(20 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 20 * W / 32, 9 * H / 32, "%.2lf", GC->rtcc->PZLTRT.DT_Ins_TPI / 60.0);
+		skpTextFmt(skp, 20 * W / 32, 10 * H / 32, "%.2lf", GC->rtcc->PZLTRT.DT_Ins_TPI_NOM / 60.0);
 
-		sprintf_s(Buffer, "%+.2lf", GC->rtcc->PZLTRT.DT_DH / 1852.0);
-		skp->Text(31 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.2lf", GC->rtcc->PZLTRT.DT_Theta_i*DEG);
-		skp->Text(31 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLTRT.TerminalPhaseTravelAngle*DEG);
-		skp->Text(31 * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
-		skp->Text(31 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLTRT.ElevationAngle*DEG);
-		skp->Text(31 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 9 * H / 32, "%+.2lf", GC->rtcc->PZLTRT.DT_DH / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 10 * H / 32, "%+.2lf", GC->rtcc->PZLTRT.DT_Theta_i * DEG);
+		skpTextFmt(skp, 31 * W / 32, 11 * H / 32, "%.1lf", GC->rtcc->PZLTRT.TerminalPhaseTravelAngle * DEG);
+		skpTextFmt(skp, 31 * W / 32, 12 * H / 32, "%+.1lf", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 13 * H / 32, "%.1lf", GC->rtcc->PZLTRT.ElevationAngle * DEG);
 
 		GET_Display2(Buffer, GC->rtcc->PZLLTT.GETLOR);
 		skp->Text(11 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.VH / 0.3048);
-		skp->Text(21 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 21 * W / 32, 17 * H / 32, "%.1lf", GC->rtcc->PZLLTT.VH / 0.3048);
 
 		GET_Display(Buffer, GC->rtcc->PZLLTT.GET_TPI, false);
 		skp->Text(8 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
 		GET_Display(Buffer, GC->rtcc->PZLLTT.GET_TPF, false);
 		skp->Text(8 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.DV_TPI / 0.3048);
-		skp->Text(12 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.DV_TPF / 0.3048);
-		skp->Text(12 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.x / 0.3048);
-		skp->Text(17 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.x / 0.3048);
-		skp->Text(17 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.y / 0.3048);
-		skp->Text(22 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.y / 0.3048);
-		skp->Text(22 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.z / 0.3048);
-		skp->Text(27 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.z / 0.3048);
-		skp->Text(27 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 12 * W / 32, 21 * H / 32, "%.1lf", GC->rtcc->PZLLTT.DV_TPI / 0.3048);
+		skpTextFmt(skp, 12 * W / 32, 23 * H / 32, "%.1lf", GC->rtcc->PZLLTT.DV_TPF / 0.3048);
+		skpTextFmt(skp, 17 * W / 32, 21 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.x / 0.3048);
+		skpTextFmt(skp, 17 * W / 32, 23 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.x / 0.3048);
+		skpTextFmt(skp, 22 * W / 32, 21 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.y / 0.3048);
+		skpTextFmt(skp, 22 * W / 32, 23 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.y / 0.3048);
+		skpTextFmt(skp, 27 * W / 32, 21 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPI_LVLH.z / 0.3048);
+		skpTextFmt(skp, 27 * W / 32, 23 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.DV_TPF_LVLH.z / 0.3048);
 
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.HA_TPI / 1852.0);
-		skp->Text(31 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.HP_TPI / 1852.0);
-		skp->Text(31 * W / 32, 22 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.HA_TPF / 1852.0);
-		skp->Text(31 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.HP_TPF / 1852.0);
-		skp->Text(31 * W / 32, 24 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 21 * H / 32, "%.1lf", GC->rtcc->PZLLTT.HA_TPI / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 22 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.HP_TPI / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 23 * H / 32, "%.1lf", GC->rtcc->PZLLTT.HA_TPF / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 24 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.HP_TPF / 1852.0);
 
-		sprintf_s(Buffer, "%.1lf", GC->rtcc->PZLLTT.HA_T / 1852.0);
-		skp->Text(31 * W / 32, 27 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->PZLLTT.HP_T / 1852.0);
-		skp->Text(31 * W / 32, 28 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 27 * H / 32, "%.1lf", GC->rtcc->PZLLTT.HA_T / 1852.0);
+		skpTextFmt(skp, 31 * W / 32, 28 * H / 32, "%+.1lf", GC->rtcc->PZLLTT.HP_T / 1852.0);
 	}
 	else if (screen == 92)
 	{
@@ -8212,8 +7291,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (G->TPI_Mode == 2)
 		{
-			sprintf_s(Buffer, "%.1f min", G->dt_TPI_sunrise / 60.0);
-			skp->Text(1 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 8, 6 * H / 14, "%.1f min", G->dt_TPI_sunrise / 60.0);
 		}
 
 		GET_Display(Buffer, G->t_TPIguess, false);
@@ -8231,8 +7309,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 2 * H / 32, "VECTOR COMPARE DISPLAY", 39);
 		skp->Text(30 * W / 32, 2 * H / 32, "1590", 4);
 
-		sprintf_s(Buffer, GC->rtcc->VectorCompareDisplayBuffer.error.c_str());
-		skp->Text(16 * W / 32, 31 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 16 * W / 32, 31 * H / 32, GC->rtcc->VectorCompareDisplayBuffer.error);
 
 		skp->Text(15 * W / 64, 7 * H / 32, "V1", 2);
 		skp->Text(29 * W / 64, 7 * H / 32, "V2", 2);
@@ -8317,8 +7394,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		for (int i = 0;i < 4;i++)
 		{
-			sprintf_s(Buffer, GC->rtcc->med_s80.VID[i].c_str());
-			skp->Text((15 + 14 * i) * W / 64, 9 * H / 32, Buffer, strlen(Buffer));
+			Text(skp, (15 + 14 * i) * W / 64, 9 * H / 32, GC->rtcc->med_s80.VID[i]);
 		}
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
@@ -8339,8 +7415,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				}
 				skp->Text((21 + 14 * i) * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
 			}
-			sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HP);
-			skp->Text((21 + 14 * i) * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (21 + 14 * i) * W / 64, 11 * H / 32, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HP);
 			if (i == 0)
 			{
 				sprintf_s(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
@@ -8350,8 +7425,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].gamma);
-			skp->Text((21 + 14 * i) * W / 64, 13 * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, (21 + 14 * i) * W / 64, 13 * H / 32, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].gamma);
 			if (i == 0)
 			{
 				sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].psi);
@@ -8520,8 +7594,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetFont(font3);
 		skp->SetTextAlign(oapi::Sketchpad::CENTER);
 		skp->Text(4 * W / 8, 3 * H / 26, "GUIDANCE OPTICS SUPPORT TABLE", 29);
-		sprintf_s(Buffer, "%s", GC->rtcc->GOSTDisplayBuffer.err.c_str());
-		skp->Text(1 * W / 2, 25 * H / 26, Buffer, strlen(Buffer));
+		Text(skp, 1 * W / 2, 25 * H / 26, GC->rtcc->GOSTDisplayBuffer.err);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 		skp->Text(38 * W / 43, 3 * H / 26, "0229", 4);
 
@@ -8603,142 +7676,92 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->GOSTDisplayBuffer.data.CODE.c_str());
-		skp->Text(15 * W / 43, 5 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.x);
-		skp->Text(23 * W / 43, 5 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.y);
-		skp->Text(31 * W / 43, 5 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.z);
-		skp->Text(40 * W / 43, 5 * H / 26, Buffer, strlen(Buffer));
+		Text(skp, 15 * W / 43, 5 * H / 26, GC->rtcc->GOSTDisplayBuffer.data.CODE);
+		skpTextFmt(skp, 23 * W / 43, 5 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.x);
+		skpTextFmt(skp, 31 * W / 43, 5 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.y);
+		skpTextFmt(skp, 40 * W / 43, 5 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att_H.z);
 
 		GET_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.GETAC, false);
 		skp->Text(16 * W / 43, 6 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.IGA);
-		skp->Text(28 * W / 43, 6 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%s", GC->rtcc->GOSTDisplayBuffer.data.IRA.c_str());
-		skp->Text(40 * W / 43, 6 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 28 * W / 43, 6 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.IGA);
+		Text(skp, 40 * W / 43, 6 * H / 26, GC->rtcc->GOSTDisplayBuffer.data.IRA);
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SXT_STAR[0]);
-		skp->Text(7 * W / 43, 8 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_INP[0]);
-		skp->Text(16 * W / 43, 8 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_INP[0]);
-		skp->Text(23 * W / 43, 8 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_RTCC[0]);
-		skp->Text(33 * W / 43, 8 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_RTCC[0]);
-		skp->Text(40 * W / 43, 8 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 43, 8 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SXT_STAR[0]);
+		skpTextFmt(skp, 16 * W / 43, 8 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_INP[0]);
+		skpTextFmt(skp, 23 * W / 43, 8 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_INP[0]);
+		skpTextFmt(skp, 33 * W / 43, 8 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_RTCC[0]);
+		skpTextFmt(skp, 40 * W / 43, 8 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_RTCC[0]);
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SXT_STAR[1]);
-		skp->Text(7 * W / 43, 9 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_INP[1]);
-		skp->Text(16 * W / 43, 9 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_INP[1]);
-		skp->Text(23 * W / 43, 9 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_RTCC[1]);
-		skp->Text(33 * W / 43, 9 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_RTCC[1]);
-		skp->Text(40 * W / 43, 9 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 43, 9 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SXT_STAR[1]);
+		skpTextFmt(skp, 16 * W / 43, 9 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_INP[1]);
+		skpTextFmt(skp, 23 * W / 43, 9 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_INP[1]);
+		skpTextFmt(skp, 33 * W / 43, 9 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_SFT_RTCC[1]);
+		skpTextFmt(skp, 40 * W / 43, 9 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SXT_TRN_RTCC[1]);
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SCT_S[0]);
-		skp->Text(5 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_SF);
-		skp->Text(12 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_M[0]);
-		skp->Text(17 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_R[0]);
-		skp->Text(23 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 43, 12 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SCT_S[0]);
+		skpTextFmt(skp, 12 * W / 43, 12 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_SF);
+		skpTextFmt(skp, 17 * W / 43, 12 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_M[0]);
+		skpTextFmt(skp, 23 * W / 43, 12 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_R[0]);
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.SCT_RTASC[0], false);
 		skp->Text(32 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.SCT_DEC[0]);
 		skp->Text(42 * W / 43, 12 * H / 26, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SCT_S[1]);
-		skp->Text(5 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%04.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_TR);
-		skp->Text(12 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_M[1]);
-		skp->Text(17 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_R[1]);
-		skp->Text(23 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 5 * W / 43, 13 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.SCT_S[1]);
+		skpTextFmt(skp, 12 * W / 43, 13 * H / 26, "%04.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_TR);
+		skpTextFmt(skp, 17 * W / 43, 13 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_M[1]);
+		skpTextFmt(skp, 23 * W / 43, 13 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.SCT_R[1]);
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.SCT_RTASC[1], false);
 		skp->Text(32 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.SCT_DEC[1]);
 		skp->Text(42 * W / 43, 13 * H / 26, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.BS_S[0]);
-		skp->Text(7 * W / 43, 16 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SPA[0]);
-		skp->Text(14 * W / 43, 16 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SXP[0]);
-		skp->Text(21 * W / 43, 16 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 43, 16 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.BS_S[0]);
+		skpTextFmt(skp, 14 * W / 43, 16 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SPA[0]);
+		skpTextFmt(skp, 21 * W / 43, 16 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SXP[0]);
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.BS_RTASC[0], false);
 		skp->Text(31 * W / 43, 16 * H / 26, Buffer, strlen(Buffer));
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.BS_DEC[0]);
 		skp->Text(41 * W / 43, 16 * H / 26, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%03o", GC->rtcc->GOSTDisplayBuffer.data.BS_S[1]);
-		skp->Text(7 * W / 43, 17 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SPA[1]);
-		skp->Text(14 * W / 43, 17 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SXP[1]);
-		skp->Text(21 * W / 43, 17 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 43, 17 * H / 26, "%03o", GC->rtcc->GOSTDisplayBuffer.data.BS_S[1]);
+		skpTextFmt(skp, 14 * W / 43, 17 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SPA[1]);
+		skpTextFmt(skp, 21 * W / 43, 17 * H / 26, "%+05.1lf", GC->rtcc->GOSTDisplayBuffer.data.BS_SXP[1]);
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.BS_RTASC[1], false);
 		skp->Text(31 * W / 43, 17 * H / 26, Buffer, strlen(Buffer));
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.BS_DEC[1]);
 		skp->Text(41 * W / 43, 17 * H / 26, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.x);
-		skp->Text(15 * W / 43, 18 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.y);
-		skp->Text(27 * W / 43, 18 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.z);
-		skp->Text(39 * W / 43, 18 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 43, 18 * H / 26, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.x);
+		skpTextFmt(skp, 27 * W / 43, 18 * H / 26, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.y);
+		skpTextFmt(skp, 39 * W / 43, 18 * H / 26, "%+.5lf", GC->rtcc->GOSTDisplayBuffer.data.Landmark_LOS.z);
 
 		GET_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.Landmark_GET, false);
 		skp->Text(12 * W / 43, 19 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%s", GC->rtcc->GOSTDisplayBuffer.data.Landmark_SC.c_str());
-		skp->Text(19 * W / 43, 19 * H / 26, Buffer, strlen(Buffer));
+		Text(skp, 19 * W / 43, 19 * H / 26, GC->rtcc->GOSTDisplayBuffer.data.Landmark_SC);
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.Landmark_RA, false);
 		skp->Text(29 * W / 43, 19 * H / 26, Buffer, strlen(Buffer));
 		Angle_Display(Buffer, GC->rtcc->GOSTDisplayBuffer.data.Landmark_DEC);
 		skp->Text(42 * W / 43, 19 * H / 26, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].x);
-		skp->Text(24 * W / 43, 20 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].y);
-		skp->Text(33 * W / 43, 20 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].z);
-		skp->Text(42 * W / 43, 20 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].x);
-		skp->Text(24 * W / 43, 21 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].y);
-		skp->Text(33 * W / 43, 21 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].z);
-		skp->Text(42 * W / 43, 21 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 43, 20 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].x);
+		skpTextFmt(skp, 33 * W / 43, 20 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].y);
+		skpTextFmt(skp, 42 * W / 43, 20 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[0].z);
+		skpTextFmt(skp, 24 * W / 43, 21 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].x);
+		skpTextFmt(skp, 33 * W / 43, 21 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].y);
+		skpTextFmt(skp, 42 * W / 43, 21 * H / 26, "%05.1lf", GC->rtcc->GOSTDisplayBuffer.data.Att[1].z);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->GOSTDisplayBuffer.data.MAT.c_str());
-		skp->Text(12 * W / 43, 21 * H / 26, Buffer, strlen(Buffer));
+		Text(skp, 12 * W / 43, 21 * H / 26, GC->rtcc->GOSTDisplayBuffer.data.MAT);
 
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m11);
-		skp->Text(13 * W / 43, 22 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m21);
-		skp->Text(13 * W / 43, 23 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m31);
-		skp->Text(13 * W / 43, 24 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m12);
-		skp->Text(27 * W / 43, 22 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m22);
-		skp->Text(27 * W / 43, 23 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m32);
-		skp->Text(27 * W / 43, 24 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m13);
-		skp->Text(42 * W / 43, 22 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m23);
-		skp->Text(42 * W / 43, 23 * H / 26, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m33);
-		skp->Text(42 * W / 43, 24 * H / 26, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 43, 22 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m11);
+		skpTextFmt(skp, 13 * W / 43, 23 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m21);
+		skpTextFmt(skp, 13 * W / 43, 24 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m31);
+		skpTextFmt(skp, 27 * W / 43, 22 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m12);
+		skpTextFmt(skp, 27 * W / 43, 23 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m22);
+		skpTextFmt(skp, 27 * W / 43, 24 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m32);
+		skpTextFmt(skp, 42 * W / 43, 22 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m13);
+		skpTextFmt(skp, 42 * W / 43, 23 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m23);
+		skpTextFmt(skp, 42 * W / 43, 24 * H / 26, "%+.7lf", GC->rtcc->GOSTDisplayBuffer.data.REFSMMAT.m33);
 	}
 	else if (screen == 96)
 	{
@@ -8784,38 +7807,24 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(16 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
 		GET_Display2(Buffer, GC->rtcc->GetIUClockZero());
 		skp->Text(14 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.3lf°", GC->rtcc->GetIULaunchAzimuth()*DEG);
-		skp->Text(26 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 26 * W / 32, 7 * H / 32, "%+.3lf°", GC->rtcc->GetIULaunchAzimuth()* DEG);
 
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.z / 0.3048);
-		skp->Text(14 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.z);
-		skp->Text(24 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.x / 0.3048);
-		skp->Text(14 * W / 32, 15 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.x);
-		skp->Text(24 * W / 32, 15 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.y / 0.3048);
-		skp->Text(14 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.y);
-		skp->Text(24 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.z / 1852.0);
-		skp->Text(14 * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.z / 1000.0);
-		skp->Text(24 * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.x / 1852.0);
-		skp->Text(14 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.x / 1000.0);
-		skp->Text(24 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.y / 1852.0);
-		skp->Text(14 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.y / 1000.0);
-		skp->Text(24 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 14 * W / 32, 13 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.z / 0.3048);
+		skpTextFmt(skp, 24 * W / 32, 13 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.z);
+		skpTextFmt(skp, 14 * W / 32, 15 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.x / 0.3048);
+		skpTextFmt(skp, 24 * W / 32, 15 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.x);
+		skpTextFmt(skp, 14 * W / 32, 17 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.y / 0.3048);
+		skpTextFmt(skp, 24 * W / 32, 17 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.DotS.y);
+		skpTextFmt(skp, 14 * W / 32, 19 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.z / 1852.0);
+		skpTextFmt(skp, 24 * W / 32, 19 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.z / 1000.0);
+		skpTextFmt(skp, 14 * W / 32, 21 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.x / 1852.0);
+		skpTextFmt(skp, 24 * W / 32, 21 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.x / 1000.0);
+		skpTextFmt(skp, 14 * W / 32, 23 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.y / 1852.0);
+		skpTextFmt(skp, 24 * W / 32, 23 * H / 32, "%+.1lf", GC->rtcc->CZNAVSLV.PosS.y / 1000.0);
 
 		GET_Display2(Buffer, GC->rtcc->CZNAVSLV.NUPTIM);
 		skp->Text(14 * W / 32, 25 * H / 32, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%+.4lf", GC->rtcc->CZNAVSLV.NUPTIM / 3600.0);
-		skp->Text(24 * W / 32, 25 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 24 * W / 32, 25 * H / 32, "%+.4lf", GC->rtcc->CZNAVSLV.NUPTIM / 3600.0);
 
 		switch (G->iuUplinkResult)
 		{
@@ -8945,16 +7954,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		if (GC->rtcc->RZJCTTC.R31_BurnMode == 1)
 		{
 			skp->Text(1 * W / 16, 4 * H / 14, "DV", 2);
-
-			sprintf_s(Buffer, "DV = %.1lf", GC->rtcc->RZJCTTC.R31_dv / 0.3048);
-			skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "DV = %.1lf", GC->rtcc->RZJCTTC.R31_dv / 0.3048);
 		}
 		else if (GC->rtcc->RZJCTTC.R31_BurnMode == 2)
 		{
 			skp->Text(1 * W / 16, 4 * H / 14, "DT", 2);
-
-			sprintf_s(Buffer, "DT = %.1lf", GC->rtcc->RZJCTTC.R31_dt);
-			skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "DT = %.1lf", GC->rtcc->RZJCTTC.R31_dt);
 		}
 		else
 		{
@@ -8964,9 +7969,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		if (GC->rtcc->RZJCTTC.R31_AttitudeMode == 1)
 		{
 			skp->Text(1 * W / 16, 8 * H / 14, "LVLH", 4);
-
-			sprintf_s(Buffer, "%+.1lf %+.1lf %+.1lf", GC->rtcc->RZJCTTC.R31_LVLHAttitude.x*DEG, GC->rtcc->RZJCTTC.R31_LVLHAttitude.y*DEG, GC->rtcc->RZJCTTC.R31_LVLHAttitude.z*DEG);
-			skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%+.1lf %+.1lf %+.1lf", GC->rtcc->RZJCTTC.R31_LVLHAttitude.x* DEG, GC->rtcc->RZJCTTC.R31_LVLHAttitude.y* DEG, GC->rtcc->RZJCTTC.R31_LVLHAttitude.z* DEG);
 		}
 		else
 		{
@@ -8999,14 +8002,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(9 * W / 16, 4 * H / 14, "Compute Gimbal Trims", 20);
 		}
 
-		sprintf_s(Buffer, "%+.1lf°", GC->rtcc->RZJCTTC.R31_InitialBankAngle*DEG);
-		skp->Text(9 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.1lf gs", GC->rtcc->RZJCTTC.R31_GLevel);
-		skp->Text(9 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%+.1lf°", GC->rtcc->RZJCTTC.R31_FinalBankAngle*DEG);
-		skp->Text(9 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 9 * W / 16, 6 * H / 14, "%+.1lf°", GC->rtcc->RZJCTTC.R31_InitialBankAngle* DEG);
+		skpTextFmt(skp, 9 * W / 16, 8 * H / 14, "%.1lf gs", GC->rtcc->RZJCTTC.R31_GLevel);
+		skpTextFmt(skp, 9 * W / 16, 10 * H / 14, "%+.1lf°", GC->rtcc->RZJCTTC.R31_FinalBankAngle* DEG);
 	}
 	else if (screen == 104)
 	{
@@ -9051,45 +8049,29 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (tab->Indicator == 0)
 		{
-			sprintf_s(Buffer, "%s", tab->RefsID.c_str());
-			skp->Text(16 * W / 44, 6 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->CSMWeightRetro);
-			skp->Text(16 * W / 44, 7 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", tab->TrueAnomalyRetro);
-			skp->Text(22 * W / 44, 7 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf %.1lf %.1lf", tab->Att_LVLH.x, tab->Att_LVLH.y, tab->Att_LVLH.z);
-			skp->Text(16 * W / 44, 8 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf %.1lf %.1lf", tab->Att_IMU.x, tab->Att_IMU.y, tab->Att_IMU.z);
-			skp->Text(16 * W / 44, 9 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->DVC);
-			skp->Text(16 * W / 44, 10 * H / 26, Buffer, strlen(Buffer));
+			Text(skp, 16 * W / 44, 6 * H / 26, tab->RefsID);
+			skpTextFmt(skp, 16 * W / 44, 7 * H / 26, "%.1lf", tab->CSMWeightRetro);
+			skpTextFmt(skp, 22 * W / 44, 7 * H / 26, "%.0lf", tab->TrueAnomalyRetro);
+			skpTextFmt(skp, 16 * W / 44, 8 * H / 26, "%.1lf %.1lf %.1lf", tab->Att_LVLH.x, tab->Att_LVLH.y, tab->Att_LVLH.z);
+			skpTextFmt(skp, 16 * W / 44, 9 * H / 26, "%.1lf %.1lf %.1lf", tab->Att_IMU.x, tab->Att_IMU.y, tab->Att_IMU.z);
+			skpTextFmt(skp, 16 * W / 44, 10 * H / 26, "%.1lf", tab->DVC);
 			SStoHHMMSS(tab->BurnTime, hh, mm, secs);
-			sprintf_s(Buffer, "%02d:%04.1lf", mm, secs);
-			skp->Text(22 * W / 44, 10 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->DVT);
-			skp->Text(16 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%+d", tab->UllageQuads);
-			skp->Text(21 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->UllageDT);
-			skp->Text(24 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->H_Retro);
-			skp->Text(16 * W / 44, 12 * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 22 * W / 44, 10 * H / 26, "%02d:%04.1lf", mm, secs);
+			skpTextFmt(skp, 16 * W / 44, 11 * H / 26, "%.1lf", tab->DVT);
+			skpTextFmt(skp, 21 * W / 44, 11 * H / 26, "%+d", tab->UllageQuads);
+			skpTextFmt(skp, 24 * W / 44, 11 * H / 26, "%.1lf", tab->UllageDT);
+			skpTextFmt(skp, 16 * W / 44, 12 * H / 26, "%.1lf", tab->H_Retro);
 			GET_Display2(Buffer, tab->GETI);
 			skp->Text(16 * W / 44, 13 * H / 26, Buffer, strlen(Buffer));
 			GET_Display(Buffer, tab->GMTI, false);
 			skp->Text(16 * W / 44, 14 * H / 26, Buffer, strlen(Buffer));
 			SStoHHMMSS(tab->RET400k, hh, mm, secs);
-			sprintf_s(Buffer, "%d:%02.0lf", mm, secs);
-			skp->Text(16 * W / 44, 15 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", tab->V400k);
-			skp->Text(16 * W / 44, 16 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", tab->Gamma400k);
-			skp->Text(22 * W / 44, 16 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf°", tab->BankAngle);
-			skp->Text(16 * W / 44, 17 * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 16 * W / 44, 15 * H / 26, "%d:%02.0lf", mm, secs);
+			skpTextFmt(skp, 16 * W / 44, 16 * H / 26, "%.0lf", tab->V400k);
+			skpTextFmt(skp, 22 * W / 44, 16 * H / 26, "%.2lf", tab->Gamma400k);
+			skpTextFmt(skp, 16 * W / 44, 17 * H / 26, "%.1lf°", tab->BankAngle);
 			SStoHHMMSS(tab->RETRB, hh, mm, secs);
-			sprintf_s(Buffer, "%d:%02.0lf", mm, secs);
-			skp->Text(16 * W / 44, 18 * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 16 * W / 44, 18 * H / 26, "%d:%02.0lf", mm, secs);
 			FormatLatitude(Buffer, tab->lat_ML);
 			skp->Text(16 * W / 44, 19 * H / 26, Buffer, strlen(Buffer));
 			FormatLongitude(Buffer, tab->lng_ML);
@@ -9106,8 +8088,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(16 * W / 44, 22 * H / 26, Buffer, strlen(Buffer));
 			FormatLongitude(Buffer, tab->lng_ZL);
 			skp->Text(24 * W / 44, 22 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf %.2lf NM", tab->dlat_NM, tab->dlng_NM);
-			skp->Text(16 * W / 44, 23 * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 16 * W / 44, 23 * H / 26, "%.2lf %.2lf NM", tab->dlat_NM, tab->dlng_NM);
 		}
 		else if (tab->Indicator == 1)
 		{
@@ -9160,21 +8141,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					AGC_Display(Buffer, tab->DV.z);
 					skp->Text((9 + i * 6) * W / 16, 13 * H / 26, Buffer, strlen(Buffer));
 
-					sprintf_s(Buffer, "%+.2lf", tab->P_G);
-					skp->Text((9 + i * 6) * W / 16, 14 * H / 26, Buffer, strlen(Buffer));
-					sprintf_s(Buffer, "%+.2lf", tab->Y_G);
-					skp->Text((9 + i * 6) * W / 16, 15 * H / 26, Buffer, strlen(Buffer));
-					sprintf_s(Buffer, "%.2lf", tab->DT_TO);
-					skp->Text((9 + i * 6) * W / 16, 16 * H / 26, Buffer, strlen(Buffer));
-					sprintf_s(Buffer, "%.2lf", tab->DV_TO);
-					skp->Text((9 + i * 6) * W / 16, 17 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (9 + i * 6) * W / 16, 14 * H / 26, "%+.2lf", tab->P_G);
+					skpTextFmt(skp, (9 + i * 6) * W / 16, 15 * H / 26, "%+.2lf", tab->Y_G);
+					skpTextFmt(skp, (9 + i * 6) * W / 16, 16 * H / 26, "%.2lf", tab->DT_TO);
+					skpTextFmt(skp, (9 + i * 6) * W / 16, 17 * H / 26, "%.2lf", tab->DV_TO);
 					if (tab->H_apo < 99999.9)
 					{
-						sprintf_s(Buffer, "%.1lf", tab->H_apo);
-						skp->Text((9 + i * 6) * W / 16, 18 * H / 26, Buffer, strlen(Buffer));
+						skpTextFmt(skp, (9 + i * 6) * W / 16, 18 * H / 26, "%.1lf", tab->H_apo);
 					}
-					sprintf_s(Buffer, "%.1lf", tab->H_peri);
-					skp->Text((9 + i * 6) * W / 16, 19 * H / 26, Buffer, strlen(Buffer));
+					skpTextFmt(skp, (9 + i * 6) * W / 16, 19 * H / 26, "%.1lf", tab->H_peri);
 					FormatLatitude(Buffer, tab->lat_IP);
 					skp->Text((9 + i * 6) * W / 16, 20 * H / 26, Buffer, strlen(Buffer));
 					FormatLongitude(Buffer, tab->lng_IP);
@@ -9193,8 +8168,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 2 * H / 26, "Recovery Target Selection (MSK 1454)", 36);
 		skp->SetFont(font3);
 
-		sprintf_s(Buffer, "%d/%d", GC->rtcc->RZDRTSD.CurrentPage, GC->rtcc->RZDRTSD.TotalNumPages);
-		skp->Text(7 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 7 * W / 8, 4 * H / 14, "%d/%d", GC->rtcc->RZDRTSD.CurrentPage, GC->rtcc->RZDRTSD.TotalNumPages);
 
 		//skp->Text(2 * W / 44, 5 * H / 26, "N", 1);
 		skp->Text(4 * W / 44, 10 * H / 26, "REV", 3);
@@ -9209,10 +8183,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			if (GC->rtcc->RZDRTSD.table[i + j].DataIndicator) break;
 
-			sprintf_s(Buffer, "%d", i + j + 1);
-			skp->Text(2 * W / 44, (12 + i) * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%d", GC->rtcc->RZDRTSD.table[i + j].Rev);
-			skp->Text(4 * W / 44, (12 + i) * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 44, (12 + i) * H / 26, "%d", i + j + 1);
+			skpTextFmt(skp, 4 * W / 44, (12 + i) * H / 26, "%d", GC->rtcc->RZDRTSD.table[i + j].Rev);
 
 			GET_Display(Buffer, GC->rtcc->RZDRTSD.table[i + j].GET, false);
 			skp->Text(9 * W / 44, (12 + i) * H / 26, Buffer, strlen(Buffer));
@@ -9224,8 +8196,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			FormatLongitude(Buffer, GC->rtcc->RZDRTSD.table[i + j].Longitude);
 			skp->Text(31 * W / 44, (12 + i) * H / 26, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%06.2lf°", GC->rtcc->RZDRTSD.table[i + j].Azimuth);
-			skp->Text(39 * W / 44, (12 + i) * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 39 * W / 44, (12 + i) * H / 26, "%06.2lf°", GC->rtcc->RZDRTSD.table[i + j].Azimuth);
 		}
 	}
 	else if (screen == 107)
@@ -9263,32 +8234,26 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->med_f75_f77.T_0_min, false);
 		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%s", GC->rtcc->med_f75_f77.EntryProfile.c_str());
-		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		Text(skp, 10 * W / 16, 4 * H / 14, GC->rtcc->med_f75_f77.EntryProfile);
 
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f75_f77.Inclination*DEG);
-		skp->Text(10 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 8 * H / 14, "%.2lf°", GC->rtcc->med_f75_f77.Inclination* DEG);
 		
 		if (G->RTEASTType == 75)
 		{
-			sprintf_s(Buffer, "%s", GC->rtcc->med_f75.Type.c_str());
-			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 16, 4 * H / 14, GC->rtcc->med_f75.Type);
 
-			sprintf_s(Buffer, "%.0lf ft/s", GC->rtcc->med_f75.DVMAX);
-			skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.0lf ft/s", GC->rtcc->med_f75.DVMAX);
 		}
 		else if (G->RTEASTType == 76)
 		{
-			sprintf_s(Buffer, "%s", GC->rtcc->med_f76.Site.c_str());
-			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 16, 4 * H / 14, GC->rtcc->med_f76.Site);
 
 			GET_Display(Buffer, GC->rtcc->med_f75_f77.T_Z, false);
 			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 		}
 		else
 		{
-			sprintf_s(Buffer, "%s", GC->rtcc->med_f77.Site.c_str());
-			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 16, 4 * H / 14, GC->rtcc->med_f77.Site);
 
 			if (GC->rtcc->med_f77.Site != "FCUA")
 			{
@@ -9341,13 +8306,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			tab = &GC->rtcc->PZREAP.AbortScanTableData[i];
 			if (tab->ASTCode == 0) continue;
 
-			sprintf_s(Buffer, "%d", tab->ASTCode);
-			skp->Text(1 * W / 32, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 1 * W / 32, (10 + 3 * i) * H / 32, "%d", tab->ASTCode);
 
-			sprintf_s(Buffer, "%s", tab->SiteID.c_str());
-			skp->Text(9 * W / 64, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%s", tab->AbortMode.c_str());
-			skp->Text(9 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			Text(skp, 9 * W / 64, (10 + 3 * i) * H / 32, tab->SiteID);
+			Text(skp, 9 * W / 64, (11 + 3 * i) * H / 32, tab->AbortMode);
 
 			GET_Display(Buffer, GC->rtcc->GETfromGMT(tab->AbortGMT), false);
 			skp->Text(9 * W / 32, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
@@ -9376,13 +8338,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				sprintf(Buffer, "D%.2f", tab->incl_EI*DEG);
 			}
 			skp->Text(29 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->h_PC / 1852.0);
-			skp->Text(29 * W / 64, (12 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 29 * W / 64, (12 + 3 * i) * H / 32, "%.1lf", tab->h_PC / 1852.0);
 
-			sprintf_s(Buffer, "%.0lf", tab->v_EI / 0.3048);
-			skp->Text(19 * W / 32, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.2lf", tab->gamma_EI*DEG);
-			skp->Text(19 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 19 * W / 32, (10 + 3 * i) * H / 32, "%.0lf", tab->v_EI / 0.3048);
+			skpTextFmt(skp, 19 * W / 32, (11 + 3 * i) * H / 32, "%.2lf", tab->gamma_EI* DEG);
 
 			GET_Display(Buffer, GC->rtcc->GETfromGMT(tab->ReentryGMT), false);
 			skp->Text(23 * W / 32, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
@@ -9408,11 +8367,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->med_f81.IgnitionTime, false);
 		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f81.lat_tgt*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f81.lng_tgt*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2lf°", GC->rtcc->med_f81.lat_tgt * DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2lf°", GC->rtcc->med_f81.lng_tgt * DEG);
 
 		if (GC->rtcc->med_f81.RefBody == BODY_EARTH)
 		{
@@ -9423,8 +8379,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 10 * H / 14, "MOON", 4);
 		}
 
-		sprintf_s(Buffer, "%+.1lf %+.1lf %+.1lf", GC->rtcc->med_f81.XDV.x / 0.3048, GC->rtcc->med_f81.XDV.y / 0.3048, GC->rtcc->med_f81.XDV.z / 0.3048);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%+.1lf %+.1lf %+.1lf", GC->rtcc->med_f81.XDV.x / 0.3048, GC->rtcc->med_f81.XDV.y / 0.3048, GC->rtcc->med_f81.XDV.z / 0.3048);
 
 		skp->Text(8 * W / 16, 10 * H / 14, "Load splashdown target", 22);
 	}
@@ -9432,19 +8387,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 	{
 		skp->Text(2 * W / 8, 2 * H / 32, "RTE Digitals Entry Profile", 26);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->med_f82.PrimaryEP.c_str());
-		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+		Text(skp, 1 * W / 16, 2 * H / 14, GC->rtcc->med_f82.PrimaryEP);
 
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f82.PrimaryInitialBank*DEG);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.2lf°", GC->rtcc->med_f82.PrimaryInitialBank * DEG);
 
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->med_f82.PrimaryGLIT);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2lf", GC->rtcc->med_f82.PrimaryGLIT);
 
 		if (GC->rtcc->med_f82.PrimaryEP == "HB1")
 		{
-			sprintf_s(Buffer, "%s", GC->rtcc->med_f82.PrimaryRollDirection.c_str());
-			skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 1 * W / 16, 8 * H / 14, GC->rtcc->med_f82.PrimaryRollDirection);
 
 			if (GC->rtcc->med_f82.PrimaryLongT > 999.9)
 			{
@@ -9452,24 +8403,19 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f82.PrimaryLongT*DEG);
-				skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.2lf°", GC->rtcc->med_f82.PrimaryLongT * DEG);
 			}
 		}
 
-		sprintf_s(Buffer, "%s", GC->rtcc->med_f82.BackupEP.c_str());
-		skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+		Text(skp, 10 * W / 16, 2 * H / 14, GC->rtcc->med_f82.BackupEP);
 
-		sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f82.BackupInitialBank*DEG);
-		skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.2lf°", GC->rtcc->med_f82.BackupInitialBank * DEG);
 
-		sprintf_s(Buffer, "%.2lf", GC->rtcc->med_f82.BackupGLIT);
-		skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%.2lf", GC->rtcc->med_f82.BackupGLIT);
 
 		if (GC->rtcc->med_f82.BackupEP == "HB1")
 		{
-			sprintf_s(Buffer, "%s", GC->rtcc->med_f82.PrimaryRollDirection.c_str());
-			skp->Text(10 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
+			Text(skp, 10 * W / 16, 8 * H / 14, GC->rtcc->med_f82.PrimaryRollDirection);
 
 			if (GC->rtcc->med_f82.BackupLongT > 999.9)
 			{
@@ -9477,8 +8423,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.2lf°", GC->rtcc->med_f82.BackupLongT*DEG);
-				skp->Text(10 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 10 * W / 16, 10 * H / 14, "%.2lf°", GC->rtcc->med_f82.BackupLongT * DEG);
 			}
 		}
 	}
@@ -9533,10 +8478,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(12 * W / 16, 5 * H / 14, "DSKY V73", 8);
 
-		sprintf_s(Buffer, "%05d", block->Octals[0]);
-		skp->Text(13 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05d", block->Octals[1]);
-		skp->Text(13 * W / 16, 7 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 16, 6 * H / 14, "%05d", block->Octals[0]);
+		skpTextFmt(skp, 13 * W / 16, 7 * H / 14, "%05d", block->Octals[1]);
 
 		skp->Text(8 * W / 16, 9 * H / 14, "INCREMENT:", 10);
 		GET_Display2(Buffer, block->TimeIncrement);
@@ -9595,10 +8538,8 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(12 * W / 16, 4 * H / 14, "DSKY V70", 8);
 
-		sprintf_s(Buffer, "%05d", block->Octals[0]);
-		skp->Text(13 * W / 16, 5 * H / 14, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "%05d", block->Octals[1]);
-		skp->Text(13 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 13 * W / 16, 5 * H / 14, "%05d", block->Octals[0]);
+		skpTextFmt(skp, 13 * W / 16, 6 * H / 14, "%05d", block->Octals[1]);
 
 		skp->Text(8 * W / 16, 8 * H / 14, "INCREMENT:", 10);
 		GET_Display2(Buffer, block->TimeIncrement);
@@ -9622,20 +8563,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, G->LUNTAR_TIG, false);
 		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%.1lf s", G->LUNTAR_bt_guess);
-		skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.2lf°", G->LUNTAR_pitch_guess*DEG);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.2lf°", G->LUNTAR_yaw_guess*DEG);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.2lf°", G->LUNTAR_lat*DEG);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.2lf°", G->LUNTAR_lng*DEG);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "%.1lf s", G->LUNTAR_bt_guess);
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%.2lf°", G->LUNTAR_pitch_guess* DEG);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.2lf°", G->LUNTAR_yaw_guess* DEG);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.2lf°", G->LUNTAR_lat* DEG);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.2lf°", G->LUNTAR_lng* DEG);
 
 		if (G->target != NULL)
 		{
@@ -9648,22 +8580,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 
 		skp->Text(10 * W / 16, 9 * H / 20, "Burn Data:", 10);
-		sprintf_s(Buffer, "TIG: TB8 + %.0lf s", G->LUNTAR_Output.tig);
-		skp->Text(10 * W / 16, 10 * H / 20, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Burn time: %.1lf s", G->LUNTAR_Output.bt);
-		skp->Text(10 * W / 16, 11 * H / 20, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Pitch: %.1lf°", G->LUNTAR_Output.pitch*DEG);
-		skp->Text(10 * W / 16, 12 * H / 20, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Yaw: %.1lf°", G->LUNTAR_Output.yaw*DEG);
-		skp->Text(10 * W / 16, 13 * H / 20, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 10 * H / 20, "TIG: TB8 + %.0lf s", G->LUNTAR_Output.tig);
+		skpTextFmt(skp, 10 * W / 16, 11 * H / 20, "Burn time: %.1lf s", G->LUNTAR_Output.bt);
+		skpTextFmt(skp, 10 * W / 16, 12 * H / 20, "Pitch: %.1lf°", G->LUNTAR_Output.pitch * DEG);
+		skpTextFmt(skp, 10 * W / 16, 13 * H / 20, "Yaw: %.1lf°", G->LUNTAR_Output.yaw * DEG);
 
 		skp->Text(10 * W / 16, 14 * H / 20, "Impact:", 7);
 		GET_Display(Buffer, G->LUNTAR_Output.get_imp);
 		skp->Text(10 * W / 16, 15 * H / 20, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Lat: %.2lf°", G->LUNTAR_Output.lat_imp*DEG);
-		skp->Text(10 * W / 16, 16 * H / 20, Buffer, strlen(Buffer));
-		sprintf_s(Buffer, "Lng: %.2lf°", G->LUNTAR_Output.lng_imp*DEG);
-		skp->Text(10 * W / 16, 17 * H / 20, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 10 * W / 16, 16 * H / 20, "Lat: %.2lf°", G->LUNTAR_Output.lat_imp * DEG);
+		skpTextFmt(skp, 10 * W / 16, 17 * H / 20, "Lng: %.2lf°", G->LUNTAR_Output.lng_imp * DEG);
 
 		if (G->LUNTAR_Output.err > 0)
 		{
@@ -9710,29 +8636,18 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (tab->Indicator_Sep == 0)
 		{
-			sprintf_s(Buffer, "%s", tab->RefsID.c_str());
-			skp->Text(16 * W / 44, 6 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->CSMWeightSep);
-			skp->Text(16 * W / 44, 7 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.0lf", tab->TrueAnomalySep);
-			skp->Text(22 * W / 44, 7 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf %.1lf %.1lf", tab->Att_LVLH_Sep.x, tab->Att_LVLH_Sep.y, tab->Att_LVLH_Sep.z);
-			skp->Text(16 * W / 44, 8 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf %.1lf %.1lf", tab->Att_IMU_Sep.x, tab->Att_IMU_Sep.y, tab->Att_IMU_Sep.z);
-			skp->Text(16 * W / 44, 9 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->DVC_Sep);
-			skp->Text(16 * W / 44, 10 * H / 26, Buffer, strlen(Buffer));
+			Text(skp, 16 * W / 44, 6 * H / 26, tab->RefsID);
+			skpTextFmt(skp, 16 * W / 44, 7 * H / 26, "%.1lf", tab->CSMWeightSep);
+			skpTextFmt(skp, 22 * W / 44, 7 * H / 26, "%.0lf", tab->TrueAnomalySep);
+			skpTextFmt(skp, 16 * W / 44, 8 * H / 26, "%.1lf %.1lf %.1lf", tab->Att_LVLH_Sep.x, tab->Att_LVLH_Sep.y, tab->Att_LVLH_Sep.z);
+			skpTextFmt(skp, 16 * W / 44, 9 * H / 26, "%.1lf %.1lf %.1lf", tab->Att_IMU_Sep.x, tab->Att_IMU_Sep.y, tab->Att_IMU_Sep.z);
+			skpTextFmt(skp, 16 * W / 44, 10 * H / 26, "%.1lf", tab->DVC_Sep);
 			SStoHHMMSS(tab->BurnTime_Sep, hh, mm, secs);
-			sprintf_s(Buffer, "%02d:%04.1lf", mm, secs);
-			skp->Text(22 * W / 44, 10 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->DVT_Sep);
-			skp->Text(16 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%+d", tab->UllageQuads_Sep);
-			skp->Text(21 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->UllageDT_Sep);
-			skp->Text(24 * W / 44, 11 * H / 26, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", tab->H_Sep);
-			skp->Text(16 * W / 44, 12 * H / 26, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 22 * W / 44, 10 * H / 26, "%02d:%04.1lf", mm, secs);
+			skpTextFmt(skp, 16 * W / 44, 11 * H / 26, "%.1lf", tab->DVT_Sep);
+			skpTextFmt(skp, 21 * W / 44, 11 * H / 26, "%+d", tab->UllageQuads_Sep);
+			skpTextFmt(skp, 24 * W / 44, 11 * H / 26, "%.1lf", tab->UllageDT_Sep);
+			skpTextFmt(skp, 16 * W / 44, 12 * H / 26, "%.1lf", tab->H_Sep);
 			GET_Display2(Buffer, tab->GETI_Sep);
 			skp->Text(16 * W / 44, 13 * H / 26, Buffer, strlen(Buffer));
 			GET_Display(Buffer, tab->GMTI_Sep, false);
@@ -9774,19 +8689,13 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		ThrusterName(Buffer, GC->rtcc->RZJCTTC.R30_Thruster);
 		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%.1lf ft/s", GC->rtcc->RZJCTTC.R30_DeltaV / 0.3048);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.1lf s", GC->rtcc->RZJCTTC.R30_DeltaT);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%.2lf %.2lf %.2lf", GC->rtcc->RZJCTTC.R30_Att.x*DEG, GC->rtcc->RZJCTTC.R30_Att.y*DEG, GC->rtcc->RZJCTTC.R30_Att.z*DEG);
-		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.1lf ft/s", GC->rtcc->RZJCTTC.R30_DeltaV / 0.3048);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.1lf s", GC->rtcc->RZJCTTC.R30_DeltaT);
+		skpTextFmt(skp, 1 * W / 16, 12 * H / 14, "%.2lf %.2lf %.2lf", GC->rtcc->RZJCTTC.R30_Att.x* DEG, GC->rtcc->RZJCTTC.R30_Att.y* DEG, GC->rtcc->RZJCTTC.R30_Att.z* DEG);
 
 		if (GC->rtcc->RZJCTTC.R30_Thruster == RTCC_ENGINETYPE_CSMSPS)
 		{
-			sprintf(Buffer, "%.1lf s", GC->rtcc->RZJCTTC.R30_Ullage_DT);
-			skp->Text(9 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 9 * W / 16, 2 * H / 14, "%.1lf s", GC->rtcc->RZJCTTC.R30_Ullage_DT);
 
 			if (GC->rtcc->RZJCTTC.R30_Use4UllageThrusters)
 			{
@@ -9827,12 +8736,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
 		skp->Text(5 * W / 32, 8 * H / 28, "LAT", 3);
-		sprintf(Buffer, "%+.2f°", G->EntryLatcor*DEG);
-		skp->Text(8 * W / 32, 8 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 8 * W / 32, 8 * H / 28, "%+.2f°", G->EntryLatcor* DEG);
 
 		skp->Text(14 * W / 32, 8 * H / 28, "LNG", 3);
-		sprintf(Buffer, "%+.2f°", G->EntryLngcor*DEG);
-		skp->Text(17 * W / 32, 8 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 17 * W / 32, 8 * H / 28, "%+.2f°", G->EntryLngcor* DEG);
 
 		skp->Text(5 * W / 32, 10 * H / 28, "OID", 3);
 		skp->Text(10 * W / 32, 10 * H / 28, "FCT", 3);
@@ -9840,8 +8747,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 1;i <= 6;i++)
 		{
-			sprintf(Buffer, "%o", i);
-			skp->Text(5 * W / 32, (i + 11) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 5 * W / 32, (i + 11) * H / 28, "%o", i);
 		}
 
 		skp->Text(10 * W / 32, 12 * H / 28, "INDEX", 5);
@@ -9853,17 +8759,14 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < 6;i++)
 		{
-			sprintf(Buffer, "%05d", GC->rtcc->CZENTRY.Octals[i]);
-			skp->Text(15 * W / 32, (i + 12) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 15 * W / 32, (i + 12) * H / 28, "%05d", GC->rtcc->CZENTRY.Octals[i]);
 		}
 
 		skp->SetTextAlign(oapi::Sketchpad::RIGHT);
 
 		skp->Text(27 * W / 32, 10 * H / 28, "DECIMAL", 7);
-		sprintf(Buffer, "%+.2f°", GC->rtcc->CZENTRY.Lat);
-		skp->Text(27 * W / 32, 14 * H / 28, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.2f°", GC->rtcc->CZENTRY.Lng);
-		skp->Text(27 * W / 32, 16 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 27 * W / 32, 14 * H / 28, "%+.2f°", GC->rtcc->CZENTRY.Lat);
+		skpTextFmt(skp, 27 * W / 32, 16 * H / 28, "%+.2f°", GC->rtcc->CZENTRY.Lng);
 
 	}
 	else if (screen == 120)
@@ -9884,11 +8787,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(48 * W / 64, 6 * H / 28, "GETSR", 5);
 		skp->Text(57 * W / 64, 6 * H / 28, "GETSS", 5);
 
-		sprintf_s(Buffer, "PAGE %02d OF %02d", GC->rtcc->EZLANDU1.curpage, GC->rtcc->EZLANDU1.pages);
-		skp->Text(6 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 6 * W / 32, 4 * H / 28, "PAGE %02d OF %02d", GC->rtcc->EZLANDU1.curpage, GC->rtcc->EZLANDU1.pages);
 
-		sprintf_s(Buffer, "%s", GC->rtcc->EZLANDU1.VectorID.c_str());
-		skp->Text(26 * W / 32, 4 * H / 28, Buffer, strlen(Buffer));
+		Text(skp, 26 * W / 32, 4 * H / 28, GC->rtcc->EZLANDU1.VectorID);
 
 		for (unsigned i = 0;i < GC->rtcc->EZLANDU1.numcontacts[GC->rtcc->EZLANDU1.curpage - 1];i++)
 		{
@@ -9909,11 +8810,9 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			GET_Display(Buffer, GC->rtcc->EZLANDU1.GETCA[GC->rtcc->EZLANDU1.curpage - 1][i], false);
 			skp->Text(22 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
 
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->EZLANDU1.Lambda[GC->rtcc->EZLANDU1.curpage - 1][i]);
-			skp->Text(29 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 29 * W / 64, (i + 8) * H / 28, "%.1lf", GC->rtcc->EZLANDU1.Lambda[GC->rtcc->EZLANDU1.curpage - 1][i]);
 
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->EZLANDU1.h[GC->rtcc->EZLANDU1.curpage - 1][i]);
-			skp->Text(33 * W / 64, (i + 8) * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 33 * W / 64, (i + 8) * H / 28, "%.0lf", GC->rtcc->EZLANDU1.h[GC->rtcc->EZLANDU1.curpage - 1][i]);
 
 			if (GC->rtcc->EZLANDU1.BestAvailableLOS[GC->rtcc->EZLANDU1.curpage - 1][i])
 			{
@@ -9931,8 +8830,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->EZLANDU1.err > 0)
 		{
-			sprintf_s(Buffer, "Error: %d", GC->rtcc->EZLANDU1.err);
-			skp->Text(4 * W / 16, 26 * H / 28, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 4 * W / 16, 26 * H / 28, "Error: %d", GC->rtcc->EZLANDU1.err);
 		}
 	}
 	else if (screen == 121)
@@ -9971,14 +8869,10 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
 		}
 
-		sprintf(Buffer, "%+.2lf", GC->rtcc->PZSLVCON.RINS);
-		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 6 * H / 14, "%+.2lf", GC->rtcc->PZSLVCON.RINS);
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%+.2lf", GC->rtcc->PZSLVCON.VINS);
 
-		sprintf(Buffer, "%+.2lf", GC->rtcc->PZSLVCON.VINS);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf(Buffer, "%+.3lf°", GC->rtcc->PZSLVCON.GAMINS*DEG);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%+.3lf°", GC->rtcc->PZSLVCON.GAMINS* DEG);
 
 		if (G->target != NULL)
 		{
@@ -10000,8 +8894,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			sprintf(Buffer, "Input DELNO");
 			skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
 
-			sprintf(Buffer, "%+.3lf°", GC->rtcc->PZSLVCON.DELNO*DEG);
-			skp->Text(10 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 6 * H / 14, "%+.3lf°", GC->rtcc->PZSLVCON.DELNO* DEG);
 		}
 		
 	}
@@ -10085,73 +8978,45 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(15 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
 		GET_Display2(Buffer, GC->rtcc->PZSLVTAR.GSTAR);
 		skp->Text(15 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVCON.PFA*DEG);
-		skp->Text(15 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVCON.PFT);
-		skp->Text(15 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.3lf", GC->rtcc->PZSLVTAR.DN);
-		skp->Text(15 * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 9 * H / 32, "%.3lf", GC->rtcc->PZSLVCON.PFA* DEG);
+		skpTextFmt(skp, 15 * W / 32, 10 * H / 32, "%.3lf", GC->rtcc->PZSLVCON.PFT);
+		skpTextFmt(skp, 15 * W / 32, 11 * H / 32, "%+.3lf", GC->rtcc->PZSLVTAR.DN);
 		GET_Display2(Buffer, GC->rtcc->PZSLVTAR.TYAW);
 		skp->Text(15 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
 		GET_Display2(Buffer, GC->rtcc->PZSLVTAR.TPLANE);
 		skp->Text(15 * W / 32, 14 * H / 32, Buffer, strlen(Buffer));
 
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVTAR.AZL);
-		skp->Text(15 * W / 32, 16 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.3lf", GC->rtcc->PZSLVCON.LATLS*DEG);
-		skp->Text(15 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.3lf", GC->rtcc->PZSLVCON.LONGLS*DEG);
-		skp->Text(15 * W / 32, 18 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 16 * H / 32, "%.3lf", GC->rtcc->PZSLVTAR.AZL);
+		skpTextFmt(skp, 15 * W / 32, 17 * H / 32, "%+.3lf", GC->rtcc->PZSLVCON.LATLS* DEG);
+		skpTextFmt(skp, 15 * W / 32, 18 * H / 32, "%+.3lf", GC->rtcc->PZSLVCON.LONGLS* DEG);
 
-		sprintf(Buffer, "%.8lf", GC->rtcc->PZSLVTAR.DELNO);
-		skp->Text(15 * W / 32, 22 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.8lf", GC->rtcc->PZSLVTAR.DELNOD);
-		skp->Text(15 * W / 32, 23 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 15 * W / 32, 22 * H / 32, "%.8lf", GC->rtcc->PZSLVTAR.DELNO);
+		skpTextFmt(skp, 15 * W / 32, 23 * H / 32, "%.8lf", GC->rtcc->PZSLVTAR.DELNOD);
 
 		GET_Display2(Buffer, GC->rtcc->PZSLVTAR.TGRR);
 		skp->Text(31 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.VIGM);
-		skp->Text(31 * W / 32, 6 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.VIGM / 0.3048);
-		skp->Text(31 * W / 32, 7 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.RIGM);
-		skp->Text(31 * W / 32, 8 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.RIGM / 0.3048);
-		skp->Text(31 * W / 32, 9 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.8lf", GC->rtcc->PZSLVTAR.GIGM);
-		skp->Text(31 * W / 32, 10 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVTAR.IIGM);
-		skp->Text(31 * W / 32, 11 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVTAR.TIGM);
-		skp->Text(31 * W / 32, 12 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.7lf", GC->rtcc->PZSLVTAR.TDIGM);
-		skp->Text(31 * W / 32, 13 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 6 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.VIGM);
+		skpTextFmt(skp, 31 * W / 32, 7 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.VIGM / 0.3048);
+		skpTextFmt(skp, 31 * W / 32, 8 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.RIGM);
+		skpTextFmt(skp, 31 * W / 32, 9 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.RIGM / 0.3048);
+		skpTextFmt(skp, 31 * W / 32, 10 * H / 32, "%.8lf", GC->rtcc->PZSLVTAR.GIGM);
+		skpTextFmt(skp, 31 * W / 32, 11 * H / 32, "%.3lf", GC->rtcc->PZSLVTAR.IIGM);
+		skpTextFmt(skp, 31 * W / 32, 12 * H / 32, "%.3lf", GC->rtcc->PZSLVTAR.TIGM);
+		skpTextFmt(skp, 31 * W / 32, 13 * H / 32, "%+.7lf", GC->rtcc->PZSLVTAR.TDIGM);
 
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.HA_C);
-		skp->Text(31 * W / 32, 17 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.HP_C);
-		skp->Text(31 * W / 32, 18 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.2lf", GC->rtcc->PZSLVTAR.TA_C);
-		skp->Text(31 * W / 32, 19 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.H);
-		skp->Text(31 * W / 32, 20 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.DH);
-		skp->Text(31 * W / 32, 21 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%E", GC->rtcc->PZSLVTAR.GMTLO);
-		skp->Text(31 * W / 32, 22 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 17 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.HA_C);
+		skpTextFmt(skp, 31 * W / 32, 18 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.HP_C);
+		skpTextFmt(skp, 31 * W / 32, 19 * H / 32, "%+.2lf", GC->rtcc->PZSLVTAR.TA_C);
+		skpTextFmt(skp, 31 * W / 32, 20 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.H);
+		skpTextFmt(skp, 31 * W / 32, 21 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.DH);
+		skpTextFmt(skp, 31 * W / 32, 22 * H / 32, "%E", GC->rtcc->PZSLVTAR.GMTLO);
 
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.HA_T);
-		skp->Text(31 * W / 32, 26 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.HP_T);
-		skp->Text(31 * W / 32, 27 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.2lf", GC->rtcc->PZSLVTAR.I_T);
-		skp->Text(31 * W / 32, 28 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.3lf", GC->rtcc->PZSLVTAR.PA);
-		skp->Text(31 * W / 32, 29 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%+.3lf", GC->rtcc->PZSLVTAR.DN_T);
-		skp->Text(31 * W / 32, 30 * H / 32, Buffer, strlen(Buffer));
-		sprintf(Buffer, "%.3lf", GC->rtcc->PZSLVTAR.BIAS);
-		skp->Text(31 * W / 32, 31 * H / 32, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 31 * W / 32, 26 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.HA_T);
+		skpTextFmt(skp, 31 * W / 32, 27 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.HP_T);
+		skpTextFmt(skp, 31 * W / 32, 28 * H / 32, "%.2lf", GC->rtcc->PZSLVTAR.I_T);
+		skpTextFmt(skp, 31 * W / 32, 29 * H / 32, "%+.3lf", GC->rtcc->PZSLVTAR.PA);
+		skpTextFmt(skp, 31 * W / 32, 30 * H / 32, "%+.3lf", GC->rtcc->PZSLVTAR.DN_T);
+		skpTextFmt(skp, 31 * W / 32, 31 * H / 32, "%.3lf", GC->rtcc->PZSLVTAR.BIAS);
 	}
 	else if (screen == 123)
 	{
@@ -10191,26 +9056,19 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		for (int i = 0;i < GC->rtcc->PZRPDT.plans;i++)
 		{
-			sprintf_s(Buffer, "%d", GC->rtcc->PZRPDT.data[i].ID);
-			skp->Text(2 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%d", GC->rtcc->PZRPDT.data[i].M);
-			skp->Text(4 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 2 * W / 32, (11 + 3 * i) * H / 32, "%d", GC->rtcc->PZRPDT.data[i].ID);
+			skpTextFmt(skp, 4 * W / 32, (11 + 3 * i) * H / 32, "%d", GC->rtcc->PZRPDT.data[i].M);
 
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NC1);
-			skp->Text(27 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NH);
-			skp->Text(32 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 27 * W / 64, (11 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZRPDT.data[i].NC1);
+			skpTextFmt(skp, 32 * W / 64, (11 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZRPDT.data[i].NH);
 			if (GC->rtcc->PZRPDT.data[i].NCC >= 0.0)
 			{
-				sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NCC);
-				skp->Text(37 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 37 * W / 64, (11 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZRPDT.data[i].NCC);
 			}
-			sprintf_s(Buffer, "%.1lf", GC->rtcc->PZRPDT.data[i].NSR);
-			skp->Text(42 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 42 * W / 64, (11 + 3 * i) * H / 32, "%.1lf", GC->rtcc->PZRPDT.data[i].NSR);
 			if (GC->rtcc->PZRPDT.data[i].NPC >= 0.0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->PZRPDT.data[i].NPC);
-				skp->Text(47 * W / 64, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
+				skpTextFmt(skp, 47 * W / 64, (11 + 3 * i) * H / 32, "%.2lf", GC->rtcc->PZRPDT.data[i].NPC);
 			}
 			GET_Display3(Buffer, GC->rtcc->PZRPDT.data[i].GETTPI);
 			skp->Text(28 * W / 32, (11 + 3 * i) * H / 32, Buffer, strlen(Buffer));
@@ -10239,19 +9097,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		GET_Display(Buffer, GC->rtcc->med_k28.ThresholdTime, false);
 		skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 
-		sprintf_s(Buffer, "%.0lf s", GC->rtcc->med_k28.TimeIncrement);
-		skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
-
-		sprintf_s(Buffer, "%.0lf NM", GC->rtcc->med_k28.H_P);
-		skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
+		skpTextFmt(skp, 1 * W / 16, 8 * H / 14, "%.0lf s", GC->rtcc->med_k28.TimeIncrement);
+		skpTextFmt(skp, 1 * W / 16, 10 * H / 14, "%.0lf NM", GC->rtcc->med_k28.H_P);
 
 		ThrusterName(Buffer, GC->rtcc->med_k28.Thruster);
 		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
 		if (GC->rtcc->med_k28.Thruster == RTCC_ENGINETYPE_LMDPS)
 		{
-			sprintf_s(Buffer, "%.3lf", GC->rtcc->med_k28.DPSScaleFactor);
-			skp->Text(10 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
+			skpTextFmt(skp, 10 * W / 16, 4 * H / 14, "%.3lf", GC->rtcc->med_k28.DPSScaleFactor);
 		}
 	}
 	else if (screen == 125)
@@ -10270,34 +9124,27 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		int j = 0;
 
-		sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-		skp->Text(10 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
+		Text(skp, 10 * W / 32, 5 * H / 32, GC->rtcc->MSK0050Buffer[j]);
 		j++;
 
 		for (unsigned i = 0;i < 6;i++)
 		{
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(2 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 2 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(11 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 11 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(15 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 15 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(19 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 19 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(23 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 23 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 
-			sprintf(Buffer, "%s", GC->rtcc->MSK0050Buffer[j].c_str());
-			skp->Text(27 * W / 32, (5 + i) * H / 16, Buffer, strlen(Buffer));
+			Text(skp, 27 * W / 32, (5 + i) * H / 16, GC->rtcc->MSK0050Buffer[j]);
 			j++;
 		}
 	}

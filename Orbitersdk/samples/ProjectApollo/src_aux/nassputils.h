@@ -41,7 +41,7 @@ namespace nassp
 			SIVB
 		};
 
-		bool IsVessel(VESSEL *v, ClassNames name)
+		inline bool IsVessel(VESSEL *v, ClassNames name)
 		{
 			switch (name)
 			{
@@ -70,5 +70,7 @@ namespace nassp
 			}
 			return false;
 		}
+
+		void skpTextFmt(oapi::Sketchpad* skp, int x, int y, const char* fmt, ...);
 	}
 }
