@@ -45,6 +45,7 @@
 #include "rtcc.h"
 #include "LVDC.h"
 #include "iu.h"
+#include <stdarg.h>
 
 // SCENARIO FILE MACROLOGY
 #define SAVE_BOOL(KEY,VALUE) oapiWriteScenario_int(scn, KEY, VALUE)
@@ -580,7 +581,6 @@ void MCC::setSubState(int newState){
 
 void MCC::TimeStep(double simdt){
 	int x=0,y=0,z=0;				// Scratch
-	char buf[MAX_MSGSIZE];			// More Scratch
 
 	/* AOS DETERMINATION */
 	
@@ -638,8 +638,7 @@ void MCC::TimeStep(double simdt){
 				MoonRev++;
 				MoonRevTime = 0.0;
 				if (GT_Enabled == true) {
-					sprintf(buf, "Rev %d", MoonRev);
-					addMessage(buf);
+					addMessage("Rev %d", MoonRev);
 				}
 			}
 		}
@@ -650,8 +649,7 @@ void MCC::TimeStep(double simdt){
 			if (CM_Prev_Position[1] < -80 && CM_Position[1] >= -80 && cm->stage >= STAGE_ORBIT_SIVB) {
 				EarthRev++;
 				if (GT_Enabled == true) {
-					sprintf(buf, "Rev %d", EarthRev);
-					addMessage(buf);
+					addMessage("Rev %d", EarthRev);
 				}
 			}
 		}
@@ -696,8 +694,7 @@ void MCC::TimeStep(double simdt){
 						if (!uplinking) {
 							GroundStations[x].AOS = 1;
 							if (GT_Enabled == true) {
-								sprintf(buf, "AOS %s", GroundStations[x].Name);
-								addMessage(buf);
+								addMessage("AOS %s", GroundStations[x].Name);
 							}
 
 							if (GroundStations[x].USBCaps) {
@@ -711,8 +708,7 @@ void MCC::TimeStep(double simdt){
 					GroundStations[x].AOS = 0;
 
 					if (GT_Enabled == true) {
-						sprintf(buf, "LOS %s", GroundStations[x].Name);
-						addMessage(buf);
+						addMessage("LOS %s", GroundStations[x].Name);
 					}
 				}
 				if (GroundStations[x].AOS) { y++; }
@@ -821,8 +817,7 @@ void MCC::TimeStep(double simdt){
 				}
 			}
 			if(MissionType == 0){
-				sprintf(buf,"Unsupported Mission %d",cm->ApolloNo);
-				addMessage(buf);
+				addMessage("Unsupported Mission %d", cm->ApolloNo);
 				MT_Enabled = false;
 			}
 			break;
@@ -1039,8 +1034,12 @@ void MCC::TimeStep(double simdt){
 }
 
 // Add message to ring buffer
-void MCC::addMessage(char *msg){
-	strncpy(messages[currentMessage],msg,MAX_MSGSIZE);			// Copy string
+void MCC::addMessage(const char *fmt, ...){
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(messages[currentMessage], MAX_MSGSIZE, fmt, ap);
+	va_end(ap);
+	messages[currentMessage][MAX_MSGSIZE - 1] = '\0';
 	msgtime[currentMessage] = 0;								// Mark new
 	currentMessage++;											// Advance tail index
 	if(currentMessage == MAX_MESSAGES){ currentMessage = 0; }	// Wrap index if necessary
@@ -3368,7 +3367,6 @@ void MCC::drawPad(bool writetofile){
 
 // Allocate PAD
 void MCC::allocPad(int Number){
-	char msg[256];
 	// Ensure PAD display off and disabled
 	if(padState == 1){ 
 		oapiAnnotationSetText(NHpad,""); // Clear PAD		
@@ -3492,8 +3490,7 @@ void MCC::allocPad(int Number){
 		return;
 	}
 	if(padForm == NULL){
-		sprintf(msg,"Could not calloc() PAD: %s",strerror(errno));
-		addMessage(msg);
+		addMessage("Could not calloc() PAD: %s", strerror(errno));
 	}
 	return;
 }
@@ -3533,27 +3530,24 @@ void MCC::keyDown(DWORD key){
 			break;
 		case OAPI_KEY_1:
 			if(menuState == 1){
-				sprintf(buf,"Voice Check");
-				addMessage(buf);
+				addMessage("Voice Check");
 				oapiAnnotationSetText(NHmenu,""); // Clear menu
 				menuState = 0;
 			}
 			if (menuState == 2) {
 				if (GT_Enabled == false) {
 					GT_Enabled = true;
-					sprintf(buf, "Ground Tracking Enabled");
+					addMessage("Ground Tracking Enabled");
 				}
 				else {
 					GT_Enabled = false;
-					sprintf(buf, "Ground Tracking Disabled");
+					addMessage("Ground Tracking Disabled");
 				}
-				addMessage(buf);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
 			if (menuState == 3) {
-				sprintf(buf, "Abort confirmed!");
-				addMessage(buf);
+				addMessage("Abort confirmed!");
 				initiateAbort();
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
@@ -3571,19 +3565,17 @@ void MCC::keyDown(DWORD key){
 			if (menuState == 2) {
 				if (MT_Enabled == false) {
 					MT_Enabled = true; GT_Enabled = true;
-					sprintf(buf, "Mission and Ground Tracking Enabled");
+					addMessage("Mission and Ground Tracking Enabled");
 				}
 				else {
 					MT_Enabled = false;
-					sprintf(buf, "Mission Tracking Disabled");
+					addMessage("Mission Tracking Disabled");
 				}
-				addMessage(buf);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
 			if (menuState == 3) {
-				sprintf(buf, "Abort rejected!");
-				addMessage(buf);
+				addMessage("Abort rejected!");
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3599,10 +3591,8 @@ void MCC::keyDown(DWORD key){
 			}
 			if (menuState == 2) {
 				// Report State
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
-				sprintf(buf, "MissionPhase %d EarthRev %d MoonRev %d MoonRevTime %f", MissionPhase, EarthRev, MoonRev, MoonRevTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
+				addMessage("MissionPhase %d EarthRev %d MoonRev %d MoonRevTime %f", MissionPhase, EarthRev, MoonRev, MoonRevTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3611,20 +3601,18 @@ void MCC::keyDown(DWORD key){
 			if(menuState == 1){
 				if(padAutoShow == false){
 					padAutoShow = true;
-					sprintf(buf,"PAD Auto Show Enabled");
+					addMessage("PAD Auto Show Enabled");
 				}else{
 					padAutoShow = false;
-					sprintf(buf,"PAD Auto Show Disabled");
+					addMessage("PAD Auto Show Disabled");
 				}
-				addMessage(buf);			
 				oapiAnnotationSetText(NHmenu,""); // Clear menu
 				menuState = 0;
 			}
 			if (menuState == 2) {
 				// Increment State
 				setState(MissionState + 1);
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3647,8 +3635,7 @@ void MCC::keyDown(DWORD key){
 			if (menuState == 2) {
 				// Decrement State
 				setState(MissionState - 1);
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3662,8 +3649,7 @@ void MCC::keyDown(DWORD key){
 			if (menuState == 2) {
 				// Increment SubState				
 				setSubState(SubState + 1);
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3678,8 +3664,7 @@ void MCC::keyDown(DWORD key){
 			if (menuState == 2) {
 				// Decrement SubState				
 				setSubState(SubState - 1);
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3694,8 +3679,7 @@ void MCC::keyDown(DWORD key){
 				// Reset State				
 				SubState = 0;
 				StateTime = SubStateTime = 0;
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
@@ -3704,8 +3688,7 @@ void MCC::keyDown(DWORD key){
 			if (menuState == 2) {
 				// Reset SubState				
 				SubStateTime = 0;
-				sprintf(buf, "MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
-				addMessage(buf);
+				addMessage("MissionState %d SubState %d StateTime %f SubStateTime %f", MissionState, SubState, StateTime, SubStateTime);
 				oapiAnnotationSetText(NHmenu, ""); // Clear menu
 				menuState = 0;
 			}
