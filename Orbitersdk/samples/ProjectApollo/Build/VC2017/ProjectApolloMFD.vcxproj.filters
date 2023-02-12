@@ -72,5 +72,8 @@
     <ClCompile Include="..\..\src_mfd\ProjectApolloMFDButtons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_aux\nassputils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

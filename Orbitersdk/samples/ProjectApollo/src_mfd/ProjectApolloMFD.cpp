@@ -53,6 +53,7 @@
 #include <queue>
 
 using namespace nassp;
+using nassp::utils::skpTextFmt;
 
 // ==============================================================
 // Global variables
@@ -1127,7 +1128,7 @@ bool ProjectApolloMFD::Update (oapi::Sketchpad* skp)
 		}
 		else
 		{
-			sprintf(buffer, "No Target!");
+			strcpy(buffer, "No Target!");
 		}
 		skp->Text((int)(width * 0.05), (int)(height * 0.95), buffer, strlen(buffer));
 	}
@@ -1141,44 +1142,41 @@ bool ProjectApolloMFD::Update (oapi::Sketchpad* skp)
 		if (g_Data.uplinkDataReady == 1 || g_Data.updateClockReady == 1) {
 			if (lem) {
 				skp->SetTextAlign(oapi::Sketchpad::CENTER);
-				sprintf(buffer, "Checklist");
-				skp->Text(width / 2, (int)(height * 0.45), buffer, strlen(buffer));
+				skp->Text(width / 2, (int)(height * 0.45), "Checklist", strlen("Checklist"));
 				skp->SetTextAlign(oapi::Sketchpad::LEFT);
-				sprintf(buffer, "LGC: IDLE (P00 DESIRED)");
+				strcpy(buffer, "LGC: IDLE (P00 DESIRED)");
 				skp->Text((int)(width * 0.1), (int)(height * 0.55), buffer, strlen(buffer));
-				sprintf(buffer, "P12: UPDATA LINK - DATA (down)");
+				strcpy(buffer, "P12: UPDATA LINK - DATA (down)");
 				skp->Text((int)(width * 0.1), (int)(height * 0.60), buffer, strlen(buffer));
-				sprintf(buffer, "P11: UP DATA LINK CB - IN");
+				strcpy(buffer, "P11: UP DATA LINK CB - IN");
 				skp->Text((int)(width * 0.1), (int)(height * 0.65), buffer, strlen(buffer));
 				skp->SetTextAlign(oapi::Sketchpad::CENTER);
 			} else {
 				skp->SetTextAlign(oapi::Sketchpad::CENTER);
-				sprintf(buffer, "Checklist");
-				skp->Text(width / 2, (int)(height * 0.45), buffer, strlen(buffer));
+				skp->Text(width / 2, (int)(height * 0.45), "Checklist", strlen("Checklist"));
 				skp->SetTextAlign(oapi::Sketchpad::LEFT);
-				sprintf(buffer, "DSKY - V37E 00E");
+				strcpy(buffer, "DSKY - V37E 00E");
 				skp->Text((int)(width * 0.1), (int)(height * 0.55), buffer, strlen(buffer));
-				sprintf(buffer, "UPTLM CM - ACCEPT (up)   2, 122");
+				strcpy(buffer, "UPTLM CM - ACCEPT (up)   2, 122");
 				skp->Text((int)(width * 0.1), (int)(height * 0.60), buffer, strlen(buffer));
-				sprintf(buffer, "UP TLM - DATA (up)            3");
+				strcpy(buffer, "UP TLM - DATA (up)            3");
 				skp->Text((int)(width * 0.1), (int)(height * 0.65), buffer, strlen(buffer));
-				sprintf(buffer, "PCM BIT RATE - HIGH (up)      3");
+				strcpy(buffer, "PCM BIT RATE - HIGH (up)      3");
 				skp->Text((int)(width * 0.1), (int)(height * 0.7), buffer, strlen(buffer));
 				skp->SetTextAlign(oapi::Sketchpad::CENTER);
 			}
 			if (g_Data.uplinkDataReady == 1) {
 				if (g_Data.uplinkDataType == UPLINK_SV)
-					sprintf(buffer, "Press SV to start upload");
+					strcpy(buffer, "Press SV to start upload");
 			}
 			else
-				sprintf(buffer, "Press CLK to start upload");
+				strcpy(buffer, "Press CLK to start upload");
 			skp->Text(width / 2, (int)(height * 0.8), buffer, strlen(buffer));
 		}
 		else if(g_Data.uplinkDataReady == 2) {
 			double linepos = 0.4;
 			skp->SetTextAlign(oapi::Sketchpad::LEFT);
-			sprintf(buffer, "304   %ld", g_Data.emem[0]);
-			skp->Text((int)(width * 0.1), (int)(height* (linepos += 0.05)), buffer, strlen(buffer));
+			skpTextFmt(skp, (int)(width * 0.1), (int)(height* (linepos += 0.05)), "304   %ld", g_Data.emem[0]);
 			sprintf(buffer, "305   %ld", g_Data.emem[1]);
 			skp->Text((int)(width * 0.1), (int)(height* (linepos += 0.05)), buffer, strlen(buffer));
 			sprintf(buffer, "306   %ld", g_Data.emem[2]);

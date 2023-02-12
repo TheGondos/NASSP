@@ -1415,7 +1415,7 @@ void Saturn::clbkPostStep(double simt, double simdt, double mjd)
 
 	if (debugConnected == false)
 	{
-		sprintf(debugString(), "Please enable the Project Apollo MFD on the modules tab of the launchpad.");
+		strcpy(debugString(), "Please enable the Project Apollo MFD on the modules tab of the launchpad.");
 		debugConnected = true;
 	}
 

@@ -669,7 +669,7 @@ void LEM_RR::Timestep(double simdt) {
 		// Print status
 		/*
 		char debugmsg[256];
-		sprintf(debugmsg,"RADAR STATUS: ");
+		strcpy(debugmsg,"RADAR STATUS: ");
 		if(val12.Bits.ZeroRRCDU != 0){ sprintf(debugmsg,"%s ZeroRRCDU",debugmsg); }
 		if(val12.Bits.EnableRRCDUErrorCounter != 0){ sprintf(debugmsg,"%s EnableEC",debugmsg); }
 		if(val12.Bits.LRPositionCommand != 0){ sprintf(debugmsg,"%s LRPos2",debugmsg); }
@@ -681,7 +681,7 @@ void LEM_RR::Timestep(double simdt) {
 
 		if(val14.Bits.ShaftAngleCDUDrive != 0){ sprintf(debugmsg,"%s DriveS(%f)",debugmsg,shaftAngle*DEG); }
 		if(val14.Bits.TrunnionAngleCDUDrive != 0){ sprintf(debugmsg,"%s DriveT(%f)",debugmsg,trunnionAngle*DEG); }
-		sprintf(oapiDebugString(),debugmsg);
+		strcpy(oapiDebugString(),debugmsg);
 		*/
 
 		// The computer wants something from the radar.

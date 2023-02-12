@@ -96,7 +96,7 @@ int MCCVessel::clbkGeneric(int msgid, int prm, void* context)
 
 		if (prm == paCBGmessageID::parameterID::Get) {
 
-			//sprintf(oapiDebugString(), "hi");
+			//strcpy(oapiDebugString(), "hi");
 
 			RFtemp->GlobalPosition = (mcc->TransmittingGroundStationVector);
 

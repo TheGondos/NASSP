@@ -45,7 +45,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 	case 3: //GENERIC LGC CSM STATE VECTOR UPDATE
 	{
 		EphemerisData sv;
-		char buffer1[1000];
 		int veh;
 
 		sv = StateVectorCalcEphem(calcParams.src); //State vector for uplink
@@ -58,13 +57,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			veh = RTCC_MPT_LM;
 		}
 
-		AGCStateVectorUpdate(buffer1, veh, RTCC_MPT_CSM, sv);
+		AGCStateVectorUpdate(uplinkdata, veh, RTCC_MPT_CSM, sv);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector");
+			strcpy(upDesc, "CSM state vector");
 		}
 	}
 	break;
@@ -72,7 +70,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 	case 4: //GENERIC LGC LM STATE VECTOR UPDATE
 	{
 		EphemerisData sv;
-		char buffer1[1000];
 		int veh;
 
 		sv = StateVectorCalcEphem(calcParams.tgt); //State vector for uplink
@@ -85,13 +82,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			veh = RTCC_MPT_LM;
 		}
 
-		AGCStateVectorUpdate(buffer1, veh, RTCC_MPT_LM, sv);
+		AGCStateVectorUpdate(uplinkdata, veh, RTCC_MPT_LM, sv);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "LM state vector");
+			strcpy(upDesc, "LM state vector");
 		}
 	}
 	break;
@@ -216,7 +212,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		double GETbase, TLIBase, TIG;
 		EphemerisData sv;
 		SV sv1;
-		char buffer1[1000];
 
 		AP11MNV * form = (AP11MNV *)pad;
 
@@ -263,16 +258,15 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		form->Weight = PZMPTCSM.mantable[1].CommonBlock.CSMMass / 0.45359237;
 		form->GET05G = res.GET05G;
 
-		sprintf(form->purpose, "TLI+90");
-		sprintf(form->remarks, "No ullage, undocked");
+		strcpy(form->purpose, "TLI+90");
+		strcpy(form->remarks, "No ullage, undocked");
 
-		AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv, true);
+		AGCStateVectorUpdate(uplinkdata, RTCC_MPT_CSM, RTCC_MPT_CSM, sv, true);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector and V66");
+			strcpy(upDesc, "CSM state vector and V66");
 		}
 	}
 	break;
@@ -327,7 +321,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		//Set anchor vector time to 0, so that no trajectory updates are done anymore
 		EZANCHR1.AnchorVectors[9].Vector.GMT = 0.0;
 
-		sprintf(form->remarks, "TLI 10-minute abort pitch, 223°");
+		strcpy(form->remarks, "TLI 10-minute abort pitch, 223°");
 	}
 	break;
 	case 15: //TLI Evaluation
@@ -358,7 +352,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		AP11ManeuverPAD(&opt, *form);
 
-		sprintf(form->purpose, "Evasive");
+		strcpy(form->purpose, "Evasive");
 	}
 	break;
 	case 17: //Block Data 1
@@ -406,20 +400,18 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 	{
 		REFSMMATOpt refsopt;
 		MATRIX3 REFSMMAT;
-		char buffer1[1000];
 
 		refsopt.REFSMMATopt = 6;
 		refsopt.REFSMMATTime = 40426.71589131481; //195:38:53 GET of nominal mission
 
 		REFSMMAT = REFSMMATCalc(&refsopt);
 
-		AGCDesiredREFSMMATUpdate(buffer1, REFSMMAT, true);
-		sprintf(uplinkdata, "%s", buffer1);
+		AGCDesiredREFSMMATUpdate(uplinkdata, REFSMMAT, true);
 
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "PTC REFSMMAT");
+			strcpy(upDesc, "PTC REFSMMAT");
 		}
 	}
 	break;
@@ -489,11 +481,11 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		{
 			if (scrubbed)
 			{
-				sprintf(upMessage, "MCC-1 has been scrubbed.");
+				strcpy(upMessage, "MCC-1 has been scrubbed.");
 			}
 			else
 			{
-				sprintf(upMessage, "MCC-1 will have to be executed.");
+				strcpy(upMessage, "MCC-1 will have to be executed.");
 			}
 		}
 		//MCC-1 Update
@@ -501,14 +493,11 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		{
 			if (scrubbed)
 			{
-				char buffer1[1000];
+				strcpy(upMessage, "MCC-1 has been scrubbed.");
+				strcpy(upDesc, "CSM state vector");
 
-				sprintf(upMessage, "MCC-1 has been scrubbed.");
-				sprintf(upDesc, "CSM state vector");
+				AGCStateVectorUpdate(uplinkdata, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
 
-				AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
-
-				sprintf(uplinkdata, "%s", buffer1);
 				if (upString != NULL) {
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
@@ -532,7 +521,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				manopt.vesseltype = 1;
 
 				AP11ManeuverPAD(&manopt, *form);
-				sprintf(form->purpose, "MCC-1");
+				strcpy(form->purpose, "MCC-1");
 				sprintf(form->remarks, "LM weight is %.0f.", form->LMWeight);
 
 				AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
@@ -542,7 +531,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				if (upString != NULL) {
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
-					sprintf(upDesc, "CSM state vector, target load");
+					strcpy(upDesc, "CSM state vector, target load");
 				}
 			}
 		}
@@ -571,14 +560,11 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		{
 			scrubbed = true;
 
-			char buffer1[1000];
+			strcpy(upMessage, "MCC-2 has been scrubbed.");
+			strcpy(upDesc, "CSM state vector");
 
-			sprintf(upMessage, "MCC-2 has been scrubbed.");
-			sprintf(upDesc, "CSM state vector");
+			AGCStateVectorUpdate(uplinkdata, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
 
-			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
-
-			sprintf(uplinkdata, "%s", buffer1);
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
@@ -616,7 +602,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			manopt.vesseltype = 1;
 
 			AP11ManeuverPAD(&manopt, *form);
-			sprintf(form->purpose, "MCC-2");
+			strcpy(form->purpose, "MCC-2");
 			sprintf(form->remarks, "LM weight is %.0f.", form->LMWeight);
 
 			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
@@ -626,7 +612,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "CSM state vector, target load");
+				strcpy(upDesc, "CSM state vector, target load");
 			}
 		}
 	}
@@ -638,7 +624,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		AP11ManPADOpt opt;
 		SV sv;
 		double GETbase;
-		char buffer1[1000];
 
 		AP11MNV * form = (AP11MNV *)pad;
 
@@ -672,7 +657,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		AP11ManeuverPAD(&opt, *form);
 
-		sprintf(form->purpose, "Flyby");
+		strcpy(form->purpose, "Flyby");
 		sprintf(form->remarks, "Height of pericynthion is %.0f NM", h_peri / 1852.0);
 		form->lat = res.latitude*DEG;
 		form->lng = res.longitude*DEG;
@@ -686,13 +671,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		calcParams.TEI = res.P30TIG;
 		calcParams.EI = res.GET400K;
 
-		AGCStateVectorUpdate(buffer1, sv, true, GETbase);
+		AGCStateVectorUpdate(uplinkdata, sv, true, GETbase);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector");
+			strcpy(upDesc, "CSM state vector");
 		}
 	}
 	break;
@@ -767,14 +751,11 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (scrubbed)
 		{
-			char buffer1[1000];
+			strcpy(upMessage, "MCC-3 has been scrubbed");
+			strcpy(upDesc, "CSM state vector");
 
-			sprintf(upMessage, "MCC-3 has been scrubbed");
-			sprintf(upDesc, "CSM state vector");
+			AGCStateVectorUpdate(uplinkdata, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
 
-			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
-
-			sprintf(uplinkdata, "%s", buffer1);
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
@@ -800,7 +781,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			manopt.vesseltype = 1;
 
 			AP11ManeuverPAD(&manopt, *form);
-			sprintf(form->purpose, "MCC-3");
+			strcpy(form->purpose, "MCC-3");
 
 			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
 			CMCExternalDeltaVUpdate(buffer2, P30TIG, dV_LVLH);
@@ -809,7 +790,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "CSM state vector, target load");
+				strcpy(upDesc, "CSM state vector, target load");
 			}
 		}
 	}
@@ -887,8 +868,8 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			char buffer1[1000];
 			char buffer2[1000];
 
-			sprintf(upMessage, "MCC-4 has been scrubbed");
-			sprintf(upDesc, "CSM state vector, Landing Site REFSMMAT");
+			strcpy(upMessage, "MCC-4 has been scrubbed");
+			strcpy(upDesc, "CSM state vector, Landing Site REFSMMAT");
 
 			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv, true);
 			AGCDesiredREFSMMATUpdate(buffer2, REFSMMAT);
@@ -935,7 +916,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			manopt.vesseltype = 1;
 
 			AP11ManeuverPAD(&manopt, *form);
-			sprintf(form->purpose, "MCC-4");
+			strcpy(form->purpose, "MCC-4");
 
 			AGCStateVectorUpdate(buffer1, RTCC_MPT_CSM, RTCC_MPT_CSM, sv);
 			CMCExternalDeltaVUpdate(buffer2, P30TIG, dV_LVLH);
@@ -945,7 +926,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "CSM state vector, target load, Landing Site REFSMMAT");
+				strcpy(upDesc, "CSM state vector, target load, Landing Site REFSMMAT");
 			}
 		}
 	}
@@ -990,7 +971,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.vesseltype = 1;
 
 		AP11ManeuverPAD(&opt, *form);
-		sprintf(form->remarks, "Assumes LS REFSMMAT and docked");
+		strcpy(form->remarks, "Assumes LS REFSMMAT and docked");
 
 		if (!REFSMMATDecision(form->Att*RAD))
 		{
@@ -1009,9 +990,9 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			opt.REFSMMAT = REFSMMAT;
 			AP11ManeuverPAD(&opt, *form);
 
-			sprintf(form->remarks, "Docked, requires realignment to preferred REFSMMAT");
+			strcpy(form->remarks, "Docked, requires realignment to preferred REFSMMAT");
 		}
-		sprintf(form->purpose, "PC+2");
+		strcpy(form->purpose, "PC+2");
 		form->lat = res.latitude*DEG;
 		form->lng = res.longitude*DEG;
 		form->RTGO = res.RTGO;
@@ -1068,7 +1049,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		manopt.vesseltype = 1;
 
 		AP11ManeuverPAD(&manopt, *form);
-		sprintf(form->purpose, "LOI-1");
+		strcpy(form->purpose, "LOI-1");
 		sprintf(form->remarks, "LM weight is %.0f", form->LMWeight);
 
 		TimeofIgnition = P30TIG;
@@ -1084,7 +1065,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector, target load");
+			strcpy(upDesc, "CSM state vector, target load");
 		}
 	}
 	break;
@@ -1124,7 +1105,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		manopt.vesseltype = 1;
 
 		AP11ManeuverPAD(&manopt, *form);
-		sprintf(form->purpose, "LOI-2");
+		strcpy(form->purpose, "LOI-2");
 
 		TimeofIgnition = P30TIG;
 		DeltaV_LVLH = dV_LVLH;
@@ -1136,7 +1117,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector, target load");
+			strcpy(upDesc, "CSM state vector, target load");
 		}
 	}
 	break;
@@ -1186,7 +1167,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		//Also move to CSM LCV
 		GMGMED("G00,LEM,LLD,CSM,LCV;");
 
-		sprintf(form->LmkID[0], "130");
+		strcpy(form->LmkID[0], "130");
 		landmarkopt.alt[0] = -1.46*1852.0;
 		landmarkopt.GETbase = CalcGETBase();
 		landmarkopt.lat[0] = 1.243*RAD;
@@ -1204,7 +1185,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector, LS REFSMMAT");
+			strcpy(upDesc, "CSM state vector, LS REFSMMAT");
 		}
 	}
 	break;
@@ -1269,7 +1250,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "State vectors, LS REFSMMAT");
+			strcpy(upDesc, "State vectors, LS REFSMMAT");
 		}
 	}
 	break;
@@ -1314,7 +1295,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.vesseltype = 0;
 
 		AP11ManeuverPAD(&opt, *form);
-		sprintf(form->purpose, "SEP");
+		strcpy(form->purpose, "SEP");
 
 		AGCStateVectorUpdate(buffer1, sv, true, GETbase);
 		AGCStateVectorUpdate(buffer2, sv, false, GETbase);
@@ -1323,7 +1304,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "State vectors");
+			strcpy(upDesc, "State vectors");
 		}
 	}
 	break;
@@ -1371,7 +1352,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.vessel = calcParams.tgt;
 
 		AP11LMManeuverPAD(&opt, *form);
-		sprintf(form->purpose, "DOI");
+		strcpy(form->purpose, "DOI");
 
 		AGCStateVectorUpdate(buffer1, sv, false, GETbase);
 		LGCExternalDeltaVUpdate(buffer2, TimeofIgnition, DeltaV_LVLH);
@@ -1381,7 +1362,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "LM state vector, DOI target load, descent target load");
+			strcpy(upDesc, "LM state vector, DOI target load, descent target load");
 		}
 	}
 	break;
@@ -1421,32 +1402,32 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (fcn == 40)
 		{
-			sprintf(manname, "TEI-1");
+			strcpy(manname, "TEI-1");
 			sv2 = coast(sv1, 0.5*2.0*3600.0);
 		}
 		else if (fcn == 41)
 		{
-			sprintf(manname, "TEI-4");
+			strcpy(manname, "TEI-4");
 			sv2 = coast(sv1, 3.5*2.0*3600.0);
 		}
 		else if (fcn == 42)
 		{
-			sprintf(manname, "TEI-5");
+			strcpy(manname, "TEI-5");
 			sv2 = coast(sv1, 2.5*2.0*3600.0);
 		}
 		else if (fcn == 43)
 		{
-			sprintf(manname, "TEI-11");
+			strcpy(manname, "TEI-11");
 			sv2 = coast(sv1, 6.5*2.0*3600.0);
 		}
 		else if (fcn == 44)
 		{
-			sprintf(manname, "TEI-30");
+			strcpy(manname, "TEI-30");
 			sv2 = coast(sv1, 19.5*2.0*3600.0);
 		}
 		else if (fcn == 45)
 		{
-			sprintf(manname, "TEI-30");
+			strcpy(manname, "TEI-30");
 			sv2 = coast(sv1, 1.5*2.0*3600.0);
 			//Nominal EOM area
 			entopt.EntryLng = -172.37*RAD;
@@ -1486,7 +1467,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.vesseltype = 0;
 
 		AP11ManeuverPAD(&opt, *form);
-		sprintf(form->purpose, manname);
+		strcpy(form->purpose, manname);
 		form->lat = res.latitude*DEG;
 		form->lng = res.longitude*DEG;
 		form->RTGO = res.RTGO;
@@ -1495,19 +1476,19 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (fcn == 40)
 		{
-			sprintf(form->remarks, "Undocked");
+			strcpy(form->remarks, "Undocked");
 		}
 		else if (fcn == 41)
 		{
-			sprintf(form->remarks, "Undocked, assumes no LOI-2");
+			strcpy(form->remarks, "Undocked, assumes no LOI-2");
 		}
 		else if (fcn == 42)
 		{
-			sprintf(form->remarks, "Undocked, assumes LOI-2");
+			strcpy(form->remarks, "Undocked, assumes LOI-2");
 		}
 		else if (fcn == 45 || fcn == 46)
 		{
-			sprintf(form->remarks, "Two-jet ullage for 16 seconds");
+			strcpy(form->remarks, "Two-jet ullage for 16 seconds");
 		}
 
 		if (fcn != 47)
@@ -1532,7 +1513,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "CSM state vector, target load");
+				strcpy(upDesc, "CSM state vector, target load");
 			}
 		}
 	}
@@ -1576,7 +1557,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (fcn == 61)
 		{
-			sprintf(form->LmkID[0], "A-1");
+			strcpy(form->LmkID[0], "A-1");
 			opt.alt[0] = 0;
 			opt.lat[0] = 2.0*RAD;
 			opt.LmkTime[0] = calcParams.LOI + 6.5*3600.0;
@@ -1588,7 +1569,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			//Update landing site
 			calcParams.tgt->GetEquPos(BZLAND.lng[RTCC_LMPOS_BEST], BZLAND.lat[RTCC_LMPOS_BEST], BZLAND.rad[RTCC_LMPOS_BEST]);
 
-			sprintf(form->LmkID[0], "Lunar Module");
+			strcpy(form->LmkID[0], "Lunar Module");
 			opt.alt[0] = BZLAND.rad[RTCC_LMPOS_BEST] - OrbMech::R_Moon;
 			opt.lat[0] = BZLAND.lat[RTCC_LMPOS_BEST];
 			if (fcn == 63)
@@ -1751,7 +1732,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		manopt.vessel = calcParams.tgt;
 
 		AP11LMManeuverPAD(&manopt, *form);
-		sprintf(form->purpose, "No PDI +12 ABORT");
+		strcpy(form->purpose, "No PDI +12 ABORT");
 
 		form->type = 1;
 		form->t_CSI = round(t_CSI);
@@ -1765,7 +1746,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		SV sv_CSM, sv_Ins, sv_IG;
 		VECTOR3 R_LS, R_C1, V_C1, u, V_C1F, R_CSI1, V_CSI1;
 		double T2, GETbase, m0, v_LH, v_LV, theta, dt_asc, t_C1, dt1, dt2, t_CSI1, t_sunrise, t_TPI, dv;
-		char buffer1[1000];
 
 		GETbase = CalcGETBase();
 		sv_CSM = StateVectorCalc(calcParams.src);
@@ -1866,13 +1846,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		form->T3_t_PPlusDT = t_PPlusDT;
 		form->T3_t_TPI = round(t_TPI);
 
-		AGCStateVectorUpdate(buffer1, sv_CSM, true, GETbase);
+		AGCStateVectorUpdate(uplinkdata, sv_CSM, true, GETbase);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector");
+			strcpy(upDesc, "CSM state vector");
 		}
 	}
 	break;
@@ -1892,10 +1871,10 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		sv_LM = StateVectorCalc(calcParams.tgt);
 
 		form->entries = 2;
-		sprintf(form->purpose[0], "DOI");
+		strcpy(form->purpose[0], "DOI");
 		form->TIG[0] = TimeofIgnition;
 		form->DV[0] = DeltaV_LVLH / 0.3048;
-		sprintf(form->purpose[1], "PDI1 +12");
+		strcpy(form->purpose[1], "PDI1 +12");
 		form->TIG[1] = calcParams.TIGSTORE1;
 		form->DV[1] = calcParams.DVSTORE1 / 0.3048;
 
@@ -1906,13 +1885,13 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM and LM state vectors");
+			strcpy(upDesc, "CSM and LM state vectors");
 		}
 	}
 	break;
 	case 77: //DOI EVALUATION
 	{
-		sprintf(upMessage, "Go for PDI");
+		strcpy(upMessage, "Go for PDI");
 	}
 	break;
 	case 78: //PDI EVALUATION
@@ -1926,24 +1905,24 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (peri - OrbMech::R_Moon > 0.)
 		{
-			sprintf(upMessage, "Recycle to next PDI attempt");
+			strcpy(upMessage, "Recycle to next PDI attempt");
 			scrubbed = true;
 		}
 	}
 	break;
 	case 79: //LANDING EVALUATION
 	{
-		sprintf(upMessage, "We copy you down, Eagle");
+		strcpy(upMessage, "We copy you down, Eagle");
 	}
 	break;
 	case 80: //STAY FOR T1
 	{
-		sprintf(upMessage, "Stay for T1");
+		strcpy(upMessage, "Stay for T1");
 	}
 	break;
 	case 81: //STAY FOR T2
 	{
-		sprintf(upMessage, "Stay for T2");
+		strcpy(upMessage, "Stay for T2");
 	}
 	break;
 	case 90: //LM ASCENT PAD FOR T3
@@ -2044,7 +2023,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "RLS, CSM state vector");
+			strcpy(upDesc, "RLS, CSM state vector");
 		}
 	}
 	break;
@@ -2186,7 +2165,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 
 		if (abs(LmkRange) < 8.0*1852.0)
 		{
-			sprintf(upMessage, "Plane Change has been scrubbed");
+			strcpy(upMessage, "Plane Change has been scrubbed");
 			scrubbed = true;
 		}
 	}
@@ -2214,7 +2193,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		{
 			REFSMMATOpt refsopt;
 			MATRIX3 REFSMMAT;
-			char buffer[1000];
 
 			refsopt.dV_LVLH = DeltaV_LVLH;
 			refsopt.GETbase = CalcGETBase();
@@ -2225,13 +2203,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			refsopt.vesseltype = 0;
 
 			REFSMMAT = REFSMMATCalc(&refsopt);
-			AGCDesiredREFSMMATUpdate(buffer, REFSMMAT);
+			AGCDesiredREFSMMATUpdate(uplinkdata, REFSMMAT);
 
-			sprintf(uplinkdata, "%s", buffer);
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "PC REFSMMAT");
+				strcpy(upDesc, "PC REFSMMAT");
 			}
 		}
 		else
@@ -2255,7 +2232,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			manopt.vesseltype = 0;
 
 			AP11ManeuverPAD(&manopt, *form);
-			sprintf(form->purpose, "PLANE CHANGE");
+			strcpy(form->purpose, "PLANE CHANGE");
 
 			AGCStateVectorUpdate(buffer1, sv_CSM, true, CalcGETBase());
 			CMCExternalDeltaVUpdate(buffer2, TimeofIgnition, DeltaV_LVLH);
@@ -2264,7 +2241,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "CSM state vector, target load");
+				strcpy(upDesc, "CSM state vector, target load");
 			}
 		}
 	}
@@ -2274,7 +2251,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		REFSMMATOpt opt;
 		MATRIX3 REFSMMAT;
 		double GETbase;
-		char buffer[1000];
 
 		GETbase = CalcGETBase();
 
@@ -2286,13 +2262,12 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.vessel = calcParams.src;
 
 		REFSMMAT = REFSMMATCalc(&opt);
-		AGCDesiredREFSMMATUpdate(buffer, REFSMMAT);
+		AGCDesiredREFSMMATUpdate(uplinkdata, REFSMMAT);
 
-		sprintf(uplinkdata, "%s", buffer);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Liftoff REFSMMAT");
+			strcpy(upDesc, "Liftoff REFSMMAT");
 		}
 	}
 	break;
@@ -2303,7 +2278,6 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		SV sv_CSM, sv_CSM_upl, sv_Ins, sv_IG;
 		MATRIX3 REFSMMAT;
 		VECTOR3 R_LS;
-		char buffer1[100];
 		double GETbase, m0, theta_1, dt_1, dv, t_TPI_guess, t_TPI;
 
 		GETbase = CalcGETBase();
@@ -2388,7 +2362,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		calcParams.SVSTORE1 = sv_Ins;
 
 		sv_CSM_upl = coast(sv_CSM, PZLRPT.data[1].T_CSI + 18.0*60.0 - OrbMech::GETfromMJD(sv_CSM.MJD, GETbase));
-		AGCStateVectorUpdate(buffer1, sv_CSM_upl, true, GETbase);
+		AGCStateVectorUpdate(uplinkdata, sv_CSM_upl, true, GETbase);
 
 		//Calculate T14
 		opt.t_hole += 2.0*3600.0;
@@ -2396,11 +2370,10 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		//Store for Ascent PAD
 		TimeofIgnition = PZLRPT.data[1].GETLO;
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM state vector");
+			strcpy(upDesc, "CSM state vector");
 		}
 	}
 	break;
@@ -2422,7 +2395,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "CSM and LM state vectors");
+			strcpy(upDesc, "CSM and LM state vectors");
 		}
 	}
 	break;
@@ -2486,7 +2459,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 	{
 		if (calcParams.tgt->GroundContact())
 		{
-			sprintf(upMessage, "Launch scrubbed, recycle for next rev");
+			strcpy(upMessage, "Launch scrubbed, recycle for next rev");
 			scrubbed = true;
 		}
 	}
@@ -2524,17 +2497,17 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (fcn == 110)
 		{
 			MCCtime = calcParams.TEI + 15.0*3600.0;
-			sprintf(manname, "MCC-5");
+			strcpy(manname, "MCC-5");
 		}
 		else if (fcn == 111 || fcn == 112)
 		{
 			MCCtime = calcParams.EI - 23.0*3600.0;
-			sprintf(manname, "MCC-6");
+			strcpy(manname, "MCC-6");
 		}
 		else if (fcn == 113 || fcn == 114)
 		{
 			MCCtime = calcParams.EI - 3.0*3600.0;
-			sprintf(manname, "MCC-7");
+			strcpy(manname, "MCC-7");
 		}
 
 		GETbase = CalcGETBase();
@@ -2615,7 +2588,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				opt.vesseltype = 0;
 
 				AP11ManeuverPAD(&opt, *form);
-				sprintf(form->purpose, manname);
+				strcpy(form->purpose, manname);
 				form->lat = res.latitude*DEG;
 				form->lng = res.longitude*DEG;
 				form->RTGO = res.RTGO;
@@ -2633,7 +2606,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				char buffer2[1000];
 
 				sprintf(upMessage, "%s has been scrubbed", manname);
-				sprintf(upDesc, "CSM state vector, entry target");
+				strcpy(upDesc, "CSM state vector, entry target");
 
 				AGCStateVectorUpdate(buffer1, sv, true, GETbase);
 				CMCEntryUpdate(buffer2, res.latitude, res.longitude);
@@ -2657,7 +2630,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				char buffer3[1000];
 
 				sprintf(upMessage, "%s has been scrubbed", manname);
-				sprintf(upDesc, "CSM state vector, entry target, Entry REFSMMAT");
+				strcpy(upDesc, "CSM state vector, entry target, Entry REFSMMAT");
 
 				AGCStateVectorUpdate(buffer1, sv, true, GETbase);
 				CMCEntryUpdate(buffer2, res.latitude, res.longitude);
@@ -2685,7 +2658,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				if (upString != NULL) {
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
-					sprintf(upDesc, "CSM state vector, target load");
+					strcpy(upDesc, "CSM state vector, target load");
 				}
 			}
 			//MCC-6 and 7 decision
@@ -2708,7 +2681,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 				if (upString != NULL) {
 					// give to mcc
 					strncpy(upString, uplinkdata, 1024 * 3);
-					sprintf(upDesc, "CSM state vector, target load, Entry REFSMMAT");
+					strcpy(upDesc, "CSM state vector, target load, Entry REFSMMAT");
 				}
 			}
 		}
@@ -2770,16 +2743,16 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 		entopt.sv0 = sv;
 
 		LunarEntryPAD(&entopt, *form);
-		sprintf(form->Area[0], "MIDPAC");
+		strcpy(form->Area[0], "MIDPAC");
 		if (entopt.direct == false)
 		{
 			if (fcn == 116 && length(DeltaV_LVLH) != 0.0)
 			{
-				sprintf(form->remarks[0], "Assumes MCC6");
+				strcpy(form->remarks[0], "Assumes MCC6");
 			}
 			else if (fcn == 117 && length(DeltaV_LVLH) != 0.0)
 			{
-				sprintf(form->remarks[0], "Assumes MCC7");
+				strcpy(form->remarks[0], "Assumes MCC7");
 			}
 		}
 
@@ -2795,7 +2768,7 @@ bool RTCC::CalculationMTP_G(int fcn, LPVOID &pad, char * upString, char * upDesc
 			if (upString != NULL) {
 				// give to mcc
 				strncpy(upString, uplinkdata, 1024 * 3);
-				sprintf(upDesc, "State vectors, entry update");
+				strcpy(upDesc, "State vectors, entry update");
 			}
 		}
 	}

@@ -50,12 +50,8 @@ void MCC::MissionSequence_B()
 			}
 			break;
 		case 1:
-			char uplinkdata[1000];
-			sprintf(uplinkdata, "V65E");
-			strncpy(upString, uplinkdata, 1024 * 3);
-			if (upString[0] != 0) {
-				this->pushLGCUplinkString(upString);
-			}
+			strcpy(upString, "V65E");
+			this->pushLGCUplinkString(upString);
 			this->LM_uplink_buffer();
 			setSubState(2);
 			break;

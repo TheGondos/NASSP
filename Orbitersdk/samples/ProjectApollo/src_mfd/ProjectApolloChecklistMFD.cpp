@@ -1334,19 +1334,19 @@ std::string ProjectApolloChecklistMFD::DisplayChecklistMissionTime(ChecklistItem
 			break;
 
 		case SECOND_STAGE_STAGING:
-			sprintf(buffer, "First Staging");
+			strcpy(buffer, "First Staging");
 			break;
 
 		case SIVB_STAGE_STAGING:
-			sprintf(buffer, "Second Staging");
+			strcpy(buffer, "Second Staging");
 			break;
 
 		case EARTH_ORBIT_INSERTION:
-			sprintf(buffer, "Earth Orbit Insertion");
+			strcpy(buffer, "Earth Orbit Insertion");
 			break;
 		case CSM_LV_SEPARATION:
 		case CSM_LV_SEPARATION_DONE:
-			sprintf(buffer, "CSM/LV Separation");
+			strcpy(buffer, "CSM/LV Separation");
 			break;
 		case TLI:
 			temptime.y = floor((fabs(item->time) - (temptime.x * 3600)) / 60);
@@ -1432,7 +1432,7 @@ std::string ProjectApolloChecklistMFD::DisplayChecklistMissionTime(ChecklistItem
 			}
 			break;
 		default:
-			sprintf(buffer, "(Unknown Event)");
+			strcpy(buffer, "(Unknown Event)");
 			break;
 	}
 	std::string line = buffer;

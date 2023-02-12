@@ -121,7 +121,7 @@ void papiWriteScenario_SV(FILEHANDLE scn, char *item, SV sv)
 	}
 	else
 	{
-		sprintf(name, "None");
+		strcpy(name, "None");
 	}
 
 	sprintf(buffer, "  %s %s %.12lf %.12lf %.12lf %.12lf %.12lf %.12lf %.12lf %.12lf", item, name, sv.mass, sv.MJD, sv.R.x, sv.R.y, sv.R.z, sv.V.x, sv.V.y, sv.V.z);
@@ -345,7 +345,7 @@ SpaceDigitals::SpaceDigitals()
 	PSI = 0.0;
 	VEHID = "";
 	GETVector1 = 0.0;
-	sprintf(REF1, "");
+	REF1 = "";
 	WT = 0.0;
 	GETA = 0.0;
 	HA = 0.0;
@@ -432,7 +432,7 @@ CheckoutMonitor::CheckoutMonitor()
 	R_Day[2] = 0;
 	A = 0.0;
 	K_Fac = 0.0;
-	sprintf_s(CFG, "");
+	CFG = "";
 	RF = "ECI";
 	WT = 0.0;
 	WC = 0.0;
@@ -548,7 +548,7 @@ DetailedManeuverTable::DetailedManeuverTable()
 	CFP_ELEV = 0.0;
 	CFP_TPI = 0.0;
 	CFP_DT = 0.0;
-	sprintf_s(CFP_OPTION, "");
+	strcpy(CFP_OPTION, "");
 	isCSMTV = true;
 	Attitude = 0;
 }
@@ -1118,7 +1118,7 @@ LunarDescentPlanningTable::LunarDescentPlanningTable()
 	PD_GETTH = 0.0;
 	PD_GETIG = 0.0;
 	PD_GETTD = 0.0;
-	sprintf(DescAzMode, "");
+	DescAzMode = "";
 	DescAsc = 0.0;
 	SN_LK_A = 0.0;
 }
@@ -1318,7 +1318,7 @@ RTCC::RTEConstraintsTable::RTEConstraintsTable()
 	ATPCoordinates[4][6] = -40.0*RAD;
 	ATPCoordinates[4][7] = 170.0*RAD;
 
-	sprintf_s(RTEManeuverCode, "CSU");
+	strcpy(RTEManeuverCode, "CSU");
 }
 
 RTCC::RendezvousEvaluationDisplay::RendezvousEvaluationDisplay()
@@ -1990,8 +1990,8 @@ void RTCC::AP7BlockData(AP7BLKOpt *opt, AP7BLK &pad)
 
 	for (int i = 0;i < 8;i++)
 	{
-		sprintf(pad.Area[i], "N/A");
-		sprintf(pad.Wx[i], "N/A");
+		strcpy(pad.Area[i], "N/A");
+		strcpy(pad.Wx[i], "N/A");
 	}
 
 	for (int i = 0;i < opt->n;i++)
@@ -2005,7 +2005,7 @@ void RTCC::AP7BlockData(AP7BLKOpt *opt, AP7BLK &pad)
 		Vc = length(res.dV_LVLH) - 60832.18 / m1; //TBD
 
 		sprintf(pad.Area[i], opt->area[i].c_str());
-		sprintf(pad.Wx[i], weather);
+		strcpy(pad.Wx[i], weather);
 
 		pad.dVC[i] = Vc/0.3048;
 		pad.GETI[i] = res.P30TIG;
@@ -3929,11 +3929,11 @@ void RTCC::AP11ManeuverPAD(AP11ManPADOpt *opt, AP11MNV &pad)
 
 	if (opt->enginetype == RTCC_ENGINETYPE_CSMSPS)
 	{
-		sprintf(pad.PropGuid, "SPS/G&N");
+		strcpy(pad.PropGuid, "SPS/G&N");
 	}
 	else
 	{
-		sprintf(pad.PropGuid, "RCS/G&N");
+		strcpy(pad.PropGuid, "RCS/G&N");
 	}
 
 	//Trim angles
@@ -3952,21 +3952,21 @@ void RTCC::AP11ManeuverPAD(AP11ManPADOpt *opt, AP11MNV &pad)
 
 	if (length(GDCangles) == 0.0)
 	{
-		sprintf(pad.SetStars, "N/A");
+		strcpy(pad.SetStars, "N/A");
 	}
 	else
 	{
 		if (GDCset == 0)
 		{
-			sprintf(pad.SetStars, "Deneb, Vega");
+			strcpy(pad.SetStars, "Deneb, Vega");
 		}
 		else if (GDCset == 1)
 		{
-			sprintf(pad.SetStars, "Navi, Polaris");
+			strcpy(pad.SetStars, "Navi, Polaris");
 		}
 		else
 		{
-			sprintf(pad.SetStars, "Acrux, Atria");
+			strcpy(pad.SetStars, "Acrux, Atria");
 		}
 	}
 	pad.Shaft = Manshaft*DEG;
@@ -4621,11 +4621,11 @@ void RTCC::LunarEntryPAD(LunarEntryPADOpt *opt, AP11ENT &pad)
 	liftline = 4.055351e-10*vei*vei - 3.149125e-5*vei + 0.503280635;
 	if (S_FPA > atan(liftline))
 	{
-		sprintf(pad.LiftVector[0], "DN");
+		strcpy(pad.LiftVector[0], "DN");
 	}
 	else
 	{
-		sprintf(pad.LiftVector[0], "UP");
+		strcpy(pad.LiftVector[0], "UP");
 	}
 
 	SV svHorCheck, svSxtCheck;
@@ -5799,7 +5799,7 @@ void RTCC::LunarAscentPAD(ASCPADOpt opt, AP11LMASCPAD &pad)
 	pad.V_vert = opt.v_LV / 0.3048;
 	pad.DEDA225_226 = SMa / 0.3048 / 100.0;
 	pad.DEDA231 = length(opt.R_LS) / 0.3048 / 100.0;
-	sprintf(pad.remarks, "");
+	strcpy(pad.remarks, "");
 	pad.DEDA047 = OrbMech::DoubleToDEDA(sin_DL, 14);
 	pad.DEDA053 = OrbMech::DoubleToDEDA(cos_DL, 14);
 }
@@ -6419,7 +6419,7 @@ void RTCC::P27PADCalc(P27Opt *opt, P27PAD &pad)
 
 	navcheck(sv1.R, sv1.V, sv1.MJD, sv1.gravref, lat, lng, alt);
 	
-	sprintf(pad.Purpose[0], "SV");
+	strcpy(pad.Purpose[0], "SV");
 	pad.GET[0] = opt->SVGET;
 	pad.alt = alt / 1852.0;
 	pad.lat = lat*DEG;
@@ -14853,12 +14853,12 @@ int RTCC::EMDSPACENoMPT(SV sv0, int queid, double gmt, double incl, double ascno
 		EZSPACE.GETVector1 = GETfromGMT(sv.GMT);
 		if (sv.RBI == BODY_EARTH)
 		{
-			sprintf(EZSPACE.REF1, "E");
+			EZSPACE.REF1 = "E";
 			mu = OrbMech::mu_Earth;
 		}
 		else
 		{
-			sprintf(EZSPACE.REF1, "M");
+			EZSPACE.REF1 = "M";
 			mu = OrbMech::mu_Moon;
 		}
 
@@ -15313,12 +15313,12 @@ int RTCC::EMDSPACE(int queid, int option, double val, double incl, double ascnod
 			EZSPACE.GETVector1 = GETfromGMT(sv.GMT);
 			if (sv.RBI == BODY_EARTH)
 			{
-				sprintf(EZSPACE.REF1, "E");
+				EZSPACE.REF1 = "E";
 				mu = OrbMech::mu_Earth;
 			}
 			else
 			{
-				sprintf(EZSPACE.REF1, "M");
+				EZSPACE.REF1 = "M";
 				mu = OrbMech::mu_Moon;
 			}
 			
@@ -21281,7 +21281,7 @@ void RTCC::EMDCHECK(int veh, int opt, double param, double THTime, int ref, bool
 	pin.VentingOpt = true;
 	PLAWDT(pin, pout);
 
-	MPTGetStringFromConfig(pout.CC, EZCHECKDIS.CFG);
+	EZCHECKDIS.CFG = MPTGetStringFromConfig(pout.CC);
 
 	EZCHECKDIS.WT = pout.ConfigWeight / 0.45359237;
 	EZCHECKDIS.WC = pout.CSMWeight / 0.45359237;
@@ -21341,60 +21341,44 @@ bool RTCC::MPTConfigSubset(const std::bitset<4> &CfgOld, const std::bitset<4> &C
 	return true;
 }
 
-void RTCC::MPTGetStringFromConfig(const std::bitset<4> &cfg, char *str)
+const char *RTCC::MPTGetStringFromConfig(const std::bitset<4> &cfg)
 {
 	unsigned cfgint = cfg.to_ulong();
 
 	switch (cfgint)
 	{
 	case 1:
-		sprintf(str, "C");
-		break;
+		return "C";
 	case 2:
-		sprintf(str, "S");
-		break;
+		return "S";
 	case 3:
-		sprintf(str, "CS");
-		break;
+		return "CS";
 	case 4:
-		sprintf(str, "A");
-		break;
+		return "A";
 	case 5:
-		sprintf(str, "CA");
-		break;
+		return "CA";
 	case 6:
-		sprintf(str, "SA");
-		break;
+		return "SA";
 	case 7:
-		sprintf(str, "CSA");
-		break;
+		return "CSA";
 	case 8:
-		sprintf(str, "D");
-		break;
+		return "D";
 	case 9:
-		sprintf(str, "CD");
-		break;
+		return "CD";
 	case 10:
-		sprintf(str, "SD");
-		break;
+		return "SD";
 	case 11:
-		sprintf(str, "CSD");
-		break;
+		return "CSD";
 	case 12:
-		sprintf(str, "L");
-		break;
+		return "L";
 	case 13:
-		sprintf(str, "CL");
-		break;
+		return "CL";
 	case 14:
-		sprintf(str, "SL");
-		break;
+		return "SL";
 	case 15:
-		sprintf(str, "CSL");
-		break;
+		return "CSL";
 	default:
-		sprintf(str, " ");
-		break;
+		return " ";
 	}
 }
 
@@ -23334,11 +23318,11 @@ void RTCC::PMDLDPP(const LDPPOptions &opt, const LDPPResults &res, LunarDescentP
 
 	if (opt.I_AZ == 0)
 	{
-		sprintf(table.DescAzMode, "OPT");
+		table.DescAzMode = "OPT";
 	}
 	else
 	{
-		sprintf(table.DescAzMode, "DES");
+		table.DescAzMode = "DES";
 	}
 	table.DescAsc = res.azi*DEG;
 	table.PD_ThetaIgn = opt.theta_D*DEG;
@@ -24794,7 +24778,7 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 	AST.VectorGMT = sv0.GMT;
 
 	char ref;
-	char discr[8], ModeName[16];
+	char ModeName[16];
 
 	if (sv_abort.RBI == BODY_EARTH)
 	{
@@ -24804,19 +24788,21 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 	{
 		ref = 'L';
 	}
+
+	const char* discr;
 	if (med == 77)
 	{
-		sprintf(discr, "S");
+		discr = "S";
 	}
 	else
 	{
 		if (med != 75)
 		{
-			sprintf(discr, "D");
+			discr = "D";
 		}
 		else
 		{
-			sprintf(discr, "");
+			discr = "";
 		}
 	}
 	sprintf(ModeName, "%c%s%s", ref, discr, typname);
@@ -29966,7 +29952,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		}
 		else
 		{
-			sprintf(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
+			strcpy(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
 			return 2;
 		}
 		if (1 <= Month && Month <= 12)
@@ -29975,7 +29961,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		}
 		else
 		{
-			sprintf(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
+			strcpy(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
 			return 2;
 		}
 		if (1 <= Day && Day <= 31)
@@ -29984,7 +29970,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		}
 		else
 		{
-			sprintf(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
+			strcpy(oapiDebugString(), "GMGPMED: P80 HAS INVALID DATE");
 			return 2;
 		}
 

@@ -89,7 +89,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "Present time");
+				strcpy(Buffer, "Present time");
 			}
 			skp->Text(2 * W / 8, 6 * H / 14, Buffer, strlen(Buffer));
 
@@ -100,21 +100,22 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "Present time");
+				strcpy(Buffer, "Present time");
 			}
 			skp->Text(2 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
 		}
 		else
 		{
+			const char* target;
 			if (G->target != NULL)
 			{
-				sprintf(Buffer, G->target->GetName());
+				target = G->target->GetName();
 			}
 			else
 			{
-				sprintf_s(Buffer, "No Target!");
+				target = "No Target!";
 			}
-			skp->Text(1 * W / 8, 4 * H / 14, Buffer, strlen(Buffer));
+			skp->Text(1 * W / 8, 4 * H / 14, target, strlen(target));
 		}
 
 		if (GC->rtcc->med_k30.StartTime >= 0)
@@ -250,7 +251,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (GC->rtcc->med_k01.ChaserThresholdGET < 0)
 			{
-				sprintf_s(Buffer, "Present Time");
+				strcpy(Buffer, "Present Time");
 			}
 			else
 			{
@@ -259,7 +260,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text(1 * W / 16, 6 * H / 14, Buffer, strlen(Buffer));
 			if (GC->rtcc->med_k01.TargetThresholdGET < 0)
 			{
-				sprintf_s(Buffer, "Present Time");
+				strcpy(Buffer, "Present Time");
 			}
 			else
 			{
@@ -276,7 +277,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "Target: Not set!");
+				strcpy(Buffer, "Target: Not set!");
 			}
 			skp->Text(1 * W / 16, 5 * H / 14, Buffer, strlen(Buffer));
 		}
@@ -652,7 +653,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 					}
 					else
 					{
-						sprintf_s(Buffer, "No Target!");
+						strcpy(Buffer, "No Target!");
 					}
 					skp->Text(1 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
 				}
@@ -2154,15 +2155,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->MissionPlanningActive == false)
 		{
+			const char* target;
 			if (G->target != NULL)
 			{
-				sprintf_s(Buffer, G->target->GetName());
+				target = G->target->GetName();
 			}
 			else
 			{
-				sprintf_s(Buffer, "No Target!");
+				target = "No Target!";
 			}
-			skp->Text(10 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
+			skp->Text(10 * W / 16, 2 * H / 14, target, strlen(target));
 		}
 
 		if (GC->rtcc->med_k15.TPIDefinition == 1)
@@ -3466,8 +3468,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skp->Text(25 * W / 32, 2 * H / 28, "GETR", 4);
 
-		sprintf(Buffer, GC->rtcc->EZSPACE.REF1);
-		skp->Text(10 * W / 64, 10 * H / 28, Buffer, strlen(Buffer));
+		skp->Text(10 * W / 64, 10 * H / 28, GC->rtcc->EZSPACE.REF1, strlen(GC->rtcc->EZSPACE.REF1));
 		skpTextFmt(skp, 10 * W / 32, 10 * H / 28, "%05.0f", GC->rtcc->EZSPACE.WT);
 		skpTextFmt(skp, 10 * W / 32, 13 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HA);
 		skpTextFmt(skp, 10 * W / 32, 14 * H / 28, "%08.1f", GC->rtcc->EZSPACE.HP);
@@ -4269,7 +4270,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m72.UllageDT < 0)
 		{
-			sprintf_s(Buffer, "Nominal ullage");
+			strcpy(Buffer, "Nominal ullage");
 		}
 		else
 		{
@@ -4383,7 +4384,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m70.UllageDT < 0)
 		{
-			sprintf_s(Buffer, "Nominal ullage");
+			strcpy(Buffer, "Nominal ullage");
 		}
 		else
 		{
@@ -4591,7 +4592,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (GC->rtcc->med_m65.UllageDT < 0)
 			{
-				sprintf_s(Buffer, "Nominal ullage");
+				strcpy(Buffer, "Nominal ullage");
 			}
 			else
 			{
@@ -4703,7 +4704,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skpTextFmt(skp, 29 * W / 32, 5 * H / 28, "%0.5f", GC->rtcc->EZCHECKDIS.U_T.z);
 		}
 
-		skp->Text(30 * W / 32, 4 * H / 28, GC->rtcc->EZCHECKDIS.CFG, 3);
+		skp->Text(30 * W / 32, 4 * H / 28, GC->rtcc->EZCHECKDIS.CFG, strlen(GC->rtcc->EZCHECKDIS.CFG));
 		skp->Text(30 * W / 32, 6 * H / 28, GC->rtcc->EZCHECKDIS.Option, 3);
 
 		skp->Text(2 * W / 32, 7 * H / 28, "X", 1);
@@ -5106,15 +5107,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			MissionPlanTable *mpt = GC->rtcc->GetMPTPointer(GC->rtcc->med_m55.Table);
 
+			const char* MPTstr;
 			if (mpt->CommonBlock.ConfigCode == 0)
 			{
-				sprintf(Buffer, "None");
+				MPTstr = "None";
 			}
 			else
 			{
-				GC->rtcc->MPTGetStringFromConfig(mpt->CommonBlock.ConfigCode, Buffer);
+				MPTstr = GC->rtcc->MPTGetStringFromConfig(mpt->CommonBlock.ConfigCode);
 			}
-			skp->Text(10 * W / 16, 6 * H / 16, Buffer, strlen(Buffer));
+			skp->Text(10 * W / 16, 6 * H / 16, MPTstr, strlen(MPTstr));
 
 			GET_Display(Buffer, mpt->SIVBVentingBeginGET);
 			skp->Text(10 * W / 16, 7 * H / 16, Buffer, strlen(Buffer));
@@ -5188,8 +5190,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		skpTextFmt(skp, 30 * W / 32, 20 * H / 28, "%07.3f°", GC->rtcc->PZLDPDIS.DescAsc);
 
-		sprintf(Buffer, GC->rtcc->PZLDPDIS.DescAzMode);
-		skp->Text(27 * W / 32, 19 * H / 28, Buffer, strlen(Buffer));
+		skp->Text(27 * W / 32, 19 * H / 28, GC->rtcc->PZLDPDIS.DescAzMode, strlen(GC->rtcc->PZLDPDIS.DescAzMode));
 
 		skpTextFmt(skp, 10 * W / 32, 20 * H / 28, "%+06.2f", GC->rtcc->PZLDPDIS.PD_ThetaIgn);
 
@@ -6174,7 +6175,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (GC->rtcc->med_m78.UllageDT < 0)
 			{
-				sprintf_s(Buffer, "Nominal ullage");
+				strcpy(Buffer, "Nominal ullage");
 			}
 			else
 			{
@@ -6684,7 +6685,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		if (GC->rtcc->med_m66.UllageDT < 0)
 		{
-			sprintf_s(Buffer, "Default");
+			strcpy(Buffer, "Default");
 		}
 		else
 		{
@@ -7250,15 +7251,16 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skp->Text(4 * W / 8, 2 * H / 32, "TPI TIMES", 9);
 		skp->SetTextAlign(oapi::Sketchpad::LEFT);
 
+		const char* target;
 		if (G->target != NULL)
 		{
-			sprintf_s(Buffer, G->target->GetName());
+			target = G->target->GetName();
 		}
 		else
 		{
-			sprintf_s(Buffer, "No Target!");
+			target = "No Target!";
 		}
-		skp->Text(1 * W / 8, 2 * H / 14, Buffer, strlen(Buffer));
+		skp->Text(1 * W / 8, 2 * H / 14, target, strlen(target));
 
 		if (G->TPI_Mode == 0)
 		{

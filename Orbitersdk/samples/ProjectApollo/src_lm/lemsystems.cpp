@@ -877,10 +877,10 @@ void LEM::JoystickTimestep(double simdt)
 		}
 
 		if (thc_id != -1 && !(thc_id < js_enabled)) {
-			sprintf(oapiDebugString(), "DX8JS: Joystick selected as THC does not exist.");
+			strcpy(oapiDebugString(), "DX8JS: Joystick selected as THC does not exist.");
 		}
 		if (rhc_id != -1 && !(rhc_id < js_enabled)) {
-			sprintf(oapiDebugString(), "DX8JS: Joystick selected as RHC does not exist.");
+			strcpy(oapiDebugString(), "DX8JS: Joystick selected as RHC does not exist.");
 		}
 
 		// Zero ACA and TTCA bits in channel 31
@@ -935,7 +935,7 @@ void LEM::JoystickTimestep(double simdt)
 							  // Attempt to acquire the device
 				hr = dx8_joystick[rhc_id]->Acquire();
 				if (FAILED(hr)) {
-					sprintf(oapiDebugString(), "DX8JS: Cannot aquire RHC");
+					strcpy(oapiDebugString(), "DX8JS: Cannot aquire RHC");
 				}
 				else {
 					hr = dx8_joystick[rhc_id]->Poll();
@@ -1223,7 +1223,7 @@ void LEM::JoystickTimestep(double simdt)
 							  // Attempt to acquire the device
 				hr = dx8_joystick[thc_id]->Acquire();
 				if (FAILED(hr)) {
-					sprintf(oapiDebugString(), "DX8JS: Cannot aquire THC");
+					strcpy(oapiDebugString(), "DX8JS: Cannot aquire THC");
 				}
 				else {
 					hr = dx8_joystick[thc_id]->Poll();
@@ -1460,7 +1460,7 @@ void LEM::SystemsTimestep(double simt, double simdt)
 	if(DebugLineClearTimer > 0){
 		DebugLineClearTimer -= simdt;
 		if(DebugLineClearTimer < 0){
-			sprintf(oapiDebugString(),"");
+			strcpy(oapiDebugString(),"");
 			DebugLineClearTimer = 0;
 		}
 	}
@@ -2697,13 +2697,13 @@ void LEM_LR::Timestep(double simdt){
 
 	// Computer interface
 	/*
-	sprintf(debugmsg,"LR STATUS: ");
+	strcpy(debugmsg,"LR STATUS: ");
 	if(val12.Bits.LRPositionCommand != 0){ sprintf(debugmsg,"%s LRPos2",debugmsg); }
 	if(val13.Bits.RadarA != 0){ sprintf(debugmsg,"%s RadarA",debugmsg); }
 	if(val13.Bits.RadarB != 0){ sprintf(debugmsg,"%s RadarB",debugmsg); }
 	if(val13.Bits.RadarC != 0){ sprintf(debugmsg,"%s RadarC",debugmsg); }
 	if(val13.Bits.RadarActivity != 0){ sprintf(debugmsg,"%s RdrActy",debugmsg); }			
-	sprintf(oapiDebugString(),debugmsg);
+	strcpy(oapiDebugString(),debugmsg);
 	*/
 
 	// Maintain discretes

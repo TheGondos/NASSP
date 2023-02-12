@@ -864,7 +864,7 @@ void ATCA::Timestep(double simt, double simdt) {
 
 	//Thruster selection debugging
 	/*char Buffer[128];
-	sprintf(Buffer, "");
+	strcpy(Buffer, "");
 	bool update = false;
 	int thrustertable[16] = {13, 15, 16, 14, 9, 12, 11, 10, 5, 8, 7, 6, 1, 3, 4, 2};
 	for (i = 0;i < 16;i++)
@@ -877,7 +877,7 @@ void ATCA::Timestep(double simt, double simdt) {
 	}
 	if (update)
 	{
-		sprintf(oapiDebugString(), Buffer);
+		strcpy(oapiDebugString(), Buffer);
 	}*/
 
 	/* THRUSTER TABLE:

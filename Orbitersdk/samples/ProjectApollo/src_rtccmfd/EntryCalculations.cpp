@@ -3224,9 +3224,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		Buffer2.assign(Buffer);
 		message.push_back(Buffer2);
 		//Line 12
-		sprintf_s(Buffer, "ENTRY PARAMETERS");
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back("ENTRY PARAMETERS");
 		//Line 13
 		Buffer2.assign("ENTRY PROFILE=() INITIAL BANK=");
 		sprintf_s(Buffer, "%+07.2lf", pRTCC->RZJCTTC.R31_InitialBankAngle*DEG);

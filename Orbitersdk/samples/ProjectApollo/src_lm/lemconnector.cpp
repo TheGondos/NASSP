@@ -324,7 +324,7 @@ bool LM_VHFtoCSM_VHF_Connector::ReceiveMessage(Connector * from, ConnectorMessag
 
 	if (m.val1.dValue > pLM_VHFs->freqXCVR_A*0.99f && m.val1.dValue < pLM_VHFs->freqXCVR_A*1.01f)
 	{
-		//sprintf(oapiDebugString(), "A");
+		//strcpy(oapiDebugString(), "A");
 		pLM_VHFs->RCVDfreqRCVR_A = m.val1.dValue;
 		pLM_VHFs->RCVDpowRCVR_A = m.val2.dValue;
 		pLM_VHFs->RCVDgainRCVR_A = m.val3.dValue;
@@ -333,7 +333,7 @@ bool LM_VHFtoCSM_VHF_Connector::ReceiveMessage(Connector * from, ConnectorMessag
 	}
 	else if (m.val1.dValue > pLM_VHFs->freqXCVR_B*0.99f && m.val1.dValue < pLM_VHFs->freqXCVR_B*1.01f)
 	{
-		//sprintf(oapiDebugString(), "B");
+		//strcpy(oapiDebugString(), "B");
 		pLM_VHFs->RCVDfreqRCVR_B = m.val1.dValue;
 		pLM_VHFs->RCVDpowRCVR_B = m.val2.dValue;
 		pLM_VHFs->RCVDgainRCVR_B = m.val3.dValue;

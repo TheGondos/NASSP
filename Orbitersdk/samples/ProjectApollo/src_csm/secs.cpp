@@ -256,7 +256,7 @@ void RCSC::Timestep(double simdt)
 
 	//Mode 1A Display
 	/*char buffer[1024];
-	sprintf(buffer, "REACTION CONTROL SYSTEM CONTROLLER - MODE 1A\n\n");
+	strcpy(buffer, "REACTION CONTROL SYSTEM CONTROLLER - MODE 1A\n\n");
 	if (OxidizerDumpA)
 	{
 		sprintf(buffer, "%sOxidizer Dump Relay - Energized\n", buffer);
@@ -1032,7 +1032,7 @@ void MESC::Timestep(double simdt)
 
 	//Mode 1A Display
 	/*char buffer[1024];
-	sprintf(buffer, "MASTER EVENTS SEQUENCE CONTROLLER - MODE 1A\n\n");
+	strcpy(buffer, "MASTER EVENTS SEQUENCE CONTROLLER - MODE 1A\n\n");
 	if (Sat->THCRotary.IsCounterClockwise())
 	{
 		sprintf(buffer, "%sTHC - CCW\n", buffer);
@@ -2048,7 +2048,7 @@ void ELSC::Timestep(double simdt)
 
 	//Mode 1A Display
 	/*char buffer[1024];
-	sprintf(buffer, "EARTH LANDING SEQUENCE CONTROLLER - MODE 1A\n\n");
+	strcpy(buffer, "EARTH LANDING SEQUENCE CONTROLLER - MODE 1A\n\n");
 	if (BaroswitchLockIn)
 	{
 		sprintf(buffer, "%sBaroswitch Lock-In Relay - Energized\n", buffer);

@@ -589,9 +589,9 @@ void MCC::Init(){
 	currentMessage = 0;
 	// Default PC/NC
 	PCOption_Enabled = false;
-	sprintf(PCOption_Text, "Roger");
+	strcpy(PCOption_Text, "Roger");
 	NCOption_Enabled = false;
-	sprintf(NCOption_Text, "Negative");
+	strcpy(NCOption_Text, "Negative");
 	// Uplink items
 	uplink_size = 0;
 	logfileinit = false;
@@ -764,10 +764,10 @@ void MCC::TimeStep(double simdt){
 
 	//debugging
 	/*if (TransmittingGroundStation) {
-		sprintf(oapiDebugString(), TransmittingGroundStation->Name);
+		strcpy(oapiDebugString(), TransmittingGroundStation->Name);
 	}
 	else {
-		sprintf(oapiDebugString(), "none");
+		strcpy(oapiDebugString(), "none");
 	}*/
 
 	// MISSION STATE EVALUATOR
@@ -2745,14 +2745,13 @@ void MCC::drawPad(bool writetofile){
 			sprintf_s(buffer2, "XX%0d:%02.0f RETDROG\n", mm, ss);
 			buffer3.append(buffer2);
 
-			sprintf_s(buffer, "%s", buffer3.c_str());
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
 		}
 		break;
 	case PT_P37PAD:
 		{
 			P37PAD * form = (P37PAD *)padForm;
-			sprintf(buffer, "P37 BLOCK DATA\n");
+			strcpy(buffer, "P37 BLOCK DATA\n");
 
 			for (int i = 0;i < 4;i++)
 			{
@@ -2770,7 +2769,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, hh2, mm, mm2;
 		double ss, ss2;
 
-		sprintf(buffer, "P30 MANEUVER");
+		strcpy(buffer, "P30 MANEUVER");
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 		SStoHHMMSS(form->burntime, hh2, mm2, ss2);
 
@@ -2840,8 +2839,7 @@ void MCC::drawPad(bool writetofile){
 			sprintf_s(buffer2, "XXXX%s LIFT VECTOR\nRemarks:\n%s", form->LiftVector[0], form->remarks[0]);
 			buffer3.append(buffer2);
 
-			sprintf_s(buffer, "%s", buffer3.c_str());
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
 		}
 		break;
 	case PT_TLIPAD:
@@ -2869,8 +2867,7 @@ void MCC::drawPad(bool writetofile){
 			sprintf_s(buffer2, "Remarks: %s", form->remarks);
 			buffer3.append(buffer2);
 			
-			sprintf_s(buffer, "%s", buffer3.c_str());
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
 		}
 	break;
 	case PT_STARCHKPAD:
@@ -2880,7 +2877,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm, hh2, mm2;
 		double ss, ss2;
 
-		sprintf(buffer, "CSM STAR CHECK UPDATE");
+		strcpy(buffer, "CSM STAR CHECK UPDATE");
 		SStoHHMMSS(form->GET[0], hh, mm, ss);
 		SStoHHMMSS(form->TAlign[0], hh2, mm2, ss2);
 
@@ -2954,7 +2951,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		sprintf(buffer, "P22 AUTO OPTICS\n");
+		strcpy(buffer, "P22 AUTO OPTICS\n");
 
 		for (int i = 0;i < form->entries;i++)
 		{
@@ -2995,7 +2992,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, hh2, mm, mm2;
 		double ss, ss2;
 
-		sprintf(buffer, "P30 LM MANEUVER");
+		strcpy(buffer, "P30 LM MANEUVER");
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 		SStoHHMMSS(form->burntime, hh2, mm2, ss2);
 
@@ -3041,7 +3038,7 @@ void MCC::drawPad(bool writetofile){
 		}
 		else
 		{
-			sprintf(buffer2, "");
+			strcpy(buffer2, "");
 		}
 
 		sprintf(buffer3, "%+07.1f DVX AGS N86\n%+07.1f DVY AGS\n%+07.1f DVZ AGS", form->dV_AGS.x, form->dV_AGS.y, form->dV_AGS.z);
@@ -3057,7 +3054,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		sprintf(buffer, "LM AOT STAR OBSERVATION");
+		strcpy(buffer, "LM AOT STAR OBSERVATION");
 		SStoHHMMSS(form->GET, hh, mm, ss);
 
 		sprintf(buffer, "%s\n%03d HR\n%02d MIN\n%02.0f SEC\n%d AOT DETENT\n%02o NAV STAR\n%03.0f R\n%03.0f P\n%03.0f Y", buffer, hh, mm, ss, form->Detent, form->Star, form->CSMAtt.x, form->CSMAtt.y, form->CSMAtt.z);
@@ -3110,7 +3107,7 @@ void MCC::drawPad(bool writetofile){
 		int hh[4], mm[4], hh2[4], mm2[4];
 		double ss[4], ss2[4];
 
-		sprintf(buffer, "S065 UPDATE");
+		strcpy(buffer, "S065 UPDATE");
 
 		for (int i = 0;i < 2;i++)
 		{
@@ -3229,7 +3226,7 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		sprintf(buffer, "P76 UPDATE PAD\n");
+		strcpy(buffer, "P76 UPDATE PAD\n");
 
 		for (int i = 0;i < form->entries;i++)
 		{
@@ -3262,7 +3259,7 @@ void MCC::drawPad(bool writetofile){
 	{
 		LIFTOFFTIMES *form = (LIFTOFFTIMES*)padForm;
 
-		sprintf(buffer, "LIFTOFF TIMES\n");
+		strcpy(buffer, "LIFTOFF TIMES\n");
 
 		for (int i = 0;i < form->entries;i++)
 		{
@@ -3366,7 +3363,7 @@ void MCC::drawPad(bool writetofile){
 	case PT_GENERIC:
 	{
 		GENERICPAD * form = (GENERICPAD *)padForm;
-		sprintf(buffer, form->paddata);
+		strcpy(buffer, form->paddata);
 		oapiAnnotationSetText(NHpad, buffer);
 	}
 	break;
@@ -3822,7 +3819,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 				{
 					// We really should test for P00 and proceed since that would be visible to the ground.
 					addMessage("CSM: Ready for uplink?");
-					sprintf(PCOption_Text, "Ready for uplink");
+					strcpy(PCOption_Text, "Ready for uplink");
 					PCOption_Enabled = true;
 					setSubState(2);
 				}
@@ -3861,7 +3858,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (cm->pcm.mcc_size == 0) {
 				addMessage("Uplink completed!");
 				NCOption_Enabled = true;
-				sprintf(NCOption_Text, "Repeat uplink");
+				strcpy(NCOption_Text, "Repeat uplink");
 				setSubState(6);
 			}
 			break;
@@ -3899,7 +3896,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (SubStateTime > 1 && subThreadStatus == DONE) {
 				// Completed. We really should test for P00 and proceed since that would be visible to the ground.
 				addMessage("CSM: Ready for uplink?");
-				sprintf(PCOption_Text, "Ready for uplink");
+				strcpy(PCOption_Text, "Ready for uplink");
 				PCOption_Enabled = true;
 				setSubState(2);
 			}
@@ -3929,7 +3926,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (cm->pcm.mcc_size == 0) {
 				addMessage("Uplink completed!");
 				NCOption_Enabled = true;
-				sprintf(NCOption_Text, "Repeat uplink");
+				strcpy(NCOption_Text, "Repeat uplink");
 				setSubState(6);
 			}
 			break;
@@ -3992,7 +3989,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 				{
 					// We really should test for P00 and proceed since that would be visible to the ground.
 					addMessage("LM: Ready for uplink?");
-					sprintf(PCOption_Text, "Ready for uplink");
+					strcpy(PCOption_Text, "Ready for uplink");
 					PCOption_Enabled = true;
 					setSubState(2);
 				}
@@ -4031,7 +4028,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (lm->PCM.mcc_size == 0) {
 				addMessage("Uplink completed!");
 				NCOption_Enabled = true;
-				sprintf(NCOption_Text, "Repeat uplink");
+				strcpy(NCOption_Text, "Repeat uplink");
 				setSubState(6);
 			}
 			break;
@@ -4069,7 +4066,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (SubStateTime > 1 && subThreadStatus == DONE) {
 				// Completed. We really should test for P00 and proceed since that would be visible to the ground.
 				addMessage("LM: Ready for uplink?");
-				sprintf(PCOption_Text, "Ready for uplink");
+				strcpy(PCOption_Text, "Ready for uplink");
 				PCOption_Enabled = true;
 				setSubState(2);
 			}
@@ -4099,7 +4096,7 @@ void MCC::UpdateMacro(int type, int padtype, bool condition, int updatenumber, i
 			if (lm->PCM.mcc_size == 0) {
 				addMessage("Uplink completed!");
 				NCOption_Enabled = true;
-				sprintf(NCOption_Text, "Repeat uplink");
+				strcpy(NCOption_Text, "Repeat uplink");
 				setSubState(6);
 			}
 			break;

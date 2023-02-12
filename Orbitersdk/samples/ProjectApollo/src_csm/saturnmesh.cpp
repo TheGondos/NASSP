@@ -1195,7 +1195,7 @@ void Saturn::CreateSIVBStage(char *config, VESSELSTATUS &vs1, bool SaturnVStage)
 	S4Config.LMPadCount = LMPadCount;
 	S4Config.AEAPad = AEAPad;
 	S4Config.AEAPadCount = AEAPadCount;
-	sprintf(S4Config.LEMCheck, LEMCheck);
+	strcpy(S4Config.LEMCheck, LEMCheck);
 
 	S4Config.iu_pointer = iu;
 	DontDeleteIU = true;

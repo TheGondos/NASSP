@@ -1198,7 +1198,7 @@ void ASCP::TimeStep(double simdt)
 		msgcounter--;
 		if(msgcounter == 0) {
 #ifdef _DEBUG
-			sprintf(oapiDebugString(),""); // Clear message
+			strcpy(oapiDebugString(),""); // Clear message
 #endif
 		}
 	}

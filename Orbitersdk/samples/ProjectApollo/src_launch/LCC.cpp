@@ -35,7 +35,7 @@ LCC::LCC(OBJHANDLE hVessel, int flightmodel) : VESSEL4(hVessel, flightmodel)
 {
 	pPad = NULL;
 
-	sprintf_s(PadName, 256, "");
+	strcpy(PadName, "");
 
 	static char *name = "LCC";
 	MFDMODESPECEX spec;

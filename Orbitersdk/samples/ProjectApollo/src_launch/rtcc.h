@@ -1134,7 +1134,7 @@ struct SpaceDigitals
 	double PSI;			//Current heading angle
 	const char *VEHID;	//Vehicle for which the space digitals are computed
 	double GETVector1;	//Ground elapsed time of the vector used to compute quantities below
-	char REF1[64];		//Inertial reference body used to compute quantities for GET Vector 1
+	const char *REF1;	//Inertial reference body used to compute quantities for GET Vector 1
 	double WT;			//Total vehicle weight at GET vector 1
 	double GETA;		//Ground elapsed time of next apogee (referenced from GET Vector 1)
 	double HA;			//Height of apogee (referenced from GET Vector 1)
@@ -1232,7 +1232,7 @@ struct CheckoutMonitor
 	int R_Day[3];	//Calendar day of liftoff (day:month:year)
 	double A;		//Vehicle area at GET
 	double K_Fac;	//Current atmospheric density multiplier
-	char CFG[4];	//Vehicle configuration at GET
+	const char *CFG;//Vehicle configuration at GET
 	const char *RF;	//Reference frame (ECT, ECI, MCT, MCI)
 	double WT;		//Total weight for above configuration
 	double WC;		//Total CSM weight
@@ -2144,7 +2144,7 @@ struct LunarDescentPlanningTable
 	double PD_GETTH;
 	double PD_GETIG;
 	double PD_GETTD;
-	char DescAzMode[4];
+	const char *DescAzMode;
 	double DescAsc;
 	double SN_LK_A; //???
 };
@@ -4825,7 +4825,7 @@ public:
 	void EMGPRINT(std::string source, std::vector<std::string> message);
 	void MPTMassUpdate(VESSEL *vessel, MED_M50 &med1, MED_M55 &med2, MED_M49 &med3, bool docked = true);
 	void MPTGetConfigFromString(const std::string &str, std::bitset<4> &cfg);
-	void MPTGetStringFromConfig(const std::bitset<4> &cfg, char *str);
+	const char *MPTGetStringFromConfig(const std::bitset<4> &cfg);
 	MissionPlanTable *GetMPTPointer(int L);
 protected:
 

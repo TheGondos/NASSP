@@ -50,7 +50,7 @@ void MCC::MissionSequence_C()
 			if (SubStateTime > 1) {
 				// Completed. We really should test for P00 and proceed since that would be visible to the ground.
 				addMessage("Ready for uplink?");
-				sprintf(PCOption_Text, "Ready for uplink");
+				strcpy(PCOption_Text, "Ready for uplink");
 				PCOption_Enabled = true;
 				setSubState(3);
 			}
@@ -75,7 +75,7 @@ void MCC::MissionSequence_C()
 			if (cm->pcm.mcc_size == 0) {
 				addMessage("Uplink completed!");
 				NCOption_Enabled = true;
-				sprintf(NCOption_Text, "Repeat uplink");
+				strcpy(NCOption_Text, "Repeat uplink");
 				setSubState(7);
 			}
 			break;

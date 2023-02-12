@@ -1244,21 +1244,21 @@ void LEM::clbkPreStep (double simt, double simdt, double mjd) {
 	// Debug string for displaying descent flight info from VC view
 	if (VcInfoEnabled && !Landed && GetAltitude(ALTMODE_GROUND) < 10000.0 && EngineArmSwitch.GetState() == 0 && oapiCockpitMode() == COCKPIT_VIRTUAL && viewpos == LMVIEW_LPD) {
 
-		char pgnssw[256];
-		char thrsw[256];
+		const char *pgnssw;
+		const char *thrsw;
 
 		if (ModeControlPGNSSwitch.GetState() == 2) {
-			sprintf(pgnssw, "AUTO");
+			pgnssw = "AUTO";
 		} else if (ModeControlPGNSSwitch.GetState() == 1) {
-			sprintf(pgnssw, "ATT HOLD");
+			pgnssw = "ATT HOLD";
 		} else {
-			sprintf(pgnssw, "OFF");
+			pgnssw = "OFF";
 		}
 
 		if (THRContSwitch.GetState() == 1) {
-			sprintf(thrsw, "AUTO");
+			thrsw = "AUTO";
 		} else {
-			sprintf(thrsw, "MAN");
+			thrsw = "MAN";
 		}
 
 		sprintf(oapiDebugString(), "PROG %s | Alt: %.0lf ft | Alt Rate: %.1lf ft/s | PGNS Mode Control: %s | Throttle: %s | Fuel: %.0lf %%", dsky.GetProg(), RadarTape.GetLGCAltitude() * 3.2808399, RadarTape.GetLGCAltitudeRate() * 3.2808399, pgnssw, thrsw, DPSFuelPercentMeter.QueryValue() * 100);
@@ -1266,7 +1266,7 @@ void LEM::clbkPreStep (double simt, double simdt, double mjd) {
 
 	} else {
 		if (VcInfoActive) {
-			sprintf(oapiDebugString(), "");
+			strcpy(oapiDebugString(), "");
 			VcInfoActive = false;
 		}
 	}

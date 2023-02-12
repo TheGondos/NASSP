@@ -76,7 +76,6 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 	{
 		AP11LMManPADOpt opt;
 		AP11LMMNV manpad;
-		char buffer1[1000];
 
 		double GET, SVMJD;
 		SVMJD = oapiGetSimMJD();
@@ -92,13 +91,12 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.csmlmdocked = 0;
 
 		AP11LMManeuverPAD(&opt, manpad);
-		SunburstAttitudeManeuver(buffer1, manpad.IMUAtt);
+		SunburstAttitudeManeuver(uplinkdata, manpad.IMUAtt);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Attitude for RCS Burn #1");
+			strcpy(upDesc, "Attitude for RCS Burn #1");
 		}
 	}
 	break;
@@ -114,35 +112,27 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Configure for RCS system B depletion");
+			strcpy(upDesc, "Configure for RCS system B depletion");
 		}
 	}
 	break;
 	case 4: //PLUS X TRANSLATION ON
 	{
-		char buffer1[1000];
-
-		SunburstLMPCommand(buffer1, 128);
-
-		sprintf(uplinkdata, "%s", buffer1);
+		SunburstLMPCommand(uplinkdata, 128);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "RCS +X translation on");
+			strcpy(upDesc, "RCS +X translation on");
 		}
 	}
 	break;
 	case 5: //PLUS X TRANSLATION OFF
 	{
-		char buffer1[1000];
-
-		SunburstLMPCommand(buffer1, 129);
-
-		sprintf(uplinkdata, "%s", buffer1);
+		SunburstLMPCommand(uplinkdata, 129);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "RCS +X translation off");
+			strcpy(upDesc, "RCS +X translation off");
 		}
 	}
 	break;
@@ -158,7 +148,7 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Configure for normal RCS system A operation");
+			strcpy(upDesc, "Configure for normal RCS system A operation");
 		}
 	}
 	break;
@@ -166,7 +156,6 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 	{
 		AP11LMManPADOpt opt;
 		AP11LMMNV manpad;
-		char buffer1[1000];
 
 		double GET, SVMJD;
 		SVMJD = oapiGetSimMJD();
@@ -182,39 +171,32 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.csmlmdocked = 0;
 
 		AP11LMManeuverPAD(&opt, manpad);
-		SunburstAttitudeManeuver(buffer1, manpad.IMUAtt);
+		SunburstAttitudeManeuver(uplinkdata, manpad.IMUAtt);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Attitude for RCS Burn #2");
+			strcpy(upDesc, "Attitude for RCS Burn #2");
 		}
 	}
 	break;
 	case 8: //X-FEED OPEN
 	{
-		char buffer1[1000];
-		SunburstLMPCommand(buffer1, 252);
-
-		sprintf(uplinkdata, "%s", buffer1);
+		SunburstLMPCommand(uplinkdata, 252);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "X-Feed Open");
+			strcpy(upDesc, "X-Feed Open");
 		}
 	}
 	break;
 	case 9: //ERRONEOUS LM WEIGHT
 	{
-		char buffer1[1000];
-		SunburstMassUpdate(buffer1, 4716.0);
-
-		sprintf(uplinkdata, "%s", buffer1);
+		SunburstMassUpdate(uplinkdata, 4716.0);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Update LM mass with erroneous value");
+			strcpy(upDesc, "Update LM mass with erroneous value");
 		}
 	}
 	break;
@@ -222,7 +204,6 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 	{
 		AP11LMManPADOpt opt;
 		AP11LMMNV manpad;
-		char buffer1[1000];
 
 		double GET, SVMJD;
 		SVMJD = oapiGetSimMJD();
@@ -238,13 +219,12 @@ bool RTCC::CalculationMTP_B(int fcn, LPVOID &pad, char * upString, char * upDesc
 		opt.csmlmdocked = 0;
 
 		AP11LMManeuverPAD(&opt, manpad);
-		SunburstAttitudeManeuver(buffer1, manpad.IMUAtt);
+		SunburstAttitudeManeuver(uplinkdata, manpad.IMUAtt);
 
-		sprintf(uplinkdata, "%s", buffer1);
 		if (upString != NULL) {
 			// give to mcc
 			strncpy(upString, uplinkdata, 1024 * 3);
-			sprintf(upDesc, "Attitude for RCS Burn #5");
+			strcpy(upDesc, "Attitude for RCS Burn #5");
 		}
 	}
 	break;
