@@ -215,8 +215,8 @@
 
 // Ground Station Information Structure
 struct GroundStation {
-	char Name[64];		 // Station name
-	char Code[8];		 // Station ID code
+	const char *Name;	 // Station name
+	const char *Code;	 // Station ID code
 	double Position[2];  // Latitude, Longitude
 	bool Active;         // This entry is valid and active
 	char TrackingCaps;	 // Tracking capabilities

@@ -120,7 +120,7 @@ public:
 	void REFSMMATName(char* Buff, int n);
 	void ThrusterName(char *Buff, int n);
 	bool ThrusterType(std::string name, int &id);
-	void MPTAttitudeName(char *Buff, int n);
+	const char *MPTAttitudeName(int n);
 	void SStoHHMMSS(double time, int &hours, int &minutes, double &seconds);
 	double timetoperi();
 	double timetoapo();
@@ -163,7 +163,7 @@ public:
 	bool set_RTESolution(char *str);
 	void menuGeneralMEDRequest();
 	void menuGeneralMEDRequest(char *message);
-	void GeneralMEDRequest(char *str);
+	void GeneralMEDRequest(const char *str);
 	void EntryRangeDialogue();
 	void menuSVCalc();
 	void menuSwitchSVSlot();

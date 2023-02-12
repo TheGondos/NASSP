@@ -639,31 +639,31 @@ bool ApolloRTCCMFD::ThrusterType(std::string name, int &id)
 	return false;
 }
 
-void ApolloRTCCMFD::MPTAttitudeName(char *Buff, int n)
+const char *ApolloRTCCMFD::MPTAttitudeName(int n)
 {
 	if (n == RTCC_ATTITUDE_INERTIAL)
 	{
-		sprintf_s(Buff, 100, "Inertial");
+		return "Inertial";
 	}
 	else if (n == RTCC_ATTITUDE_MANUAL)
 	{
-		sprintf_s(Buff, 100, "Manual");
+		return "Manual";
 	}
 	else if (n == RTCC_ATTITUDE_LAMBERT)
 	{
-		sprintf_s(Buff, 100, "Lambert (N/A)");
+		return "Lambert (N/A)";
 	}
 	else if (n == RTCC_ATTITUDE_PGNS_EXDV)
 	{
-		sprintf_s(Buff, 100, "PGNS External DV");
+		return "PGNS External DV";
 	}
 	else if (n == RTCC_ATTITUDE_AGS_EXDV)
 	{
-		sprintf_s(Buff, 100, "AGS External DV");
+		return "AGS External DV";
 	}
 	else
 	{
-		sprintf_s(Buff, 100, "");
+		return "";
 	}
 }
 
@@ -5221,7 +5221,7 @@ bool GeneralMEDRequestInput(void *id, char *str, void *data)
 	return true;
 }
 
-void ApolloRTCCMFD::GeneralMEDRequest(char *str)
+void ApolloRTCCMFD::GeneralMEDRequest(const char *str)
 {
 	sprintf_s(GC->rtcc->RTCCMEDBUFFER, 256, str);
 	G->GeneralMEDRequest();
@@ -5363,15 +5363,15 @@ bool ApolloRTCCMFD::REFSMMATUplinkCalc(char *str)
 	{
 		if (type >= 1 && type <= 2)
 		{
-			char veh[4];
+			const char *veh;
 			char str2[32];
 			if (screen == 53)
 			{
-				sprintf_s(veh, "CMC");
+				veh = "CMC";
 			}
 			else
 			{
-				sprintf_s(veh, "LGC");
+				veh = "LGC";
 			}
 			sprintf_s(str2, 32, "C12,%s,CUR,%d;", veh, type);
 			GeneralMEDRequest(str2);
@@ -8112,10 +8112,8 @@ bool GOSTDisplayREFSMMATInput(void* id, char *str, void *data)
 
 	mat.assign(str);
 	med = "G10,CSM,,,,," + mat + ";";
-	char Buff[64];
-	sprintf_s(Buff, 64, med.c_str());
 
-	((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+	((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 	return true;
 }
 
@@ -8137,9 +8135,7 @@ bool GOSTBoresightSCTCalcInput(void* id, char *str, void *data)
 		med2.assign(ref);
 
 		med = "G10,CSM," + std::to_string(hh) + ":" + std::to_string(mm) + ":" + std::to_string(ss) + "," + std::to_string(star) + "," + med2 + ",,;";
-		char Buff[64];
-		sprintf_s(Buff, 64, med.c_str());
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 		return true;
 	}
 	return false;
@@ -8163,9 +8159,7 @@ bool GOSTSXTCalcInput(void* id, char *str, void *data)
 		med2.assign(ref);
 
 		med = "G10,CSM," + std::to_string(hh) + ":" + std::to_string(mm) + ":" + std::to_string(ss) + "," + std::to_string(star) + ",," + med2 + ",;";
-		char Buff[64];
-		sprintf_s(Buff, 64, med.c_str());
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 		return true;
 	}
 	return false;
@@ -8197,10 +8191,7 @@ bool GOSTEnterAttitudeInput(void* id, char *str, void *data)
 		med += std::to_string(Att.z);
 		med += ";";
 
-		char Buff[64];
-		sprintf_s(Buff, 64, med.c_str());
-
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 		return true;
 	}
 	return false;
@@ -8233,10 +8224,7 @@ bool GOSTEnterSXTDataInput(void* id, char *str, void *data)
 		med += std::to_string(TA);
 		med += ";";
 
-		char Buff[64];
-		sprintf_s(Buff, 64, med.c_str());
-
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 		return true;
 	}
 	return false;
@@ -8255,9 +8243,7 @@ bool GOSTShowStarVectorInput(void* id, char *str, void *data)
 	{
 		std::string med;
 		med = "G14,CSM," + std::to_string(star) + ";";
-		char Buff[64];
-		sprintf_s(Buff, "%s", med.c_str());
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 		return true;
 	}
 	return false;
@@ -8280,9 +8266,7 @@ bool GOSTShowLandmarkVectorInput(void* id, char *str, void *data)
 		med2.assign(buff);
 
 		med = "G14," + med2 + ",," + std::to_string(hh) + ":" + std::to_string(mm) + ":" + std::to_string(ss) + "," + body + "," + std::to_string(lat) + "," + std::to_string(lng) + "," + std::to_string(height) + ";";
-		char Buff[64];
-		sprintf_s(Buff, "%s", med.c_str());
-		((ApolloRTCCMFD*)data)->GeneralMEDRequest(Buff);
+		((ApolloRTCCMFD*)data)->GeneralMEDRequest(med.c_str());
 
 		return true;
 	}

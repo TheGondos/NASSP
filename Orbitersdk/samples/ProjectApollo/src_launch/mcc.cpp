@@ -109,8 +109,8 @@ MCC::MCC(RTCC *rtc)
 		GroundStations[x].USBCaps = 0;
 		GroundStations[x].StationPurpose = 0;
 		GroundStations[x].AOS = 0;
-		sprintf(GroundStations[x].Name,"INVALID");
-		sprintf(GroundStations[x].Code,"XXX");
+		GroundStations[x].Name = "INVALID";
+		GroundStations[x].Code = "XXX";
 		x++;
 	}	
 	// Reset capcom interface
@@ -160,7 +160,8 @@ void MCC::Init(){
 
 	// This particular ground station list is the stations that were on-net for Apollo 8.
 	// The index numbers represent status as of 1968.	
-	sprintf(GroundStations[1].Name,"ANTIGUA"); sprintf(GroundStations[1].Code,"ANG");
+	GroundStations[1].Name = "ANTIGUA";
+	GroundStations[1].Code = "ANG";
 	// GroundStations[1].Position[0] = 28.40433; GroundStations[1].Position[1] = -80.60192; // This is the Cape?
 	GroundStations[1].Position[0] = 17.137222; GroundStations[1].Position[1] = -61.775833;
 	GroundStations[1].SBandAntenna = GSSA_9METER;
@@ -173,7 +174,8 @@ void MCC::Init(){
 	GroundStations[1].TrackingCaps = 0;
 	GroundStations[1].Active = true;
 
-	sprintf(GroundStations[2].Name,"ASCENSION"); sprintf(GroundStations[2].Code,"ACN");
+	GroundStations[2].Name = "ASCENSION";
+	GroundStations[2].Code = "ACN";
 	GroundStations[2].Position[0] = -7.94354; GroundStations[2].Position[1] = -14.37105;
 	GroundStations[2].SBandAntenna = GSSA_9METER;
 	GroundStations[2].HasAcqAid = true;
@@ -185,7 +187,8 @@ void MCC::Init(){
 	GroundStations[2].TrackingCaps = GSTK_USB;
 	GroundStations[2].Active = true;
 
-	sprintf(GroundStations[3].Name,"BERMUDA"); sprintf(GroundStations[3].Code,"BDA");
+	GroundStations[3].Name = "BERMUDA";
+	GroundStations[3].Code = "BDA";
 	GroundStations[3].Position[0] = 32.36864; GroundStations[3].Position[1] = -64.68563;
 	GroundStations[3].SBandAntenna = GSSA_9METER;
 	GroundStations[3].HasRadar = true;
@@ -198,7 +201,8 @@ void MCC::Init(){
 	GroundStations[3].TrackingCaps = GSTK_CBAND_LOWSPEED|GSTK_CBAND_HIGHSPEED|GSTK_USB;
 	GroundStations[3].Active = true;
 
-	sprintf(GroundStations[4].Name,"GRAND CANARY"); sprintf(GroundStations[4].Code,"CYI");
+	GroundStations[4].Name = "GRAND CANARY";
+	GroundStations[4].Code = "CYI";
 	GroundStations[4].Position[0] = 27.74055; GroundStations[4].Position[1] = -15.60077;
 	GroundStations[4].SBandAntenna = GSSA_9METER;
 	GroundStations[4].HasRadar = true;
@@ -211,7 +215,8 @@ void MCC::Init(){
 	GroundStations[4].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[4].Active = true;
 
-	sprintf(GroundStations[5].Name,"HONEYSUCKLE"); sprintf(GroundStations[5].Code,"HSK");
+	GroundStations[5].Name = "HONEYSUCKLE";
+	GroundStations[5].Code = "HSK";
 	GroundStations[5].Position[0] = -35.40282; GroundStations[5].Position[1] = 148.98144;
 	GroundStations[5].SBandAntenna = GSSA_26METER;
 	GroundStations[5].DownTlmCaps = GSDT_USB;
@@ -222,7 +227,8 @@ void MCC::Init(){
 	GroundStations[5].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VIDEO;
 	GroundStations[5].Active = true;
 
-	sprintf(GroundStations[6].Name,"CARNARVON"); sprintf(GroundStations[6].Code,"CRO");
+	GroundStations[6].Name = "CARNARVON";
+	GroundStations[6].Code = "CRO";
 	GroundStations[6].Position[0] = -24.90619; GroundStations[6].Position[1] = 113.72595;
 	GroundStations[6].SBandAntenna = GSSA_9METER;
 	GroundStations[6].HasRadar = true;
@@ -235,7 +241,8 @@ void MCC::Init(){
 	GroundStations[6].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[6].Active = true;
 
-	sprintf(GroundStations[7].Name,"CORPUS CHRISTI"); sprintf(GroundStations[7].Code,"TEX");
+	GroundStations[7].Name = "CORPUS CHRISTI";
+	GroundStations[7].Code = "TEX";
 	GroundStations[7].Position[0] = 27.65273; GroundStations[7].Position[1] = -97.37588;
 	GroundStations[7].SBandAntenna = GSSA_9METER;
 	GroundStations[7].HasAcqAid = true;
@@ -247,7 +254,8 @@ void MCC::Init(){
 	GroundStations[7].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[7].Active = true;
 
-	sprintf(GroundStations[8].Name,"GOLDSTONE"); sprintf(GroundStations[8].Code,"GDS");
+	GroundStations[8].Name = "GOLDSTONE";
+	GroundStations[8].Code = "GDS";
 	GroundStations[8].Position[0] = 35.33820; GroundStations[8].Position[1] = -116.87421;
 	GroundStations[8].SBandAntenna = GSSA_26METER;
 	GroundStations[8].DownTlmCaps = GSDT_USB;
@@ -258,7 +266,8 @@ void MCC::Init(){
 	GroundStations[8].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VIDEO;
 	GroundStations[8].Active = true;
 
-	sprintf(GroundStations[9].Name,"GRAND BAHAMA"); sprintf(GroundStations[9].Code,"GBM");
+	GroundStations[9].Name = "GRAND BAHAMA";
+	GroundStations[9].Code = "GBM";
 	GroundStations[9].Position[0] = 26.62022; GroundStations[9].Position[1] = -78.35825;
 	GroundStations[9].SBandAntenna = GSSA_9METER;
 	GroundStations[9].HasAcqAid = true;
@@ -270,7 +279,8 @@ void MCC::Init(){
 	GroundStations[9].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[9].Active = true;
 
-	sprintf(GroundStations[10].Name,"GUAM"); sprintf(GroundStations[10].Code,"GWM");
+	GroundStations[10].Name = "GUAM";
+	GroundStations[10].Code = "GWM";
 	GroundStations[10].Position[0] = 13.30929; GroundStations[10].Position[1] = 144.73694;
 	GroundStations[10].SBandAntenna = GSSA_9METER;
 	GroundStations[10].HasAcqAid = true;
@@ -282,7 +292,8 @@ void MCC::Init(){
 	GroundStations[10].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[10].Active = true;
 
-	sprintf(GroundStations[11].Name,"GUAYMAS"); sprintf(GroundStations[11].Code,"GYM");
+	GroundStations[11].Name = "GUAYMAS";
+	GroundStations[11].Code = "GYM";
 	GroundStations[11].Position[0] = 27.95029; GroundStations[11].Position[1] = -110.90846;
 	GroundStations[11].SBandAntenna = GSSA_9METER;
 	GroundStations[11].HasAcqAid = true;
@@ -294,7 +305,8 @@ void MCC::Init(){
 	GroundStations[11].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[11].Active = true;
 
-	sprintf(GroundStations[12].Name,"HAWAII"); sprintf(GroundStations[12].Code,"HAW");
+	GroundStations[12].Name = "HAWAII";
+	GroundStations[12].Code = "HAW";
 	GroundStations[12].Position[0] = 21.44719; GroundStations[12].Position[1] = -157.76307;
 	GroundStations[12].SBandAntenna = GSSA_9METER;
 	GroundStations[12].HasAcqAid = true;
@@ -307,7 +319,8 @@ void MCC::Init(){
 	GroundStations[12].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[12].Active = true;
 
-	sprintf(GroundStations[13].Name,"MADRID"); sprintf(GroundStations[13].Code,"MAD");
+	GroundStations[13].Name = "MADRID";
+	GroundStations[13].Code = "MAD";
 	GroundStations[13].Position[0] = 40.45443; GroundStations[13].Position[1] = -4.16990;
 	GroundStations[13].SBandAntenna = GSSA_26METER;
 	GroundStations[13].DownTlmCaps = GSDT_USB;
@@ -318,7 +331,8 @@ void MCC::Init(){
 	GroundStations[13].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VIDEO;
 	GroundStations[13].Active = true;
 
-	sprintf(GroundStations[14].Name,"MERRIT"); sprintf(GroundStations[14].Code,"MIL");
+	GroundStations[14].Name = "MERRIT";
+	GroundStations[14].Code = "MIL";
 	GroundStations[14].Position[0] = 28.40433; GroundStations[14].Position[1] = -80.60192;
 	GroundStations[14].SBandAntenna = GSSA_3PT7METER;
 	GroundStations[14].HasRadar = true;
@@ -330,7 +344,8 @@ void MCC::Init(){
 	GroundStations[14].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 	GroundStations[14].Active = true;
 
-	sprintf(GroundStations[15].Name,"USNS HUNTSVILLE"); sprintf(GroundStations[15].Code,"HTV");
+	GroundStations[15].Name = "USNS HUNTSVILLE";
+	GroundStations[15].Code = "HTV";
 	GroundStations[15].SBandAntenna = GSSA_3PT7METER;
 	GroundStations[15].HasRadar = true;
 	GroundStations[15].HasAcqAid = true;
@@ -340,7 +355,8 @@ void MCC::Init(){
 	GroundStations[15].CommCaps = GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE;
 	GroundStations[15].StationPurpose = GSPT_ENTRY|GSPT_ORBITAL|GSPT_NEAR_SPACE;
 
-	sprintf(GroundStations[16].Name,"USNS MERCURY"); sprintf(GroundStations[16].Code,"MER");
+	GroundStations[16].Name = "USNS MERCURY";
+	GroundStations[16].Code = "MER";
 	GroundStations[16].SBandAntenna = GSSA_9METER;
 	GroundStations[16].HasRadar = true;
 	GroundStations[16].HasAcqAid = true;
@@ -351,7 +367,8 @@ void MCC::Init(){
 	GroundStations[16].USBCaps = GSSC_VOICE|GSSC_COMMAND|GSSC_TELEMETRY;
 	GroundStations[16].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 
-	sprintf(GroundStations[17].Name,"USNS REDSTONE"); sprintf(GroundStations[17].Code,"RED");
+	GroundStations[17].Name = "USNS REDSTONE";
+	GroundStations[17].Code = "RED";
 	GroundStations[17].SBandAntenna = GSSA_9METER;
 	GroundStations[17].HasRadar = true;
 	GroundStations[17].HasAcqAid = true;
@@ -362,7 +379,8 @@ void MCC::Init(){
 	GroundStations[17].USBCaps = GSSC_VOICE|GSSC_COMMAND|GSSC_TELEMETRY;
 	GroundStations[17].CommCaps = GSGC_DATAHISPEED|GSGC_DATAWIDEBAND|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 
-	sprintf(GroundStations[18].Name,"USNS VANGUARD"); sprintf(GroundStations[18].Code,"VAN");
+	GroundStations[18].Name = "USNS VANGUARD";
+	GroundStations[18].Code = "VAN";
 	GroundStations[18].SBandAntenna = GSSA_9METER;
 	GroundStations[18].HasRadar = true;
 	GroundStations[18].HasAcqAid = true;
@@ -373,7 +391,8 @@ void MCC::Init(){
 	GroundStations[18].USBCaps = GSSC_VOICE|GSSC_COMMAND|GSSC_TELEMETRY;
 	GroundStations[18].CommCaps = GSGC_DATAHISPEED|GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE|GSGC_VIDEO;
 
-	sprintf(GroundStations[19].Name,"USNS WATERTOWN"); sprintf(GroundStations[19].Code,"WTN");
+	GroundStations[19].Name = "USNS WATERTOWN";
+	GroundStations[19].Code = "WTN";
 	GroundStations[19].SBandAntenna = GSSA_3PT7METER;
 	GroundStations[19].HasRadar = true;
 	GroundStations[19].HasAcqAid = true;
@@ -396,7 +415,8 @@ void MCC::Init(){
 	// 28 = MSFNOC (? THE OPERATIONS CENTER ?)
 
 	// 29 = HSK WING
-	sprintf(GroundStations[29].Name,"HONEYSUCKLE"); sprintf(GroundStations[29].Code,"HSKX");
+	GroundStations[29].Name = "HONEYSUCKLE";
+	GroundStations[29].Code = "HSKX";
 	GroundStations[29].Position[0] = -35.40282; GroundStations[29].Position[1] = 148.98144;
 	GroundStations[29].SBandAntenna = GSSA_26METER;
 	GroundStations[29].StationPurpose = GSPT_LUNAR;
@@ -406,7 +426,8 @@ void MCC::Init(){
 	GroundStations[29].Active = true;
 
 	// 30 = GDS WING
-	sprintf(GroundStations[30].Name,"GOLDSTONE"); sprintf(GroundStations[30].Code,"GDSX");
+	GroundStations[30].Name = "GOLDSTONE";
+	GroundStations[30].Code = "GDSX";
 	GroundStations[30].Position[0] = 35.33820; GroundStations[30].Position[1] = -116.87421;
 	GroundStations[30].SBandAntenna = GSSA_26METER;
 	GroundStations[30].StationPurpose = GSPT_LUNAR;
@@ -416,7 +437,8 @@ void MCC::Init(){
 	GroundStations[30].Active = true;
 
 	// 31 = MAD WING
-	sprintf(GroundStations[31].Name,"MADRID"); sprintf(GroundStations[31].Code,"MADX");
+	GroundStations[31].Name = "MADRID";
+	GroundStations[31].Code = "MADX";
 	GroundStations[31].Position[0] = 40.45443; GroundStations[31].Position[1] = -4.16990;
 	GroundStations[31].SBandAntenna = GSSA_26METER;
 	GroundStations[31].StationPurpose = GSPT_LUNAR;
@@ -427,7 +449,8 @@ void MCC::Init(){
 
 	// 32 = NTTF (PRELAUNCH?)
 
-	sprintf(GroundStations[33].Name,"TANANARIVE"); sprintf(GroundStations[33].Code,"TAN");
+	GroundStations[33].Name = "TANANARIVE";
+	GroundStations[33].Code = "TAN";
 	GroundStations[33].Position[0] = -19.00000; GroundStations[33].Position[1] = 47.27556;	
 	GroundStations[33].HasRadar = true;
 	GroundStations[33].HasAcqAid = true;
@@ -438,7 +461,8 @@ void MCC::Init(){
 	GroundStations[33].Active = true;
 
 	// ALL SUBSEQUENT ARE DOD STATIONS
-	sprintf(GroundStations[34].Name,"ANTIGUA"); sprintf(GroundStations[34].Code,"ANT");
+	GroundStations[34].Name = "ANTIGUA";
+	GroundStations[34].Code = "ANT";
 	GroundStations[34].Position[0] = 17.137222; GroundStations[34].Position[1] = -61.775833;
 	GroundStations[34].HasRadar = true;
 	GroundStations[34].HasAcqAid = true;
@@ -449,7 +473,8 @@ void MCC::Init(){
 	GroundStations[34].CommCaps = 0;
 	GroundStations[34].Active = true;
 
-	sprintf(GroundStations[35].Name,"ASCENSION"); sprintf(GroundStations[35].Code,"ASC");
+	GroundStations[35].Name = "ASCENSION";
+	GroundStations[35].Code = "ASC";
 	GroundStations[35].Position[0] = -7.969444; GroundStations[35].Position[1] = -14.393889;
 	GroundStations[35].HasRadar = true;
 	GroundStations[35].HasAcqAid = true;
@@ -460,7 +485,8 @@ void MCC::Init(){
 	GroundStations[35].Active = true;
 
 	// CAPE KENNEDY: These numbers are guesses. Since it's a DOD site, it's probably at the AFB.
-	sprintf(GroundStations[36].Name,"CAPE KENNEDY"); sprintf(GroundStations[36].Code,"CNV");
+	GroundStations[36].Name = "CAPE KENNEDY";
+	GroundStations[36].Code = "CNV";
 	GroundStations[36].Position[0] = 28.488889; GroundStations[36].Position[1] = -80.577778;
 	GroundStations[36].SBandAntenna = GSSA_9METER;
 	GroundStations[36].StationPurpose = GSPT_LAUNCH;
@@ -469,7 +495,8 @@ void MCC::Init(){
 	GroundStations[36].CommCaps = GSGC_VHFAG_VOICE;
 	GroundStations[36].Active = true;	
 
-	sprintf(GroundStations[37].Name,"GRAND BAHAMA"); sprintf(GroundStations[37].Code,"GBI");
+	GroundStations[37].Name = "GRAND BAHAMA";
+	GroundStations[37].Code = "GBI";
 	GroundStations[37].Position[0] = 26.574167; GroundStations[37].Position[1] = -78.664722;
 	GroundStations[37].HasRadar = true;
 	GroundStations[37].HasAcqAid = true;
@@ -481,7 +508,8 @@ void MCC::Init(){
 	GroundStations[37].CommCaps = 0;
 	GroundStations[37].Active = true;
 
-	sprintf(GroundStations[38].Name,"MERRIT ISLAND"); sprintf(GroundStations[38].Code,"MLA");
+	GroundStations[38].Name = "MERRIT ISLAND";
+	GroundStations[38].Code = "MLA";
 	GroundStations[38].Position[0] = 28.488889; GroundStations[38].Position[1] = -80.577778; // Generic KSC coordinates.
 	GroundStations[38].HasRadar = true;
 	GroundStations[38].HasAcqAid = true;
@@ -491,7 +519,8 @@ void MCC::Init(){
 	GroundStations[38].CommCaps = 0;
 	GroundStations[38].Active = true;
 
-	sprintf(GroundStations[39].Name,"PATRICK AFB"); sprintf(GroundStations[39].Code,"PAT");	
+	GroundStations[39].Name = "PATRICK AFB";
+	GroundStations[39].Code = "PAT";	
 	GroundStations[39].Position[0] = 28.235; GroundStations[39].Position[1] = -80.61;
 	GroundStations[39].HasRadar = true;
 	GroundStations[39].StationPurpose = GSPT_LAUNCH;
@@ -500,7 +529,8 @@ void MCC::Init(){
 	GroundStations[39].CommCaps = 0;
 	GroundStations[39].Active = true;
 
-	sprintf(GroundStations[40].Name,"PRETORIA"); sprintf(GroundStations[40].Code,"PRE");
+	GroundStations[40].Name = "PRETORIA";
+	GroundStations[40].Code = "PRE";
 	GroundStations[40].Position[0] = -30.78330; GroundStations[40].Position[1] = 28.58330;	
 	GroundStations[40].HasRadar = true;
 	GroundStations[40].StationPurpose = GSPT_ORBITAL;
@@ -509,7 +539,8 @@ void MCC::Init(){
 	GroundStations[40].CommCaps = 0;
 	GroundStations[40].Active = true;
 
-	sprintf(GroundStations[41].Name,"VANDENBERG"); sprintf(GroundStations[41].Code,"CAL");
+	GroundStations[41].Name = "VANDENBERG";
+	GroundStations[41].Code = "CAL";
 	GroundStations[41].Position[0] = 34.74007; GroundStations[41].Position[1] = -120.61909;	
 	GroundStations[41].HasRadar = true;
 	GroundStations[41].HasAcqAid = true;
@@ -519,7 +550,8 @@ void MCC::Init(){
 	GroundStations[41].CommCaps = GSGC_TELETYPE|GSGC_SCAMA_VOICE|GSGC_VHFAG_VOICE;
 	GroundStations[41].Active = true;
 
-	sprintf(GroundStations[42].Name,"WHITE SANDS"); sprintf(GroundStations[42].Code,"WHS");
+	GroundStations[42].Name = "WHITE SANDS";
+	GroundStations[42].Code = "WHS";
 	GroundStations[42].Position[0] = 32.35637; GroundStations[42].Position[1] = -106.37826;
 	GroundStations[42].HasRadar = true;
 	GroundStations[42].HasAcqAid = true;

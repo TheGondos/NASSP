@@ -1059,10 +1059,10 @@ struct FIDOOrbitDigitals
 {
 	FIDOOrbitDigitals();
 	double GET;		//Ground elapsed time associated with present position data
-	char VEHID[64];	//Vehicle name
+	const char *VEHID; //Vehicle name
 	int REV;		//Current revolution number associated with subject vehicle and central body
-	char REF[64];	//Reference planet
-	char STAID[16]; //Last vector used for updating the ephemeris
+	const char *REF;//Reference planet
+	std::string STAID; //Last vector used for updating the ephemeris
 	double GMTID;	//GMT of the state vector
 	double GETID;	//GET of the state vector
 	int NV1;		//Number of vectors used for interpolation for present position values
@@ -1092,7 +1092,7 @@ struct FIDOOrbitDigitals
 	double K;		//K-Factor
 	double ORBWT;	//Total current weight
 	int REVR;		//Revolution of requested apogee/perigee
-	char REFR[64];	//Reference planet of requested vector
+	const char *REFR; //Reference planet of requested vector
 	double GETBV;	//Time tag of vector from which apogee/perigee values were computed
 	int NV2;		//Number of vectors used in interpolating for base vector for predicted apogee/perigee data
 	double HAR;		//Height of next apogee at GETA, as requested
@@ -1117,14 +1117,14 @@ struct SpaceDigitals
 {
 	SpaceDigitals();
 	int TUP;			//Update number associated with subject vehicle
-	char VecID[16];		//Identification of the last vector used to update the ephemeris
+	std::string VecID;	//Identification of the last vector used to update the ephemeris
 	double WEIGHT;		//Total vehicle weight
 	double GMTV;		//Greenwich time-tag of the vector
 	double GETV;		//Ground elapsed time-tag of the vector
 	double GETAxis;		//Ground elapsed time used to define the earth-moon line
 	double GETR;		//Ground elapsed time reference (elapsed time of an event)
 	double GET;			//Current ground elapsed time for which orb params were computed
-	char REF[64];		//Inertial reference body used to compute orb params
+	const char *REF;	//Inertial reference body used to compute orb params
 	double V;			//Current velocity
 	double PHI;			//Current latitude
 	double H;			//Current altitude above spherical Earth or above moon assuming landing site radius
@@ -1132,7 +1132,7 @@ struct SpaceDigitals
 	double GAM;			//Current inertial flightpath angle
 	double LAM;			//Current longitude
 	double PSI;			//Current heading angle
-	char VEHID[4];		//Vehicle for which the space digitals are computed
+	const char *VEHID;	//Vehicle for which the space digitals are computed
 	double GETVector1;	//Ground elapsed time of the vector used to compute quantities below
 	char REF1[64];		//Inertial reference body used to compute quantities for GET Vector 1
 	double WT;			//Total vehicle weight at GET vector 1
@@ -1203,10 +1203,10 @@ struct CheckoutMonitor
 {
 	CheckoutMonitor();
 
-	char VEH[4];	//Vehicle associated with parameters
+	const char *VEH;//Vehicle associated with parameters
 	double GET;		//Ground elapsed time tag of vector
 	double GMT;		//Greenwich mean time tag of the vector
-	char VID[64];	//Identification of the last vector used to update the ephemeris
+	std::string VID;//Identification of the last vector used to update the ephemeris
 	VECTOR3 Pos;	//Position vector
 	VECTOR3 Vel;	//Velocity vector
 	double V_i;		//Inertial velocity
@@ -1233,7 +1233,7 @@ struct CheckoutMonitor
 	double A;		//Vehicle area at GET
 	double K_Fac;	//Current atmospheric density multiplier
 	char CFG[4];	//Vehicle configuration at GET
-	char RF[4];		//Reference frame (ECT, ECI, MCT, MCI)
+	const char *RF;	//Reference frame (ECT, ECI, MCT, MCI)
 	double WT;		//Total weight for above configuration
 	double WC;		//Total CSM weight
 	double WL;		//Total LM weight
@@ -1264,7 +1264,7 @@ struct CheckoutMonitor
 	double EB2;		//Ephemeris begin time (other vehicle)
 	double EE2;		//Ephemeris end time (other vehicle)
 	VECTOR3 U_T;	//Unit thrust vector associated with the requested maneuver
-	char Option[4];	//MED option to which displayed data corresponds (GET, GMT, MVI, MVE, RAD, ALT, FPA)
+	const char *Option;	//MED option to which displayed data corresponds (GET, GMT, MVI, MVE, RAD, ALT, FPA)
 
 	int unit; //0 = ER, 1 = FT
 	bool TABlank; //Is true anomaly blanked
@@ -1278,15 +1278,15 @@ struct CheckoutMonitor
 struct DetailedManeuverTable
 {
 	DetailedManeuverTable();
-	char C_STA_ID[10];
+	std::string C_STA_ID;
 	double C_GMTV;
 	double C_GETV;
-	char CODE[10];
-	char L_STA_ID[10];
+	std::string CODE;
+	std::string L_STA_ID;
 	double L_GMTV;
 	double L_GETV;
-	char REF[10];
-	char X_STA_ID[10];
+	std::string REF;
+	std::string X_STA_ID;
 	double X_GMTV;
 	double X_GETV;
 	double GETR;
@@ -1303,7 +1303,7 @@ struct DetailedManeuverTable
 	double DT_U;
 	double DT_TO;
 	double DV_TO;
-	char REFSMMAT_Code[7];
+	std::string REFSMMAT_Code;
 	double DEL_P;
 	double DEL_Y;
 	VECTOR3 VG;
@@ -1336,8 +1336,8 @@ struct DetailedManeuverTable
 	double YD;
 	bool UntilDay; //false = until night, true = until day
 	double TimeUntil;
-	char PGNS_Veh[8];
-	char AGS_Veh[8];
+	const char *PGNS_Veh;
+	const char *AGS_Veh;
 	double PGNS_GETI;
 	VECTOR3 PGNS_DV;
 	double AGS_GETI;
@@ -2783,7 +2783,7 @@ public:
 	void GetSystemGimbalAngles(int thruster, double &P_G, double &Y_G) const;
 	double RTCCPresentTimeGMT();
 	OBJHANDLE GetGravref(int body);
-	bool RTEManeuverCodeLogic(char *code, double lmascmass, double lmdscmass, int UllageNum, int &thruster, int &AttMode, int &ConfigCode, int &ManVeh, double &lmmass);
+	bool RTEManeuverCodeLogic(const char *code, double lmascmass, double lmdscmass, int UllageNum, int &thruster, int &AttMode, int &ConfigCode, int &ManVeh, double &lmmass);
 
 	// **MISSION PROGRAMS**
 
@@ -2844,10 +2844,10 @@ public:
 	void EMGSTGEN(int QUEID, int L1, int ID1, int L2, int ID2, double gmt, MATRIX3 *refs = NULL);
 	//GOST Matrix Storage and Print
 	void EMGSTSTM(int L, MATRIX3 REFS, int id, double gmt);
-	void EMGSTGENName(int ID, char *Buffer);
+	const char *EMGSTGENName(int ID);
 	int EMGSTGENCode(const char *Buffer);
 	//GOST REFSMMAT Maintenance
-	void FormatREFSMMATCode(int ID, int num, char *buff);
+	void FormatREFSMMATCode(int ID, int num, std::string &str);
 	//Sun-Moon-Earth Occultation
 	bool EMMGSTCK(VECTOR3 u_star, VECTOR3 R, int body, VECTOR3 R_EM, VECTOR3 R_ES);
 	//Guidance Optics Support Table

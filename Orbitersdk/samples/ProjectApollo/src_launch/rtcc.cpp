@@ -303,16 +303,16 @@ FIDOOrbitDigitals::FIDOOrbitDigitals()
 	PA = 0.0;
 	PP = 0.0;
 	PPP = 0.0;
-	sprintf(REF, "");
+	REF = "";
 	REV = 0;
 	REVL = 0;
 	REVR = 0;
-	sprintf(STAID, "");
+	STAID = "";
 	TAPP = 0.0;
 	TO = 0.0;
 	V = 0.0;
-	sprintf(VEHID, "");
-	sprintf(REFR, "");
+	VEHID = "";
+	REFR = "";
 	GETBV = 0.0;
 	HAR = 0.0;
 	PAR = 0.0;
@@ -328,14 +328,14 @@ FIDOOrbitDigitals::FIDOOrbitDigitals()
 SpaceDigitals::SpaceDigitals()
 {
 	TUP = 0;
-	sprintf(VecID, "");
+	VecID = "";
 	WEIGHT = 0.0;
 	GMTV = 0.0;
 	GETV = 0.0;
 	GETAxis = 0.0;
 	GETR = 0.0;
 	GET = 0.0;
-	sprintf(REF, "");
+	REF = "";
 	V = 0.0;
 	PHI = 0.0;
 	H = 0.0;
@@ -343,7 +343,7 @@ SpaceDigitals::SpaceDigitals()
 	GAM = 0.0;
 	LAM = 0.0;
 	PSI = 0.0;
-	sprintf(VEHID, "");
+	VEHID = "";
 	GETVector1 = 0.0;
 	sprintf(REF1, "");
 	WT = 0.0;
@@ -401,10 +401,10 @@ SpaceDigitals::SpaceDigitals()
 
 CheckoutMonitor::CheckoutMonitor()
 {
-	sprintf_s(VEH, "CSM");
+	VEH = "CSM";
 	GET = 0.0;
 	GMT = 0.0;
-	sprintf_s(VID, "");
+	VID = "";
 	Pos = _V(0, 0, 0);
 	Vel = _V(0, 0, 0);
 	V_i = 0.0;
@@ -433,7 +433,7 @@ CheckoutMonitor::CheckoutMonitor()
 	A = 0.0;
 	K_Fac = 0.0;
 	sprintf_s(CFG, "");
-	sprintf_s(RF, "ECI");
+	RF = "ECI";
 	WT = 0.0;
 	WC = 0.0;
 	WL = 0.0;
@@ -464,7 +464,7 @@ CheckoutMonitor::CheckoutMonitor()
 	EB2 = 0.0;
 	EE2 = 0.0;
 	U_T = _V(-2, 0, 0); //Indicator to blank display (value < -2)
-	sprintf_s(Option, "GMT");
+	Option = "GMT";
 
 	unit = 0;
 	TABlank = false;
@@ -475,15 +475,15 @@ CheckoutMonitor::CheckoutMonitor()
 
 DetailedManeuverTable::DetailedManeuverTable()
 {
-	sprintf_s(C_STA_ID, "");
+	C_STA_ID = "";
 	C_GMTV = 0.0;
 	C_GETV = 0.0;
-	sprintf_s(CODE, "");
-	sprintf_s(L_STA_ID, "");
+	CODE = "";
+	L_STA_ID = "";
 	L_GMTV = 0.0;
 	L_GETV = 0.0;
-	sprintf_s(REF, "");
-	sprintf_s(X_STA_ID, "");
+	REF = "";
+	X_STA_ID = "";
 	X_GMTV = 0.0;
 	X_GETV = 0.0;
 	GETR = 0.0;
@@ -500,7 +500,7 @@ DetailedManeuverTable::DetailedManeuverTable()
 	DT_U = 0.0;
 	DT_TO = 0.0;
 	DV_TO = 0.0;
-	sprintf_s(REFSMMAT_Code, "");
+	REFSMMAT_Code = "";
 	DEL_P = 0.0;
 	DEL_Y = 0.0;
 	VG = _V(0, 0, 0);
@@ -533,8 +533,8 @@ DetailedManeuverTable::DetailedManeuverTable()
 	YD = 0.0;
 	UntilDay = false;
 	TimeUntil = 0.0;
-	sprintf_s(PGNS_Veh, "");
-	sprintf_s(AGS_Veh, "");
+	PGNS_Veh = "";
+	AGS_Veh = "";
 	PGNS_GETI = 0.0;
 	PGNS_DV = _V(0, 0, 0);
 	AGS_GETI = 0.0;
@@ -713,15 +713,11 @@ MPTManeuver::MPTManeuver()
 
 void MPTManeuver::SaveState(FILEHANDLE scn, char *start_str, char *end_str)
 {
-	char Buff[128];
-
 	oapiWriteLine(scn, start_str);
 	
-	sprintf_s(Buff, code.c_str());
-	oapiWriteScenario_string(scn, "code", Buff);
+	oapiWriteScenario_string(scn, "code", const_cast<char *>(code.c_str()));
 	CommonBlock.SaveState(scn);
-	sprintf_s(Buff, StationIDFrozen.c_str());
-	oapiWriteScenario_string(scn, "StationIDFrozen", Buff);
+	oapiWriteScenario_string(scn, "StationIDFrozen", const_cast<char*>(StationIDFrozen.c_str()));
 	papiWriteScenario_double(scn, "GMTFrozen", GMTFrozen);
 	oapiWriteScenario_int(scn, "AttitudeCode", AttitudeCode);
 	oapiWriteScenario_int(scn, "Thruster", Thruster);
@@ -1143,8 +1139,7 @@ void MissionPlanTable::SaveState(FILEHANDLE scn, char *start_str, char *end_str)
 	char Buff[128], Buff2[128];
 	oapiWriteLine(scn, start_str);
 	oapiWriteScenario_int(scn, "ManeuverNum", ManeuverNum);
-	sprintf_s(Buff, StationID.c_str());
-	oapiWriteScenario_string(scn, "StationID", Buff);
+	oapiWriteScenario_string(scn, "StationID", const_cast<char *>(StationID.c_str()));
 	papiWriteScenario_double(scn, "GMTAV", GMTAV);
 	papiWriteScenario_double(scn, "KFactor", KFactor);
 	papiWriteScenario_double(scn, "LMStagingGMT", LMStagingGMT);
@@ -1483,10 +1478,10 @@ void RTCC::LoadLaunchDaySpecificParameters(int year, int month, int day)
 void RTCC::QMSEARCH(int year, int month, int day)
 {
 	//This function loads the skeleton flight plan for the launch day
-	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d SFP.txt", year, month, day);
+	char fname[128];
+	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d SFP.txt", year, month, day);
 
-	ifstream startable(Buff);
+	ifstream startable(fname);
 	if (startable.is_open())
 	{
 		std::string line;
@@ -1494,7 +1489,7 @@ void RTCC::QMSEARCH(int year, int month, int day)
 
 		while (getline(startable, line))
 		{
-			sprintf_s(Buff, line.c_str());
+			char *Buff = const_cast<char *>(line.c_str());
 
 			if (papiReadScenario_double(Buff, "SFP_DPSI_LOI", dtemp))
 			{
@@ -1741,10 +1736,10 @@ void RTCC::QMMBLD(int year, int month, int day)
 void RTCC::LoadMissionInitParameters(int year, int month, int day)
 {
 	//This function loads launch day specific parameters that might be updated and might be saved/loaded
-	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d Init.txt", year, month, day);
+	char fname[128];
+	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d Init.txt", year, month, day);
 
-	ifstream startable(Buff);
+	ifstream startable(fname);
 	if (startable.is_open())
 	{
 		std::string line, strtemp;
@@ -1753,7 +1748,7 @@ void RTCC::LoadMissionInitParameters(int year, int month, int day)
 
 		while (getline(startable, line))
 		{
-			sprintf_s(Buff, line.c_str());
+			char *Buff = const_cast<char *>(line.c_str());
 
 			papiReadScenario_int(Buff, "LDPPDwellOrbits", GZGENCSN.LDPPDwellOrbits);
 			papiReadScenario_double(Buff, "PZLOIPLN_HP_LLS", PZLOIPLN.HP_LLS);
@@ -1851,10 +1846,10 @@ void RTCC::LoadMissionInitParameters(int year, int month, int day)
 void RTCC::LoadMissionConstantsFile(char *file)
 {
 	//This function loads mission specific constants that will rarely be changed or saved/loaded
-	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%s.txt", file);
+	char fname[128];
+	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%s.txt", file);
 
-	ifstream startable(Buff);
+	ifstream startable(fname);
 	if (startable.is_open())
 	{
 		std::string line, strtemp;
@@ -1865,7 +1860,7 @@ void RTCC::LoadMissionConstantsFile(char *file)
 
 		while (getline(startable, line))
 		{
-			sprintf_s(Buff, line.c_str());
+			char *Buff = const_cast<char *>(line.c_str());
 
 			if (papiReadScenario_int(Buff, "AGCEpoch", SystemParameters.AGCEpoch))
 			{
@@ -1900,13 +1895,15 @@ void RTCC::LoadMissionConstantsFile(char *file)
 			}
 			else if (papiReadScenario_int(Buff, "MCCCRF", SystemParameters.MCCCRF))
 			{
-				sprintf(Buff, "%d", SystemParameters.MCCCRF);
-				sscanf(Buff, "%o", &SystemParameters.MCCCRF_DL);
+				char buf[32];
+				sprintf(buf, "%d", SystemParameters.MCCCRF);
+				sscanf(buf, "%o", &SystemParameters.MCCCRF_DL);
 			}
 			else if (papiReadScenario_int(Buff, "MCCLRF", SystemParameters.MCCLRF))
 			{
-				sprintf(Buff, "%d", SystemParameters.MCCLRF);
-				sscanf(Buff, "%o", &SystemParameters.MCCLRF_DL);
+				char buf[32];
+				sprintf(buf, "%d", SystemParameters.MCCLRF);
+				sscanf(buf, "%o", &SystemParameters.MCCLRF_DL);
 			}
 			else if (papiReadScenario_double(Buff, "PDI_v_IGG", dtemp))
 			{
@@ -14009,10 +14006,8 @@ void RTCC::EMMRMD(int Veh1, int Veh2, double get, double dt, int refs, int axis,
 		ELVCNV(_V(M_B.m21, M_B.m22, M_B.m23), PYRGMT, 0, 2, 3, Y_B_selen);
 		ELVCNV(_V(M_B.m31, M_B.m32, M_B.m33), PYRGMT, 0, 2, 3, Z_B_selen);
 	}
-	char Buffer[7];
 
-	FormatREFSMMATCode(refs, refsdata.ID, Buffer);
-	EZRMDT.REFSMMAT.assign(Buffer);
+	FormatREFSMMATCode(refs, refsdata.ID, EZRMDT.REFSMMAT);
 
 	if (axis == 1)
 	{
@@ -14389,11 +14384,11 @@ void RTCC::EMMDYNMC(int L, int queid, int ind, double param)
 		tab->TO = tcontab->T0;
 		if (tcontab->sv_present.RBI == BODY_EARTH)
 		{
-			sprintf_s(tab->REF, "EARTH");
+			tab->REF = "EARTH";
 		}
 		else
 		{
-			sprintf_s(tab->REF, "LUNAR");
+			tab->REF = "LUNAR";
 		}
 
 		if (mpt->LastExecutedManeuver == 0)
@@ -14409,16 +14404,16 @@ void RTCC::EMMDYNMC(int L, int queid, int ind, double param)
 
 	if (queid == 2)
 	{
-		sprintf_s(tab->STAID, tcontab->StationID.c_str());
+		tab->STAID = tcontab->StationID;
 		tab->GMTID = mpt->GMTAV;
 		tab->GETID = GETfromGMT(mpt->GMTAV);
 		if (L == 1)
 		{
-			sprintf_s(tab->VEHID, "CSM");
+			tab->VEHID = "CSM";
 		}
 		else
 		{
-			sprintf_s(tab->VEHID, "LEM");
+			tab->VEHID = "LEM";
 		}
 	}
 
@@ -14636,11 +14631,11 @@ void RTCC::EMMDYNMC(int L, int queid, int ind, double param)
 
 		if (sv_pred.RBI == BODY_EARTH)
 		{
-			sprintf_s(tab->REFR, "EARTH");
+			tab->REFR = "EARTH";
 		}
 		else
 		{
-			sprintf_s(tab->REFR, "LUNAR");
+			tab->REFR = "LUNAR";
 		}
 
 		tab->REVR = CapeCrossingRev(L, sv_pred.GMT);
@@ -14814,11 +14809,11 @@ int RTCC::EMDSPACENoMPT(SV sv0, int queid, double gmt, double incl, double ascno
 
 	if (sv.RBI == BODY_EARTH)
 	{
-		sprintf(EZSPACE.REF, "EARTH");
+		EZSPACE.REF = "EARTH";
 	}
 	else
 	{
-		sprintf(EZSPACE.REF, "MOON");
+		EZSPACE.REF = "MOON";
 	}
 
 	TimeConstraintsTable newtab;
@@ -15189,11 +15184,11 @@ int RTCC::EMDSPACE(int queid, int option, double val, double incl, double ascnod
 	{
 		if (EZETVMED.SpaceDigVehID == 1)
 		{
-			sprintf_s(EZSPACE.VEHID, "CSM");
+			EZSPACE.VEHID = "CSM";
 		}
 		else
 		{
-			sprintf_s(EZSPACE.VEHID, "LEM");
+			EZSPACE.VEHID = "LEM";
 		}
 	}
 
@@ -15202,7 +15197,7 @@ int RTCC::EMDSPACE(int queid, int option, double val, double incl, double ascnod
 		double cfg_weight;
 
 		EZSPACE.TUP = ephtab->EPHEM.Header.TUP;
-		sprintf_s(EZSPACE.VecID, mpt->StationID.c_str());
+		EZSPACE.VecID = mpt->StationID;
 		if (tctab->TUP > 0)
 		{
 			if (mpt->LastExecutedManeuver == 0)
@@ -15227,11 +15222,11 @@ int RTCC::EMDSPACE(int queid, int option, double val, double incl, double ascnod
 		{
 			if (tctab->sv_present.RBI == BODY_EARTH)
 			{
-				sprintf(EZSPACE.REF, "EARTH");
+				EZSPACE.REF = "EARTH";
 			}
 			else
 			{
-				sprintf(EZSPACE.REF, "MOON");
+				EZSPACE.REF = "MOON";
 			}
 			EZSPACE.V = tctab->V / 0.3048;
 			EZSPACE.GAM = tctab->gamma*DEG;
@@ -20800,25 +20795,25 @@ void RTCC::EMDCHECK(int veh, int opt, double param, double THTime, int ref, bool
 	switch (opt)
 	{
 	case 1:
-		sprintf(EZCHECKDIS.Option, "GMT");
+		EZCHECKDIS.Option = "GMT";
 		break;
 	case 2:
-		sprintf(EZCHECKDIS.Option, "GET");
+		EZCHECKDIS.Option = "GET";
 		break;
 	case 3:
-		sprintf(EZCHECKDIS.Option, "MVI");
+		EZCHECKDIS.Option = "MVI";
 		break;
 	case 4:
-		sprintf(EZCHECKDIS.Option, "MVE");
+		EZCHECKDIS.Option = "MVE";
 		break;
 	case 5:
-		sprintf(EZCHECKDIS.Option, "RAD");
+		EZCHECKDIS.Option = "RAD";
 		break;
 	case 6:
-		sprintf(EZCHECKDIS.Option, "ALT");
+		EZCHECKDIS.Option = "ALT";
 		break;
 	case 7:
-		sprintf(EZCHECKDIS.Option, "FPA");
+		EZCHECKDIS.Option = "FPA";
 		break;
 	}
 
@@ -21065,13 +21060,13 @@ void RTCC::EMDCHECK(int veh, int opt, double param, double THTime, int ref, bool
 
 	if (veh == RTCC_MPT_LM)
 	{
-		sprintf_s(EZCHECKDIS.VEH, "LM");
+		EZCHECKDIS.VEH = "LM";
 	}
 	else
 	{
-		sprintf_s(EZCHECKDIS.VEH, "CSM");
+		EZCHECKDIS.VEH = "CSM";
 	}
-	sprintf_s(EZCHECKDIS.VID, "%s", table->StationID.c_str());
+	EZCHECKDIS.VID = table->StationID;
 	EZCHECKDIS.GET = GETfromGMT(sv_out.GMT);
 	EZCHECKDIS.GMT = sv_out.GMT;
 
@@ -21081,19 +21076,19 @@ void RTCC::EMDCHECK(int veh, int opt, double param, double THTime, int ref, bool
 
 	if (ref == 0)
 	{
-		sprintf(EZCHECKDIS.RF, "ECI");
+		EZCHECKDIS.RF = "ECI";
 	}
 	else if (ref == 1)
 	{
-		sprintf(EZCHECKDIS.RF, "ECT");
+		EZCHECKDIS.RF = "ECT";
 	}
 	else if (ref == 2)
 	{
-		sprintf(EZCHECKDIS.RF, "MCI");
+		EZCHECKDIS.RF = "MCI";
 	}
 	else
 	{
-		sprintf(EZCHECKDIS.RF, "MCT");
+		EZCHECKDIS.RF = "MCT";
 	}
 
 	//Display unit
@@ -22741,7 +22736,7 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 
 	man = &table->mantable[ManNo - 1];
 
-	sprintf_s(res.CODE, man->code.c_str());
+	res.CODE = man->code;
 	res.Attitude = man->AttitudeCode;
 	res.GETI = GETfromGMT(man->GMTI);
 	if (man->AttitudeCode == RTCC_ATTITUDE_SIVB_IGM)
@@ -22808,14 +22803,14 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 	res.WEDGE_ANG = 0.0;
 	res.DH = 0.0;
 
-	sprintf_s(res.PGNS_Veh, "");
-	sprintf_s(res.AGS_Veh, "");
+	res.PGNS_Veh = "";
+	res.AGS_Veh = "";
 
 	if (man->AttitudeCode == 5)
 	{
 		res.PGNS_DV = _V(0, 0, 0);
 		res.AGS_DV = man->dV_LVLH / 0.3048;
-		sprintf_s(res.AGS_Veh, "LM");
+		res.AGS_Veh = "LM";
 	}
 	else if (man->AttitudeCode == 4)
 	{
@@ -22827,11 +22822,11 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 
 		if (MPT_ID == RTCC_MPT_CSM)
 		{
-			sprintf_s(res.PGNS_Veh, "CSM");
+			res.PGNS_Veh = "CSM";
 		}
 		else
 		{
-			sprintf_s(res.PGNS_Veh, "LM");
+			res.PGNS_Veh = "LM";
 		}
 	}
 	else
@@ -22842,13 +22837,13 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 
 	if (MPT_ID == RTCC_MPT_CSM)
 	{
-		sprintf_s(res.C_STA_ID, table->StationID.c_str());
+		res.C_STA_ID = table->StationID;
 		res.C_GMTV = table->GMTAV;
 		res.C_GETV = GETfromGMT(table->GMTAV);
 	}
 	else
 	{
-		sprintf_s(res.L_STA_ID, table->StationID.c_str());
+		res.L_STA_ID = table->StationID;
 		res.L_GMTV = table->GMTAV;
 		res.L_GETV = GETfromGMT(table->GMTAV);
 	}
@@ -22860,18 +22855,18 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 	else
 	{
 		res.X_GMTV = 0.0;
-		sprintf(res.X_STA_ID, "");
+		res.X_STA_ID = "";
 	}
 
 	if (man->RefBodyInd == BODY_EARTH)
 	{
 		mu = OrbMech::mu_Earth;
-		sprintf_s(res.REF, "EARTH");
+		res.REF = "EARTH";
 	}
 	else
 	{
 		mu = OrbMech::mu_Moon;
-		sprintf_s(res.REF, "LUNAR");
+		res.REF = "LUNAR";
 	}
 
 	bool UseOtherMPT;
@@ -22897,7 +22892,7 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 	if (REFSMMAT_ID == 100)
 	{
 		REFSMMAT = PIDREF(man->A_T, man->R_BI, man->V_BI, man->P_G, man->Y_G, HeadsUp);
-		sprintf_s(res.REFSMMAT_Code, "DES");
+		res.REFSMMAT_Code = "DES";
 	}
 	else
 	{
@@ -22916,7 +22911,7 @@ void RTCC::PMDDMT(int MPT_ID, unsigned ManNo, int REFSMMAT_ID, bool HeadsUp, Det
 		{
 			RefsAvailable = false;
 			res.error = "REFSMMAT NOT AVAILABLE";
-			sprintf(res.REFSMMAT_Code, "");
+			res.REFSMMAT_Code = "";
 		}
 		else
 		{
@@ -24547,7 +24542,7 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 
 	EphemerisData sv_ig, sv_r;
 	ASTData AST;
-	char typname[8];
+	const char *typname;
 
 	//Entry profile handling
 	std::string EntryProfile;
@@ -24584,12 +24579,12 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 			if (med_f75.Type == "TCUA")
 			{
 				critical = 2;
-				sprintf_s(typname, "TCUA");
+				typname = "TCUA";
 			}
 			else if (med_f75.Type == "FCUA")
 			{
 				critical = 3;
-				sprintf_s(typname, "FCUA");
+				typname = "FCUA";
 			}
 			else
 			{
@@ -24603,11 +24598,11 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 			dvmax = PZREAP.DVMAX*0.3048;
 			if (PZREAP.RTEIsPTPSite)
 			{
-				sprintf_s(typname, "PTP");
+				typname = "PTP";
 			}
 			else
 			{
-				sprintf_s(typname, "ATP");
+				typname = "ATP";
 			}
 			
 			TZMINI = PZREAP.RTETimeOfLanding*3600.0;
@@ -24666,7 +24661,7 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 			if (med_f75.Type == "FCUA")
 			{
 				SMODE = 16;
-				sprintf_s(typname, "FCUA");
+				typname = "FCUA";
 			}
 			else
 			{
@@ -24685,11 +24680,11 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 			SMODE = 14;
 			if (PZREAP.RTEIsPTPSite)
 			{
-				sprintf_s(typname, "PTP");
+				typname = "PTP";
 			}
 			else
 			{
-				sprintf_s(typname, "ATP");
+				typname = "ATP";
 			}
 			TZMINI = PZREAP.RTETimeOfLanding*3600.0;
 			TZMAXI = 0.0;
@@ -24699,7 +24694,7 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 			if (med_f77.Site == "FCUA")
 			{
 				SMODE = 36;
-				sprintf_s(typname, "FCUA");
+				typname = "FCUA";
 				TZMINI = PZREAP.TZMIN*3600.0;
 				TZMAXI = PZREAP.TZMAX*3600.0;
 
@@ -24712,11 +24707,11 @@ void RTCC::PMMREAST(int med, EphemerisData *sv)
 				SMODE = 34;
 				if (PZREAP.RTEIsPTPSite)
 				{
-					sprintf_s(typname, "PTP");
+					typname = "PTP";
 				}
 				else
 				{
-					sprintf_s(typname, "ATP");
+					typname = "ATP";
 				}
 				TZMINI = PZREAP.RTETimeOfLanding*3600.0;
 				TZMAXI = 0.0;
@@ -25079,8 +25074,6 @@ void RTCC::PMMREDIG(bool mpt)
 	RTEDSPMData SPM;
 	RTEDigitalSolutionTable RID;
 
-	char Buff[64];
-	sprintf_s(Buff, 5, "%s", med_f80.ManeuverCode.c_str());
 	double gmt;
 
 	if (med_f80.ASTCode == 0)
@@ -25220,7 +25213,7 @@ void RTCC::PMMREDIG(bool mpt)
 	MED.Column = med_f80.Column;
 
 	//Check configuration
-	if (RTEManeuverCodeLogic(Buff, lmascmass, lmdscmass, med_f80.NumQuads, MED.Thruster, MED.AttitudeMode, MED.ConfigCode, MED.ManVeh, SPM.LMWeight))
+	if (RTEManeuverCodeLogic(med_f80.ManeuverCode.c_str(), lmascmass, lmdscmass, med_f80.NumQuads, MED.Thruster, MED.AttitudeMode, MED.ConfigCode, MED.ManVeh, SPM.LMWeight))
 	{
 		//Illegal maneuver code
 		PZREAP.RTEDTable[MED.Column - 1].Error = 11;
@@ -25483,8 +25476,7 @@ void RTCC::PMMREDIG(bool mpt)
 	RID.ManeuverCode = med_f80.ManeuverCode;
 	if (refsnum != -1)
 	{
-		FormatREFSMMATCode(refsnum, EZJGMTX1.data[refsnum - 1].ID, Buff);
-		RID.SpecifiedREFSMMAT.assign(Buff);
+		FormatREFSMMATCode(refsnum, EZJGMTX1.data[refsnum - 1].ID, RID.SpecifiedREFSMMAT);
 	}
 	else
 	{
@@ -31173,22 +31165,20 @@ void RTCC::EMGSTSTM(int L, MATRIX3 REFS, int id, double gmt)
 	tab->data[id - 1].GMT = gmt;
 
 	char Buffer[128];
-	char Buff1[4];
 	char Buff2[32];
-	char Buff3[4];
+	const char* vname;
 
-	EMGSTGENName(id, Buff1);
 	OrbMech::format_time_HHMMSS(Buff2, GETfromGMT(gmt));
 	if (L == 1)
 	{
-		sprintf_s(Buff3, "CSM");
+		vname = "CSM";
 	}
 	else
 	{
-		sprintf_s(Buff3, "LEM");
+		vname = "LEM";
 	}
 
-	sprintf_s(Buffer, "NEW IMU MATRIX %s%03d %s", Buff1, tab->data[id - 1].ID, Buff3);
+	sprintf_s(Buffer, "NEW IMU MATRIX %s%03d %s", EMGSTGENName(id), tab->data[id - 1].ID, vname);
 	RTCCONLINEMON.TextBuffer[0].assign(Buffer);
 	sprintf_s(Buffer, "GET = %s", Buff2);
 	RTCCONLINEMON.TextBuffer[1].assign(Buffer);
@@ -31196,56 +31186,44 @@ void RTCC::EMGSTSTM(int L, MATRIX3 REFS, int id, double gmt)
 	EMGPRINT("EMGSTSTM", 19);
 }
 
-void RTCC::FormatREFSMMATCode(int ID, int num, char *buff)
+void RTCC::FormatREFSMMATCode(int ID, int num, std::string &str)
 {
-	char buff2[4];
-	EMGSTGENName(ID, buff2);
-	sprintf_s(buff, 7, "%s%03d", buff2, num);
+	char buf[64];
+	snprintf(buf, 64, "%s%03d", EMGSTGENName(ID), num);
+	buf[sizeof(buf)-1] = '\0';
+	str = buf;
 }
 
-void RTCC::EMGSTGENName(int ID, char *Buffer)
+const char *RTCC::EMGSTGENName(int ID)
 {
 	switch (ID)
 	{
 	case RTCC_REFSMMAT_TYPE_CUR:
-		sprintf_s(Buffer, 4, "CUR");
-		break;
+		return "CUR";
 	case RTCC_REFSMMAT_TYPE_PCR:
-		sprintf_s(Buffer, 4, "PCR");
-		break;
+		return "PCR";
 	case RTCC_REFSMMAT_TYPE_TLM:
-		sprintf_s(Buffer, 4, "TLM");
-		break;
+		return "TLM";
 	case RTCC_REFSMMAT_TYPE_OST:
-		sprintf_s(Buffer, 4, "OST");
-		break;
+		return "OST";
 	case RTCC_REFSMMAT_TYPE_MED:
-		sprintf_s(Buffer, 4, "MED");
-		break;
+		return "MED";
 	case RTCC_REFSMMAT_TYPE_DMT:
-		sprintf_s(Buffer, 4, "DMT");
-		break;
+		return "DMT";
 	case RTCC_REFSMMAT_TYPE_DOD:
-		sprintf_s(Buffer, 4, "DOD");
-		break;
+		return "DOD";
 	case RTCC_REFSMMAT_TYPE_LCV:
-		sprintf_s(Buffer, 4, "LCV");
-		break;
+		return "LCV";
 	case RTCC_REFSMMAT_TYPE_AGS:
-		sprintf_s(Buffer, 4, "AGS");
-		break;
+		return "AGS";
 	case RTCC_REFSMMAT_TYPE_DOK:
-		sprintf_s(Buffer, 4, "DOK");
-		break;
+		return "DOK";
 	case RTCC_REFSMMAT_TYPE_LLA:
-		sprintf_s(Buffer, 4, "LLA");
-		break;
+		return "LLA";
 	case RTCC_REFSMMAT_TYPE_LLD:
-		sprintf_s(Buffer, 4, "LLD");
-		break;
+		return "LLD";
 	default:
-		sprintf_s(Buffer, 4, "");
-		break;
+		return "";
 	}
 }
 
@@ -32966,7 +32944,7 @@ int RTCC::AttitudeNameToCode(std::string attitude)
 	return 0;
 }
 
-bool RTCC::RTEManeuverCodeLogic(char *code, double lmascmass, double lmdscmass, int UllageNum, int &thruster, int &AttMode, int &ConfigCode, int &ManVeh, double &lmmass)
+bool RTCC::RTEManeuverCodeLogic(const char *code, double lmascmass, double lmdscmass, int UllageNum, int &thruster, int &AttMode, int &ConfigCode, int &ManVeh, double &lmmass)
 {
 	AttMode = RTCC_ATTITUDE_PGNS_EXDV;
 
@@ -33747,9 +33725,7 @@ void RTCC::CMMRFMAT(int L, int id, int addr)
 		return;
 	}
 
-	char buff[7];
-	FormatREFSMMATCode(id, refs.ID, buff);
-	block->MatrixID.assign(buff);
+	FormatREFSMMATCode(id, refs.ID, block->MatrixID);
 
 	MATRIX3 a = mul(refs.REFSMMAT, OrbMech::tmat(SystemParameters.MAT_J2000_BRCS));
 	block->REFSMMAT = a;
@@ -33943,40 +33919,40 @@ RTCC_BMSVPS_1:
 
 		//Get telemetry vector from BZSTLM and save vector code
 		EphemerisData sv;
-		char Buff[5];
+		const char *prefix = "";
 		switch (tabid)
 		{
 		case 0:
 			sv = BZSTLM.HighSpeedCMCCSMVector;
-			sprintf_s(Buff, "CCHE");
+			prefix = "CCHE";
 			break;
 		case 1:
 			sv = BZSTLM.HighSpeedLGCCSMVector;
-			sprintf_s(Buff, "LCHE");
+			prefix = "LCHE";
 			break;
 		case 2:
 			sv = BZSTLM.HighSpeedAGSCSMVector;
-			sprintf_s(Buff, "ACHE");
+			prefix = "ACHE";
 			break;
 		case 3:
 			sv = BZSTLM.HighSpeedIUVector;
-			sprintf_s(Buff, "ICHE");
+			prefix = "ICHE";
 			break;
 		case 4:
 			sv = BZSTLM.HighSpeedCMCLEMVector;
-			sprintf_s(Buff, "CLHE");
+			prefix = "CLHE";
 			break;
 		case 5:
 			sv = BZSTLM.HighSpeedLGCLEMVector;
-			sprintf_s(Buff, "LLHE");
+			prefix = "LLHE";
 			break;
 		case 6:
 			sv = BZSTLM.HighSpeedAGSLEMVector;
-			sprintf_s(Buff, "ALHE");
+			prefix = "ALHE";
 			break;
 		case 7:
 			sv = BZSTLM.HighSpeedIUVector;
-			sprintf_s(Buff, "ILHE");
+			prefix = "ILHE";
 			break;
 		}
 
@@ -33992,7 +33968,7 @@ RTCC_BMSVPS_1:
 		{
 			BZEVLVEC.data[tabid].ID++;
 		}
-		sprintf_s(Buff2, "%s%03d", Buff, BZEVLVEC.data[tabid].ID);
+		sprintf_s(Buff2, "%s%03d", prefix, BZEVLVEC.data[tabid].ID);
 		BZEVLVEC.data[tabid].VectorCode.assign(Buff2);
 	}
 	//To usable slot?
@@ -34018,32 +33994,32 @@ RTCC_BMSVPS_1:
 			return;
 		}
 
-		char Buff[5];
+		const char* prefix = "";
 		switch (etabid)
 		{
 		case 0:
-			sprintf_s(Buff, "CCHU");
+			prefix = "CCHU";
 			break;
 		case 1:
-			sprintf_s(Buff, "LCHU");
+			prefix = "LCHU";
 			break;
 		case 2:
-			sprintf_s(Buff, "ACHU");
+			prefix = "ACHU";
 			break;
 		case 3:
-			sprintf_s(Buff, "ICHU");
+			prefix = "ICHU";
 			break;
 		case 4:
-			sprintf_s(Buff, "CLHU");
+			prefix = "CLHU";
 			break;
 		case 5:
-			sprintf_s(Buff, "LLHU");
+			prefix = "LLHU";
 			break;
 		case 6:
-			sprintf_s(Buff, "ALHU");
+			prefix = "ALHU";
 			break;
 		case 7:
-			sprintf_s(Buff, "ILHU");
+			prefix = "ILHU";
 			break;
 		}
 
@@ -34059,7 +34035,7 @@ RTCC_BMSVPS_1:
 		{
 			BZUSEVEC.data[utabid].ID++;
 		}
-		sprintf_s(Buff2, "%s%03d", Buff, BZUSEVEC.data[utabid].ID);
+		sprintf_s(Buff2, "%s%03d", prefix, BZUSEVEC.data[utabid].ID);
 		BZUSEVEC.data[utabid].VectorCode.assign(Buff2);
 
 		RTCCONLINEMON.TextBuffer[0] = BZUSEVEC.data[utabid].VectorCode;
@@ -34947,10 +34923,7 @@ void RTCC::EMMGSTMP()
 			return;
 		}
 
-		char Buff[7];
-
-		FormatREFSMMATCode(EZGSTMED.MTX1, refs.ID, Buff);
-		EZJGSTTB.IRA.assign(Buff);
+		FormatREFSMMATCode(EZGSTMED.MTX1, refs.ID, EZJGSTTB.IRA);
 
 		//Get state vector at input time
 		ELVCTRInputTable intab;
@@ -35180,10 +35153,7 @@ void RTCC::EMMGSTMP()
 		}
 		else
 		{
-			char Buff[7];
-
-			FormatREFSMMATCode(EZGSTMED.MTX3, refs.ID, Buff);
-			EZJGSTTB.MAT.assign(Buff);
+			FormatREFSMMATCode(EZGSTMED.MTX3, refs.ID, EZJGSTTB.MAT);
 			EZJGSTTB.REFSMMAT = refs.REFSMMAT;
 		}
 	}

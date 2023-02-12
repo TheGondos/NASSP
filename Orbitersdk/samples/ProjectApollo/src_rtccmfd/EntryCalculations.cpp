@@ -2702,9 +2702,7 @@ void RetrofirePlanning::RMSTTF()
 	}
 	//TBD: Burn code
 	//TBD: Area
-	char Buffer[16];
-	pRTCC->EMGSTGENName(pRTCC->RZJCTTC.R31_REFSMMAT, Buffer);
-	tab->RefsID.assign(Buffer);
+	tab->RefsID = pRTCC->EMGSTGENName(pRTCC->RZJCTTC.R31_REFSMMAT);
 	tab->CSMWeightRetro = burnaux.WTENGON *LBS*1000.0;
 
 	pRTCC->EMMDYNEL(sv_TIG, elem);
@@ -3201,8 +3199,9 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		message.push_back(Buffer2);
 		//Line 7
 		Buffer2.assign("REFSMMAT ID=");
-		pRTCC->FormatREFSMMATCode(refsid, refsdata.ID, Buffer);
-		Buffer2.append(Buffer);
+		std::string REFSMMAT_ID;
+		pRTCC->FormatREFSMMATCode(refsid, refsdata.ID, REFSMMAT_ID);
+		Buffer2.append(REFSMMAT_ID);
 		sprintf_s(Buffer, " XX=%+.8lf XY=%+.8lf XZ=%+.8lf", refsdata.REFSMMAT.m11, refsdata.REFSMMAT.m12, refsdata.REFSMMAT.m13);
 		Buffer2.append(Buffer);
 		message.push_back(Buffer2);
