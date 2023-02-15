@@ -8119,7 +8119,7 @@ bool GOSTBoresightSCTCalcInput(void* id, char *str, void *data)
 	int hh, mm, star;
 	char ref[16];
 
-	if (sscanf_s(str, "%d:%d:%lf %d %s", &hh, &mm, &ss, &star, &ref, _countof(ref)) == 5)
+	if (sscanf(str, "%d:%d:%lf %d %15s", &hh, &mm, &ss, &star, ref) == 5)
 	{
 		std::string med, med2;
 		med2.assign(ref);
@@ -8143,7 +8143,7 @@ bool GOSTSXTCalcInput(void* id, char *str, void *data)
 	int hh, mm, star;
 	char ref[16];
 
-	if (sscanf_s(str, "%d:%d:%lf %d %s", &hh, &mm, &ss, &star, &ref, _countof(ref)) == 5)
+	if (sscanf(str, "%d:%d:%lf %d %15s", &hh, &mm, &ss, &star, &ref) == 5)
 	{
 		std::string med, med2;
 		med2.assign(ref);
@@ -8250,7 +8250,7 @@ bool GOSTShowLandmarkVectorInput(void* id, char *str, void *data)
 	int hh, mm;
 	double ss, lat = 0.0, lng = 0.0, height = 0.0;
 	char buff[16], body;
-	if (sscanf_s(str, "%s %d:%d:%lf %c %lf %lf %lf", buff, (unsigned)_countof(buff), &hh, &mm, &ss, &body, 1, &lat, &lng, &height) >= 3)
+	if (sscanf(str, "%15s %d:%d:%lf %c %lf %lf %lf", buff, &hh, &mm, &ss, &body, 1, &lat, &lng, &height) >= 3)
 	{
 		std::string med, med2;
 		med2.assign(buff);

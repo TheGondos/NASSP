@@ -18891,7 +18891,7 @@ bool RTCC::MEDTimeInputHHMMSS(std::string vec, double &hours)
 	int hh, mm;
 	double ss;
 	bool pos = true;
-	if (sscanf_s(vec.c_str(), "%d:%d:%lf", &hh, &mm, &ss) != 3)
+	if (sscanf(vec.c_str(), "%d:%d:%lf", &hh, &mm, &ss) != 3)
 	{
 		return true;
 	}
@@ -28190,7 +28190,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.SPSFuelRemaining = -1;
 		if (data.size() > 1 && data[1] != "")
 		{
-			if (sscanf_s(data[1].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[1].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28201,7 +28201,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.CSMRCSFuelRemaining = -1;
 		if (data.size() > 2 && data[2] != "")
 		{
-			if (sscanf_s(data[2].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[2].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28212,7 +28212,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.SIVBFuelRemaining = -1;
 		if (data.size() > 3 && data[3] != "")
 		{
-			if (sscanf_s(data[3].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[3].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28223,7 +28223,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.LMAPSFuelRemaining = -1;
 		if (data.size() > 4 && data[4] != "")
 		{
-			if (sscanf_s(data[4].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[4].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28234,7 +28234,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.LMRCSFuelRemaining = -1;
 		if (data.size() > 5 && data[5] != "")
 		{
-			if (sscanf_s(data[5].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[5].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28245,7 +28245,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		med_m49.LMDPSFuelRemaining = -1;
 		if (data.size() > 6 && data[6] != "")
 		{
-			if (sscanf_s(data[6].c_str(), "%lf", &temp) == 1)
+			if (sscanf(data[6].c_str(), "%lf", &temp) == 1)
 			{
 				if (temp >= 0)
 				{
@@ -28368,7 +28368,7 @@ int RTCC::PMMMED(std::string med, std::vector<std::string> data)
 		else
 		{
 			double ang;
-			if (sscanf_s(data[3].c_str(), "%lf", &ang) != 1)
+			if (sscanf(data[3].c_str(), "%lf", &ang) != 1)
 			{
 				return 2;
 			}
@@ -29061,7 +29061,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 			return 2;
 		}
 		double Azi;
-		if (sscanf_s(data[2].c_str(), "%lf", &Azi) != 1)
+		if (sscanf(data[2].c_str(), "%lf", &Azi) != 1)
 		{
 			return 2;
 		}
@@ -29094,7 +29094,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		double val;
 		if (data.size() > 0 && data[0] != "")
 		{
-			if (sscanf_s(data[0].c_str(), "%lf", &val) != 1)
+			if (sscanf(data[0].c_str(), "%lf", &val) != 1)
 			{
 				return 2;
 			}
@@ -29106,7 +29106,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		}
 		if (data.size() > 1 && data[1] != "")
 		{
-			if (sscanf_s(data[1].c_str(), "%lf", &val) != 1)
+			if (sscanf(data[1].c_str(), "%lf", &val) != 1)
 			{
 				return 2;
 			}
@@ -29126,7 +29126,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 		}
 		int hh, mm;
 		double ss;
-		if (sscanf_s(data[0].c_str(), "%d:%d:%lf", &hh, &mm, &ss) != 3)
+		if (sscanf(data[0].c_str(), "%d:%d:%lf", &hh, &mm, &ss) != 3)
 		{
 			return 2;
 		}
@@ -29145,7 +29145,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 			return 1;
 		}
 		double val;
-		if (sscanf_s(data[0].c_str(), "%lf", &val) != 1)
+		if (sscanf(data[0].c_str(), "%lf", &val) != 1)
 		{
 			return 2;
 		}
@@ -29874,7 +29874,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 			return 1;
 		}
 		double val;
-		if (sscanf_s(data[0].c_str(), "%lf", &val) != 1)
+		if (sscanf(data[0].c_str(), "%lf", &val) != 1)
 		{
 			return 2;
 		}
@@ -29888,7 +29888,7 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 			return 1;
 		}
 		int Num;
-		if (sscanf_s(data[0].c_str(), "%d", &Num) != 1)
+		if (sscanf(data[0].c_str(), "%d", &Num) != 1)
 		{
 			return 2;
 		}
@@ -29911,15 +29911,15 @@ int RTCC::GMSMED(std::string med, std::vector<std::string> data)
 			return 2;
 		}
 		int Month, Day, Year;
-		if (sscanf_s(data[2].c_str(), "%d", &Month) != 1)
+		if (sscanf(data[2].c_str(), "%d", &Month) != 1)
 		{
 			return 2;
 		}
-		if (sscanf_s(data[3].c_str(), "%d", &Day) != 1)
+		if (sscanf(data[3].c_str(), "%d", &Day) != 1)
 		{
 			return 2;
 		}
-		if (sscanf_s(data[4].c_str(), "%d", &Year) != 1)
+		if (sscanf(data[4].c_str(), "%d", &Year) != 1)
 		{
 			return 2;
 		}
@@ -30364,7 +30364,7 @@ int RTCC::EMGTVMED(std::string med, std::vector<std::string> data)
 			return 2;
 		}
 		double dt;
-		if (sscanf_s(data[3].c_str(), "%lf", &dt) != 1)
+		if (sscanf(data[3].c_str(), "%lf", &dt) != 1)
 		{
 			return 2;
 		}
