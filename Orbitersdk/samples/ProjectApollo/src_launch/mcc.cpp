@@ -46,6 +46,8 @@
 #include "LVDC.h"
 #include "iu.h"
 #include <stdarg.h>
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 // SCENARIO FILE MACROLOGY
 #define SAVE_BOOL(KEY,VALUE) oapiWriteScenario_int(scn, KEY, VALUE)
@@ -2546,6 +2548,7 @@ void SStoHHMMSS(double time, int &hours, int &minutes, double &seconds)
 
 // Draw PAD display
 void MCC::drawPad(bool writetofile){
+	std::string annotation;
 	char buffer[1024];
 	char tmpbuf[36];
 	char tmpbuf2[36];
@@ -2553,6 +2556,7 @@ void MCC::drawPad(bool writetofile){
 		oapiAnnotationSetText(NHpad,"PAD data lost");
 		return;
 	}
+	buffer[0] = '\0';
 	switch(padNumber){
 	case 0:
 		// NO PAD (*knifed*)
@@ -2561,205 +2565,177 @@ void MCC::drawPad(bool writetofile){
 	case PT_AP7BLK:
 		{
 			AP7BLK * form = (AP7BLK *)padForm;
-			int length = 0;
-			length += sprintf(buffer + length, "BLOCK DATA");
+			annotation = "BLOCK DATA";
 
 			for (int i = 0;i < 4;i++)
 			{
 				format_time(tmpbuf, form->GETI[i]);
 				format_time(tmpbuf2, form->GETI[i + 4]);
-				length += sprintf(buffer + length, "\nXX%s XX%s AREA\nXXX%+05.1f XXX%+05.1f LAT\nXX%+06.1f XX%+06.1f LONG\n%s %s GETI\nXXX%4.1f XXX%4.1f DVC\n%s %s WX", form->Area[i], form->Area[i + 4], form->Lat[i], form->Lat[i + 4], form->Lng[i], form->Lng[i + 4], tmpbuf, tmpbuf2, form->dVC[i], form->dVC[i + 4], form->Wx[i], form->Wx[i + 4]);
+				annotation += fmt(buffer, "\nXX%s XX%s AREA\nXXX%+05.1f XXX%+05.1f LAT\nXX%+06.1f XX%+06.1f LONG\n%s %s GETI\nXXX%4.1f XXX%4.1f DVC\n%s %s WX", form->Area[i], form->Area[i + 4], form->Lat[i], form->Lat[i + 4], form->Lng[i], form->Lng[i + 4], tmpbuf, tmpbuf2, form->dVC[i], form->dVC[i + 4], form->Wx[i], form->Wx[i + 4]);
 			}
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_P27PAD:
 		{
 			P27PAD * form = (P27PAD *)padForm;
 			format_time(tmpbuf, form->GET[0]);
-			sprintf(buffer, "P27 UPDATE\nPURP V%d\nGET %s\n304 01 INDEX %d\n", form->Verb[0], tmpbuf, form->Index[0]);
+			annotation = fmt(buffer, "P27 UPDATE\nPURP V%d\nGET %s\n304 01 INDEX %d\n", form->Verb[0], tmpbuf, form->Index[0]);
 			for (int i = 0;i < 16;i++)
 			{
-				sprintf(buffer, "%s %02o %05d\n", buffer,i+2, form->Data[0][i]);
+				annotation += fmt(buffer, "%02o %05d\n", i+2, form->Data[0][i]);
 			}
 			format_time_prec(tmpbuf, form->NavChk);
-			sprintf(buffer, "%sNAV CHECK (N34)\n%s\nLAT %+07.2f\nLONG %+07.2f\nALT %+07.1f\n", buffer, tmpbuf, form->lat, form->lng, form->alt);
-			oapiAnnotationSetText(NHpad, buffer);
+			annotation += fmt(buffer, "NAV CHECK (N34)\n%s\nLAT %+07.2f\nLONG %+07.2f\nALT %+07.1f\n", tmpbuf, form->lat, form->lng, form->alt);
+			oapiAnnotationSetText(NHpad, const_cast<char*>(annotation.c_str()));
 		}
 		break;
 	case PT_AP7NAV:
 		{
 			AP7NAV * form = (AP7NAV *)padForm;
 			format_time_prec(tmpbuf, form->NavChk[0]);
-			sprintf(buffer, "NAV CHECK\nGET (N34):\n%s\n %+07.2f LAT\n %+07.2f LNG\n %+07.1f ALT\n", tmpbuf, form->lat[0], form->lng[0], form->alt[0]);
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, fmt(buffer, "NAV CHECK\nGET (N34):\n%s\n %+07.2f LAT\n %+07.2f LNG\n %+07.1f ALT\n", tmpbuf, form->lat[0], form->lng[0], form->alt[0]));
 		}
 		break;
 	case PT_AP7MNV:
 		{
 			int hh, mm;
 			double ss;
-			char tempString[1024];
-			std::string fullString;
 
 			AP7MNV * form = (AP7MNV *)padForm;
 
 			if (MissionType == MTP_D)
 			{
-				fullString = "MANEUVER UPDATE (P30)\n";
+				annotation = "MANEUVER UPDATE (P30)\n";
 			}
 			else
 			{
-				fullString = "MANEUVER\n";
+				annotation = "MANEUVER\n";
 			}
 
 			SStoHHMMSS(form->GETI, hh, mm, ss);
-			snprintf(tempString, 1024, "%s PURPOSE\n%+06d HRS GETI N33\n%+06d MIN\n%+07.2f SEC\n%+07.1f DVX\n%+07.1f DVY\n%+07.1f DVZ\n", form->purpose, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z);
-			fullString.append(tempString);
+			annotation += fmt(buffer, "%s PURPOSE\n%+06d HRS GETI N33\n%+06d MIN\n%+07.2f SEC\n%+07.1f DVX\n%+07.1f DVY\n%+07.1f DVZ\n", form->purpose, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z);
 
 			if (MissionType == MTP_D)
 			{
-				snprintf(tempString, 1024, "%+07.1f DVR\n", length(form->dV));
+				annotation += fmt(buffer, "%+07.1f DVR\n", length(form->dV));
 			}
 			else
 			{
-				snprintf(tempString, 1024, "%+07.1f HA\n%+07.1f HP\n", form->HA, form->HP);
+				annotation += fmt(buffer, "%+07.1f HA\n%+07.1f HP\n", form->HA, form->HP);
 			}
-			fullString.append(tempString);
 
-			snprintf(tempString, 1024, "%+07.1f DVC\n", form->Vc);
-			fullString.append(tempString);
+			annotation += fmt(buffer, "%+07.1f DVC\n", form->Vc);
 
 			SStoHHMMSS(form->burntime, hh, mm, ss);
 			if (MissionType == MTP_D)
 			{
-				snprintf(tempString, 1024, "XX%d:%04.1f BT\n%+06.0f CSM WT\n%+07.2f PTRM\n%+07.2f YTRM\n", mm, ss, form->Weight, form->pTrim, form->yTrim);
+				annotation += fmt(buffer, "XX%d:%04.1f BT\n%+06.0f CSM WT\n%+07.2f PTRM\n%+07.2f YTRM\n", mm, ss, form->Weight, form->pTrim, form->yTrim);
 			}
 			else
 			{
-				snprintf(tempString, 1024, "%+06.0f WGT\n%+07.2f PTRM\n%+07.2f YTRM\nXXX%d:%02.0f BT (MIN:SEC)\n", form->Weight, form->pTrim, form->yTrim, mm, ss);
+				annotation += fmt(buffer, "%+06.0f WGT\n%+07.2f PTRM\n%+07.2f YTRM\nXXX%d:%02.0f BT (MIN:SEC)\n", form->Weight, form->pTrim, form->yTrim, mm, ss);
 			}
-			fullString.append(tempString);
 
-			snprintf(tempString, 1024, "XXXX%02d SXTS\n%+07.2f SFT\n%+07.3f TRN\n", form->Star, form->Shaft, form->Trun);
-			fullString.append(tempString);
+			annotation += fmt(buffer, "XXXX%02d SXTS\n%+07.2f SFT\n%+07.3f TRN\n", form->Star, form->Shaft, form->Trun);
 
 			if (MissionType == MTP_D)
 			{
-				snprintf(tempString, 1024, "%+07.2f LAT NAV\n%+07.2f LONG CHECK\n%+07.1f ALT TIG-30\n", form->lat, form->lng, form->alt);
+				annotation += fmt(buffer, "%+07.2f LAT NAV\n%+07.2f LONG CHECK\n%+07.1f ALT TIG-30\n", form->lat, form->lng, form->alt);
 			}
 			else
 			{
 				SStoHHMMSS(form->NavChk, hh, mm, ss);
-				snprintf(tempString, 1024, "%+06d HRS\n%+06d MIN TLAT, LONG\n%+07.2f SEC\n%+07.2f LAT\n%+07.2f LONG\n%+07.1f ALT\n", hh, mm, ss, form->lat, form->lng, form->alt);
+				annotation += fmt(buffer, "%+06d HRS\n%+06d MIN TLAT, LONG\n%+07.2f SEC\n%+07.2f LAT\n%+07.2f LONG\n%+07.1f ALT\n", hh, mm, ss, form->lat, form->lng, form->alt);
 			}
-			fullString.append(tempString);
 
-			snprintf(tempString, 1024, "XXX%03.0f R\nXXX%03.0f P\nXXX%03.0f Y\nRemarks:\n%s", form->Att.x, form->Att.y, form->Att.z, form->remarks);
-			fullString.append(tempString);
+			annotation += fmt(buffer, "XXX%03.0f R\nXXX%03.0f P\nXXX%03.0f Y\nRemarks:\n%s", form->Att.x, form->Att.y, form->Att.z, form->remarks);
 
-			snprintf(buffer, 1024, "%s", fullString.c_str());
-			oapiAnnotationSetText(NHpad,buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_AP7TPI:
 		{
 			AP7TPI * form = (AP7TPI *)padForm;
 			format_time_prec(tmpbuf, form->GETI);
-			sprintf(buffer, "TERMINAL PHASE INITIATE\nGETI\n%s\n%+07.1f Vgx\n%+07.1f Vgy\n%+07.1f Vgz\n", tmpbuf, form->Vg.x, form->Vg.y, form->Vg.z);
+			annotation = fmt(buffer, "TERMINAL PHASE INITIATE\nGETI\n%s\n%+07.1f Vgx\n%+07.1f Vgy\n%+07.1f Vgz\n", tmpbuf, form->Vg.x, form->Vg.y, form->Vg.z);
 			if (form->Backup_dV.x > 0)
 			{
-				sprintf(buffer, "%sF%04.1f/%02.0f DVX LOS/BT\n", buffer, abs(form->Backup_dV.x), form->Backup_bT.x);
+				annotation += fmt(buffer, "F%04.1f/%02.0f DVX LOS/BT\n", abs(form->Backup_dV.x), form->Backup_bT.x);
 			}
 			else
 			{
-				sprintf(buffer, "%sA%04.1f/%02.0f DVX LOS/BT\n", buffer, abs(form->Backup_dV.x), form->Backup_bT.x);
+				annotation += fmt(buffer, "A%04.1f/%02.0f DVX LOS/BT\n", abs(form->Backup_dV.x), form->Backup_bT.x);
 			}
 			if (form->Backup_dV.y > 0)
 			{
-				sprintf(buffer, "%sR%04.1f/%02.0f DVY LOS/BT\n", buffer, abs(form->Backup_dV.y), form->Backup_bT.y);
+				annotation += fmt(buffer, "R%04.1f/%02.0f DVY LOS/BT\n", abs(form->Backup_dV.y), form->Backup_bT.y);
 			}
 			else
 			{
-				sprintf(buffer, "%sL%04.1f/%02.0f DVY LOS/BT\n", buffer, abs(form->Backup_dV.y), form->Backup_bT.y);
+				annotation += fmt(buffer, "L%04.1f/%02.0f DVY LOS/BT\n", abs(form->Backup_dV.y), form->Backup_bT.y);
 			}
 			if (form->Backup_dV.z > 0)
 			{
-				sprintf(buffer, "%sD%04.1f/%02.0f DVZ LOS/BT\n", buffer, abs(form->Backup_dV.z), form->Backup_bT.z);
+				annotation += fmt(buffer, "D%04.1f/%02.0f DVZ LOS/BT\n", abs(form->Backup_dV.z), form->Backup_bT.z);
 			}
 			else
 			{
-				sprintf(buffer, "%sU%04.1f/%02.0f DVZ LOS/BT\n", buffer, abs(form->Backup_dV.z), form->Backup_bT.z);
+				annotation += fmt(buffer, "U%04.1f/%02.0f DVZ LOS/BT\n", abs(form->Backup_dV.z), form->Backup_bT.z);
 			}
-			sprintf(buffer, "%sX%04.1f/%3.1f\nX%06.2f R\n%+06.1f RDOT AT TPI\n%06.2f EL MINUS 5 MIN\n%06.2f AZ", buffer, form->dH_TPI, form->dH_Max, form->R, form->Rdot, form->EL, form->AZ);
+			annotation += fmt(buffer, "X%04.1f/%3.1f\nX%06.2f R\n%+06.1f RDOT AT TPI\n%06.2f EL MINUS 5 MIN\n%06.2f AZ", form->dH_TPI, form->dH_Max, form->R, form->Rdot, form->EL, form->AZ);
 
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_AP7ENT:
 		{
 			AP7ENT * form = (AP7ENT *)padForm;
 
-			char buffer2[1024];
-			std::string buffer3;
 			int hh, mm;
 			double ss;
 
-			buffer3 = "ENTRY UPDATE\nPREBURN\n";
-			sprintf_s(buffer2, "X%s AREA\nXX%+5.1f DV TO\n", form->Area[0], form->dVTO[0]);
-			buffer3.append(buffer2);
-			sprintf_s(buffer2, "XXX%03.0f R400K\nXXX%03.0f P400K\nXXX%03.0f Y400K\n", form->Att400K[0].x, form->Att400K[0].y, form->Att400K[0].z);
-			buffer3.append(buffer2);
-			sprintf_s(buffer2, "%+07.1f RTGO .05G\n%+06.0f VIO .05G\n", form->RTGO[0], form->VIO[0]);
-			buffer3.append(buffer2);
+			annotation = "ENTRY UPDATE\nPREBURN\n";
+			annotation += fmt(buffer, "X%s AREA\nXX%+5.1f DV TO\n", form->Area[0], form->dVTO[0]);
+			annotation += fmt(buffer, "XXX%03.0f R400K\nXXX%03.0f P400K\nXXX%03.0f Y400K\n", form->Att400K[0].x, form->Att400K[0].y, form->Att400K[0].z);
+			annotation += fmt(buffer, "%+07.1f RTGO .05G\n%+06.0f VIO .05G\n", form->RTGO[0], form->VIO[0]);
 			SStoHHMMSS(form->Ret05[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RET .05G\n%+07.2f LAT\n%+07.2f LONG\n", mm, ss, form->Lat[0], form->Lng[0]);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RET .05G\n%+07.2f LAT\n%+07.2f LONG\n", mm, ss, form->Lat[0], form->Lng[0]);
 			SStoHHMMSS(form->Ret2[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE (55°) N66\n", mm, ss, form->DRE[0]);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE (55°) N66\n", mm, ss, form->DRE[0]);
 			SStoHHMMSS(form->RetBBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETBBO\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETBBO\n", mm, ss);
 			SStoHHMMSS(form->RetEBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETEBO\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETEBO\n", mm, ss);
 			SStoHHMMSS(form->RetDrog[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETDROG\n", mm, ss);
-			buffer3.append(buffer2);
-			sprintf_s(buffer2, "POSTBURN\nXXX%03.0f R400K\n%+07.1f RTGO .05G\n%+06.0f VIO .05G\n", form->PB_R400K[0], form->PB_RTGO[0], form->PB_VIO[0]);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETDROG\n", mm, ss);
+			annotation += fmt(buffer, "POSTBURN\nXXX%03.0f R400K\n%+07.1f RTGO .05G\n%+06.0f VIO .05G\n", form->PB_R400K[0], form->PB_RTGO[0], form->PB_VIO[0]);
 			SStoHHMMSS(form->PB_Ret05[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RET .05G\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RET .05G\n", mm, ss);
 			SStoHHMMSS(form->PB_Ret2[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE +/-100nm N66\n", mm, ss, form->PB_DRE[0]);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RET .2G\n%+07.1lf DRE +/-100nm N66\n", mm, ss, form->PB_DRE[0]);
 			SStoHHMMSS(form->PB_RetBBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETBBO\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETBBO\n", mm, ss);
 			SStoHHMMSS(form->PB_RetEBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETEBO\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETEBO\n", mm, ss);
 			SStoHHMMSS(form->PB_RetDrog[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%0d:%02.0f RETDROG\n", mm, ss);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "XX%0d:%02.0f RETDROG\n", mm, ss);
 
-			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_P37PAD:
 		{
 			P37PAD * form = (P37PAD *)padForm;
-			strcpy(buffer, "P37 BLOCK DATA\n");
+			annotation = "P37 BLOCK DATA\n";
 
 			for (int i = 0;i < 4;i++)
 			{
 				format_time(tmpbuf, form->GETI[i]);
 				format_time(tmpbuf2, form->GET400K[i]);
-				sprintf(buffer, "%s-------------------------\n%s GETI\nX%+04.0f DVT\nX%+5.1f LONG\n%s GET 400K\n", buffer, tmpbuf, form->dVT[i], form->lng[i], tmpbuf2);
+				annotation += fmt(buffer, "-------------------------\n%s GETI\nX%+04.0f DVT\nX%+5.1f LONG\n%s GET 400K\n", tmpbuf, form->dVT[i], form->lng[i], tmpbuf2);
 			}
-			oapiAnnotationSetText(NHpad, buffer);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_AP11MNV:
@@ -2769,105 +2745,78 @@ void MCC::drawPad(bool writetofile){
 		int hh, hh2, mm, mm2;
 		double ss, ss2;
 
-		strcpy(buffer, "P30 MANEUVER");
+		annotation = "P30 MANEUVER";
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 		SStoHHMMSS(form->burntime, hh2, mm2, ss2);
 
 		format_time(tmpbuf, form->GET05G);
 
-		sprintf(buffer, "%s\n%s PURPOSE\n%s PROP/GUID\n%+05.0f WT N47\n%+07.2f PTRIM N48\n%+07.2f YTRIM\n%+06d HRS GETI\n%+06d MIN N33\n%+07.2f SEC\n%+07.1f DVX N81\n%+07.1f DVY\n%+07.1f DVZ\nXXX%03.0f R\nXXX%03.0f P\nXXX%03.0f Y\n",
-			buffer, form->purpose, form->PropGuid, form->Weight, form->pTrim, form->yTrim, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z, form->Att.x, form->Att.y, form->Att.z);
+		annotation += fmt(buffer, "\n%s PURPOSE\n%s PROP/GUID\n%+05.0f WT N47\n%+07.2f PTRIM N48\n%+07.2f YTRIM\n%+06d HRS GETI\n%+06d MIN N33\n%+07.2f SEC\n%+07.1f DVX N81\n%+07.1f DVY\n%+07.1f DVZ\nXXX%03.0f R\nXXX%03.0f P\nXXX%03.0f Y\n",
+			form->purpose, form->PropGuid, form->Weight, form->pTrim, form->yTrim, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z, form->Att.x, form->Att.y, form->Att.z);
 
 		if (form->type == 1)
 		{
-			sprintf(buffer, "%s%+07.1f HA N44\n%+07.1f HP\n%+07.1f DVT\nXXX%d:%02.0f BT\nX%06.1f DVC\nXXXX%02d SXTS\n%+06.1f0 SFT\n%+05.1f00 TRN\nXXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n%+07.2f LAT N61\n%+07.2f LONG\n%+07.1f RTGO EMS\n%+06.0f VI0\n%s GET 0.05G\n",
-				buffer, form->HA, form->HP, form->Vt, mm2, ss2, form->Vc, form->Star, form->Shaft, form->Trun, form->BSSStar, form->SPA, form->SXP, form->lat, form->lng, form->RTGO, form->VI0, tmpbuf);
+			annotation += fmt(buffer, "%+07.1f HA N44\n%+07.1f HP\n%+07.1f DVT\nXXX%d:%02.0f BT\nX%06.1f DVC\nXXXX%02d SXTS\n%+06.1f0 SFT\n%+05.1f00 TRN\nXXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n%+07.2f LAT N61\n%+07.2f LONG\n%+07.1f RTGO EMS\n%+06.0f VI0\n%s GET 0.05G\n",
+				form->HA, form->HP, form->Vt, mm2, ss2, form->Vc, form->Star, form->Shaft, form->Trun, form->BSSStar, form->SPA, form->SXP, form->lat, form->lng, form->RTGO, form->VI0, tmpbuf);
 
-			sprintf(buffer, "%sSET STARS: %s\nRALIGN %03.0f\nPALIGN %03.0f\nYALIGN %03.0f\n", buffer, form->SetStars, form->GDCangles.x, form->GDCangles.y, form->GDCangles.z);
+			annotation += fmt(buffer, "SET STARS: %s\nRALIGN %03.0f\nPALIGN %03.0f\nYALIGN %03.0f\n", form->SetStars, form->GDCangles.x, form->GDCangles.y, form->GDCangles.z);
 		}
 
-		sprintf(buffer, "%sRemarks:\n%s", buffer, form->remarks);
+		annotation += fmt(buffer, "Remarks:\n%s", form->remarks);
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP11ENT:
 		{
 			AP11ENT * form = (AP11ENT *)padForm;
 
-			char buffer2[1024];
-			std::string buffer3;
 			int hh, mm;
 			double ss;
 
-			buffer3 = "LUNAR ENTRY\n";
+			annotation = "LUNAR ENTRY\n";
 
 			format_time(tmpbuf, form->GETHorCheck[0]);
-			sprintf_s(buffer2, "%s AREA\nXXX%03.0f R 0.05G\nXXX%03.0f P 0.05G\nXXX%03.0f Y 0.05G\n%s GET HOR CHK\n", form->Area[0], form->Att05[0].x, form->Att05[0].y, form->Att05[0].z, tmpbuf);
-			buffer3.append(buffer2);
-
-			sprintf_s(buffer2, "XXX%03.0f P\n%+07.2f LAT N61\n%+07.2f LONG\nXXX%04.1f MAX G\n", form->PitchHorCheck[0], form->Lat[0], form->Lng[0], form->MaxG[0]);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "%s AREA\nXXX%03.0f R 0.05G\nXXX%03.0f P 0.05G\nXXX%03.0f Y 0.05G\n%s GET HOR CHK\n", form->Area[0], form->Att05[0].x, form->Att05[0].y, form->Att05[0].z, tmpbuf);
+			annotation += fmt(buffer, "XXX%03.0f P\n%+07.2f LAT N61\n%+07.2f LONG\nXXX%04.1f MAX G\n", form->PitchHorCheck[0], form->Lat[0], form->Lng[0], form->MaxG[0]);
 			format_time(tmpbuf, form->RRT[0]);
-			sprintf_s(buffer2, "%+06.0f V400K N60\n%+07.2f y400K\n%+07.1f RTGO EMS\n%+06.0f VI0\n%s RRT\n", form->V400K[0], form->Gamma400K[0], form->RTGO[0], form->VIO[0], tmpbuf);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "%+06.0f V400K N60\n%+07.2f y400K\n%+07.1f RTGO EMS\n%+06.0f VI0\n%s RRT\n", form->V400K[0], form->Gamma400K[0], form->RTGO[0], form->VIO[0], tmpbuf);
 			SStoHHMMSS(form->RET05[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%02d:%02.0f RET 0.05G\nXXX%04.2f DO\n", mm, ss, form->DO[0]);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "XX%02d:%02.0f RET 0.05G\nXXX%04.2f DO\n", mm, ss, form->DO[0]);
 			SStoHHMMSS(form->RETVCirc[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%02d:%02.0f RET V CIRC\n", mm, ss);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "XX%02d:%02.0f RET V CIRC\n", mm, ss);
 			SStoHHMMSS(form->RETBBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%02d:%02.0f RETBBO\n", mm, ss);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "XX%02d:%02.0f RETBBO\n", mm, ss);
 			SStoHHMMSS(form->RETEBO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%02d:%02.0f RETEBO\n", mm, ss);
-			buffer3.append(buffer2);
-
+			annotation += fmt(buffer, "XX%02d:%02.0f RETEBO\n", mm, ss);
 			SStoHHMMSS(form->RETDRO[0], hh, mm, ss);
-			sprintf_s(buffer2, "XX%02d:%02.0f RETDRO\n", mm, ss);
-			buffer3.append(buffer2);
-
-			sprintf_s(buffer2, "XXXX%02d SXTS\n%+06.1f0 SFT\n%+05.1f00 TRN\nXXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n", form->SXTS[0], form->SFT[0], form->TRN[0], form->BSS[0], form->SPA[0], form->SXP[0]);
-			buffer3.append(buffer2);
-
-			sprintf_s(buffer2, "XXXX%s LIFT VECTOR\nRemarks:\n%s", form->LiftVector[0], form->remarks[0]);
-			buffer3.append(buffer2);
-
-			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
+			annotation += fmt(buffer, "XX%02d:%02.0f RETDRO\n", mm, ss);
+			annotation += fmt(buffer, "XXXX%02d SXTS\n%+06.1f0 SFT\n%+05.1f00 TRN\nXXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n", form->SXTS[0], form->SFT[0], form->TRN[0], form->BSS[0], form->SPA[0], form->SXP[0]);
+			annotation += fmt(buffer, "XXXX%s LIFT VECTOR\nRemarks:\n%s", form->LiftVector[0], form->remarks[0]);
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 		break;
 	case PT_TLIPAD:
 		{
 			TLIPAD * form = (TLIPAD *)padForm;
 
-			char buffer2[1024];
-			std::string buffer3;
+			annotation = "TLI\n";
 			int hh, mm;
 			double ss;
 
-			buffer3 = "TLI\n";
 			format_time(tmpbuf, form->TB6P);
 			SStoHHMMSS(form->BurnTime, hh, mm, ss);
 
-			sprintf_s(buffer2, "%s TB6p\nXXX%03.0f R\nXXX%03.0f P TLI\nXXX%03.0f Y\nXXX%d:%02.0f BT\n%07.1f DVC\n%+05.0f VI\nXXX%03.0f R\nXXX%03.0f P SEP\nXXX%03.0f Y\n", tmpbuf, form->IgnATT.x, form->IgnATT.y, form->IgnATT.z, mm, ss, form->dVC, form->VI, form->SepATT.x, form->SepATT.y, form->SepATT.z);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "%s TB6p\nXXX%03.0f R\nXXX%03.0f P TLI\nXXX%03.0f Y\nXXX%d:%02.0f BT\n%07.1f DVC\n%+05.0f VI\nXXX%03.0f R\nXXX%03.0f P SEP\nXXX%03.0f Y\n", tmpbuf, form->IgnATT.x, form->IgnATT.y, form->IgnATT.z, mm, ss, form->dVC, form->VI, form->SepATT.x, form->SepATT.y, form->SepATT.z);
 
 			if (form->type == 2)
 			{
-				sprintf_s(buffer2, "XXX%03.0f R\nXXX%03.0f P EXTRACTION\nXXX%03.0f Y\n", form->ExtATT.x, form->ExtATT.y, form->ExtATT.z);
-				buffer3.append(buffer2);
+				annotation += fmt(buffer, "XXX%03.0f R\nXXX%03.0f P EXTRACTION\nXXX%03.0f Y\n", form->ExtATT.x, form->ExtATT.y, form->ExtATT.z);
 			}
 
-			sprintf_s(buffer2, "Remarks: %s", form->remarks);
-			buffer3.append(buffer2);
+			annotation += fmt(buffer, "Remarks: %s", form->remarks);
 			
-			oapiAnnotationSetText(NHpad, const_cast<char *>(buffer3.c_str()));
+			oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 		}
 	break;
 	case PT_STARCHKPAD:
@@ -2877,13 +2826,10 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm, hh2, mm2;
 		double ss, ss2;
 
-		strcpy(buffer, "CSM STAR CHECK UPDATE");
 		SStoHHMMSS(form->GET[0], hh, mm, ss);
 		SStoHHMMSS(form->TAlign[0], hh2, mm2, ss2);
 
-		sprintf(buffer, "%s\nXX%03d HR GET\nXXX%02d MIN SR\nX%05.2f SEC\n%+06.1f R FDAI\n%+06.1f P\n%+06.1f Y\nXX%03d HR T ALIGN\nXXX%02d MIN\nX%05.2f SEC\n", buffer, hh, mm, ss, form->Att[0].x, form->Att[0].y, form->Att[0].z, hh2, mm2, ss2);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "CSM STAR CHECK UPDATE\nXX%03d HR GET\nXXX%02d MIN SR\nX%05.2f SEC\n%+06.1f R FDAI\n%+06.1f P\n%+06.1f Y\nXX%03d HR T ALIGN\nXXX%02d MIN\nX%05.2f SEC\n", hh, mm, ss, form->Att[0].x, form->Att[0].y, form->Att[0].z, hh2, mm2, ss2));
 	}
 	break;
 	case PT_AP10MAPUPDATE:
@@ -2892,56 +2838,57 @@ void MCC::drawPad(bool writetofile){
 
 		int hh, mm;
 		double ss;
+		annotation = fmt(buffer, "MAP UPDATE REV %d\n", form->Rev);
 
-		sprintf(buffer, "MAP UPDATE REV %d\n", form->Rev);
+		
 		SStoHHMMSS(form->LOSGET, hh, mm, ss);
-		sprintf(buffer, "%sLOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+		annotation += fmt(buffer, "LOS: %d:%02d:%02.0f\n", hh, mm, ss);
 		if (form->type == 0)
 		{
 			SStoHHMMSS(form->PMGET, hh, mm, ss);
-			sprintf(buffer, "%sPM: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "PM: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->AOSGET, hh, mm, ss);
-			sprintf(buffer, "%sAOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS: %d:%02d:%02.0f\n", hh, mm, ss);
 		}
 		else if (form->type == 1)
 		{
 			SStoHHMMSS(form->SRGET, hh, mm, ss);
-			sprintf(buffer, "%sSR: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "SR: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->PMGET, hh, mm, ss);
-			sprintf(buffer, "%sPM: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "PM: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->AOSGET, hh, mm, ss);
-			sprintf(buffer, "%sAOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->SSGET, hh, mm, ss);
-			sprintf(buffer, "%sSS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "SS: %d:%02d:%02.0f\n", hh, mm, ss);
 		}
 		else if (form->type == 2)
 		{
 			SStoHHMMSS(form->PMGET, hh, mm, ss);
-			sprintf(buffer, "%sAOS WITH LOI1: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS WITH LOI1: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->AOSGET, hh, mm, ss);
-			sprintf(buffer, "%sAOS W/O LOI1: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS W/O LOI1: %d:%02d:%02.0f\n", hh, mm, ss);
 		}
 		else if (form->type == 3)
 		{
 			SStoHHMMSS(form->PMGET, hh, mm, ss);
-			sprintf(buffer, "%sPM: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "PM: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->AOSGET, hh, mm, ss);
-			sprintf(buffer, "%sAOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->SSGET, hh, mm, ss);
-			sprintf(buffer, "%sSS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "SS: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->LOSGET2, hh, mm, ss);
-			sprintf(buffer, "%sLOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "LOS: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->SRGET, hh, mm, ss);
-			sprintf(buffer, "%sSR: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "SR: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->PMGET2, hh, mm, ss);
-			sprintf(buffer, "%sPM: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "PM: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->AOSGET2, hh, mm, ss);
-			sprintf(buffer, "%sAOS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "AOS: %d:%02d:%02.0f\n", hh, mm, ss);
 			SStoHHMMSS(form->SSGET2, hh, mm, ss);
-			sprintf(buffer, "%sSS: %d:%02d:%02.0f\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "SS: % d : % 02d : % 02.0f\n", hh, mm, ss);
 		}
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP11LMARKTRKPAD:
@@ -2951,38 +2898,36 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		strcpy(buffer, "P22 AUTO OPTICS\n");
+		annotation = "P22 AUTO OPTICS\n";
 
 		for (int i = 0;i < form->entries;i++)
 		{
-			sprintf(buffer, "%sLMK ID %s\n", buffer, form->LmkID[i]);
+			annotation += fmt(buffer, "LMK ID %s\n", form->LmkID[i]);
 			SStoHHMMSS(form->T1[i], hh, mm, ss);
-			sprintf(buffer, "%sT1 %03d:%02d:%02.f (HOR)\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "T1 %03d:%02d:%02.f (HOR)\n", hh, mm, ss);
 			SStoHHMMSS(form->T2[i], hh, mm, ss);
-			sprintf(buffer, "%sT2 %03d:%02d:%02.f (35°)\n", buffer, hh, mm, ss);
+			annotation += fmt(buffer, "T2 %03d:%02d:%02.f (35°)\n", hh, mm, ss);
 
 			if (form->CRDist[i] > 0)
 			{
-				sprintf(buffer, "%s%02.f NM North\n", buffer, form->CRDist[i]);
+				annotation += fmt(buffer, "%02.f NM North\n", form->CRDist[i]);
 			}
 			else
 			{
-				sprintf(buffer, "%s%02.f NM South\n", buffer, abs(form->CRDist[i]));
+				annotation += fmt(buffer, "%02.f NM South\n", abs(form->CRDist[i]));
 			}
 
-			sprintf(buffer, "%sN 89\nLAT %+07.3f\nLONG/2 %+07.3f\nALTITUDE %+07.2f NM\n", buffer, form->Lat[i], form->Lng05[i], form->Alt[i]);
+			annotation += fmt(buffer, "N 89\nLAT %+07.3f\nLONG/2 %+07.3f\nALTITUDE %+07.2f NM\n", form->Lat[i], form->Lng05[i], form->Alt[i]);
 		}
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP10DAPDATA:
 	{
 		AP10DAPDATA * form = (AP10DAPDATA *)padForm;
 
-		sprintf(buffer, "DAP PAD\n%+06.0f\n%+06.0f\n%+07.2f\n%+07.2f", form->ThisVehicleWeight, form->OtherVehicleWeight, form->PitchTrim, form->YawTrim);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "DAP PAD\n%+06.0f\n%+06.0f\n%+07.2f\n%+07.2f", form->ThisVehicleWeight, form->OtherVehicleWeight, form->PitchTrim, form->YawTrim));
 	}
 	break;
 	case PT_AP11LMMNV:
@@ -2992,30 +2937,30 @@ void MCC::drawPad(bool writetofile){
 		int hh, hh2, mm, mm2;
 		double ss, ss2;
 
-		strcpy(buffer, "P30 LM MANEUVER");
+		annotation = "P30 LM MANEUVER";
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 		SStoHHMMSS(form->burntime, hh2, mm2, ss2);
 
-		sprintf(buffer, "%s\n%s PURPOSE\n%+06d HRS N33\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n"
+		annotation += fmt(buffer, "\n%s PURPOSE\n%+06d HRS N33\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n"
 			"%+07.1f HA N42\n%+07.1f HP\n%+07.1f DVR\nXXX%d:%02.0f BT\nXXX%03.0f R FDAI\nXXX%03.0f P INER\n%+07.1f DVX AGS N86\n%+07.1f DVY AGS\n%+07.1f DVZ AGS\n",
-			buffer, form->purpose, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z, form->HA, form->HP, form->dVR, mm2, ss2, form->Att.x, form->Att.y, 
+			form->purpose, hh, mm, ss, form->dV.x, form->dV.y, form->dV.z, form->HA, form->HP, form->dVR, mm2, ss2, form->Att.x, form->Att.y, 
 			form->dV_AGS.x,form->dV_AGS.y,form->dV_AGS.z);
 		
 		if (form->type == 0)
 		{
-			sprintf(buffer, "%sXXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n", buffer, form->BSSStar, form->SPA, form->SXP);
+			annotation += fmt(buffer, "XXX%03d BSS\nXX%+05.1f SPA\nXXX%+04.1f SXP\n", form->BSSStar, form->SPA, form->SXP);
 		}
 		else
 		{
 			SStoHHMMSS(form->t_CSI, hh, mm, ss);
 			SStoHHMMSS(form->t_TPI, hh2, mm2, ss2);
 
-			sprintf(buffer, "%s%+06d HRS N11\n%+06d MIN CSI\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\n", buffer, hh, mm, ss, hh2, mm2, ss2);
+			annotation += fmt(buffer, "%+06d HRS N11\n%+06d MIN CSI\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\n", hh, mm, ss, hh2, mm2, ss2);
 		}
 
-		sprintf(buffer, "%sRemarks:\n%s", buffer, form->remarks);
+		annotation += fmt(buffer, "Remarks:\n%s", form->remarks);
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP10CSI:
@@ -3024,27 +2969,21 @@ void MCC::drawPad(bool writetofile){
 
 		int hh, hh2, mm, mm2;
 		double ss, ss2;
-		char buffer1[1000], buffer2[100], buffer3[200];
 
 		SStoHHMMSS(form->t_CSI, hh, mm, ss);
 		SStoHHMMSS(form->t_TPI, hh2, mm2, ss2);
 
-		sprintf(buffer1, "P32 CSI UPDATE\n%+06d HR N11\n%+06d MIN TIG\n%+07.2f SEC CSI\n%+06d HR N37\n%+06d MIN TIG\n%+07.2f SEC TPI\n%+07.1f DVX LOCAL N81\n%+07.1f DVY VERT\n"
+		annotation = fmt(buffer, "P32 CSI UPDATE\n%+06d HR N11\n%+06d MIN TIG\n%+07.2f SEC CSI\n%+06d HR N37\n%+06d MIN TIG\n%+07.2f SEC TPI\n%+07.1f DVX LOCAL N81\n%+07.1f DVY VERT\n"
 			"XXX%03.0f PLM FDAI\n", hh, mm, ss, hh2, mm2, ss2, form->dV_LVLH.x, form->dV_LVLH.y, form->PLM_FDAI);
 
 		if (form->type == 1)
 		{
-			sprintf(buffer2, "373 %+07.1f\n275 %+07.1f\n", form->DEDA373, form->DEDA275);
-		}
-		else
-		{
-			strcpy(buffer2, "");
+			annotation += fmt(buffer, "373 %+07.1f\n275 %+07.1f\n", form->DEDA373, form->DEDA275);
 		}
 
-		sprintf(buffer3, "%+07.1f DVX AGS N86\n%+07.1f DVY AGS\n%+07.1f DVZ AGS", form->dV_AGS.x, form->dV_AGS.y, form->dV_AGS.z);
-		sprintf(buffer, "%s%s%s", buffer1, buffer2, buffer3);
+		annotation += fmt(buffer, "%+07.1f DVX AGS N86\n%+07.1f DVY AGS\n%+07.1f DVZ AGS", form->dV_AGS.x, form->dV_AGS.y, form->dV_AGS.z);
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP9AOTSTARPAD:
@@ -3054,21 +2993,17 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		strcpy(buffer, "LM AOT STAR OBSERVATION");
 		SStoHHMMSS(form->GET, hh, mm, ss);
 
-		sprintf(buffer, "%s\n%03d HR\n%02d MIN\n%02.0f SEC\n%d AOT DETENT\n%02o NAV STAR\n%03.0f R\n%03.0f P\n%03.0f Y", buffer, hh, mm, ss, form->Detent, form->Star, form->CSMAtt.x, form->CSMAtt.y, form->CSMAtt.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "LM AOT STAR OBSERVATION\n%03d HR\n%02d MIN\n%02.0f SEC\n%d AOT DETENT\n%02o NAV STAR\n%03.0f R\n%03.0f P\n%03.0f Y",
+								hh, mm, ss, form->Detent, form->Star, form->CSMAtt.x, form->CSMAtt.y, form->CSMAtt.z));
 	}
 	break;
 	case PT_TORQANG:
 	{
 		TORQANG *form = (TORQANG*)padForm;
 
-		sprintf(buffer, "GYRO TORQUING ANGLES\nX %+07.3f\nY %+07.3f\n Z %+07.3f", form->V42Angles.x, form->V42Angles.y, form->V42Angles.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "GYRO TORQUING ANGLES\nX %+07.3f\nY %+07.3f\n Z %+07.3f", form->V42Angles.x, form->V42Angles.y, form->V42Angles.z));
 	}
 	break;
 	case PT_AP9LMTPI:
@@ -3079,11 +3014,9 @@ void MCC::drawPad(bool writetofile){
 
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 
-		sprintf(buffer, "TPI UPDATE (P34)\n%+06d HR N37\n%+06d MIN TIG\n%+07.2f SEC TPI\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n%+07.1f DVR N42\n"
-			"XXX%03.0f RLM FDAI N18\nXXX%03.0f PLM INER\n%+07.2f R TPI N54\n%+07.1f RDOT TPI\n%+07.1f F/A (+/-) N59\n%+07.1f L/R (-/+) DV\n%+07.1f U/D (-/+) LOS", 
-			hh, mm, ss, form->Vg.x, form->Vg.y, form->Vg.z, form->dVR, form->Att.x, form->Att.y, form->R, form->Rdot, form->Backup_dV.x, form->Backup_dV.y, form->Backup_dV.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "TPI UPDATE (P34)\n%+06d HR N37\n%+06d MIN TIG\n%+07.2f SEC TPI\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n%+07.1f DVR N42\n"
+			"XXX%03.0f RLM FDAI N18\nXXX%03.0f PLM INER\n%+07.2f R TPI N54\n%+07.1f RDOT TPI\n%+07.1f F/A (+/-) N59\n%+07.1f L/R (-/+) DV\n%+07.1f U/D (-/+) LOS",
+			hh, mm, ss, form->Vg.x, form->Vg.y, form->Vg.z, form->dVR, form->Att.x, form->Att.y, form->R, form->Rdot, form->Backup_dV.x, form->Backup_dV.y, form->Backup_dV.z));
 	}
 	break;
 	case PT_AP9LMCDH:
@@ -3094,11 +3027,9 @@ void MCC::drawPad(bool writetofile){
 
 		SStoHHMMSS(form->GETI, hh, mm, ss);
 
-		sprintf(buffer, "CDH UPDATE (P33)\n%+06d HR N31\n%+06d MIN TIG\n%+07.2f SEC CDH\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n"
+		oapiAnnotationSetText(NHpad, fmt(buffer, "CDH UPDATE (P33)\n%+06d HR N31\n%+06d MIN TIG\n%+07.2f SEC CDH\n%+07.1f DVX N81\n%+07.1f DVY LOCAL\n%+07.1f DVZ VERT\n"
 			"XXX%03.0f PLM INER\n%+07.1f DVX N86\n%+07.1f DVZ AGS",
-			hh, mm, ss, form->Vg.x, form->Vg.y, form->Vg.z, form->Pitch, form->Vg_AGS.x, form->Vg_AGS.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+			hh, mm, ss, form->Vg.x, form->Vg.y, form->Vg.z, form->Pitch, form->Vg_AGS.x, form->Vg_AGS.z));
 	}
 	break;
 	case PT_S065UPDATE:
@@ -3107,7 +3038,7 @@ void MCC::drawPad(bool writetofile){
 		int hh[4], mm[4], hh2[4], mm2[4];
 		double ss[4], ss2[4];
 
-		strcpy(buffer, "S065 UPDATE");
+		annotation = "S065 UPDATE";
 
 		for (int i = 0;i < 2;i++)
 		{
@@ -3116,25 +3047,25 @@ void MCC::drawPad(bool writetofile){
 			SStoHHMMSS(form->TAlign[2 * i], hh2[2 * i], mm2[2 * i], ss2[2 * i]);
 			SStoHHMMSS(form->TAlign[2 * i + 1], hh2[2 * i + 1], mm2[2 * i + 1], ss2[2 * i + 1]);
 
-			sprintf(buffer, "%s\n%s %s SITE (OR AREA)\n%06.2f %06.2f R FDAI\n%06.2f %06.2f P\n%06.2f %06.2f Y\nXX%03d XX%03d GET START\n"
+			annotation += fmt(buffer, "\n%s %s SITE (OR AREA)\n%06.2f %06.2f R FDAI\n%06.2f %06.2f P\n%06.2f %06.2f Y\nXX%03d XX%03d GET START\n"
 				"XXX%02d XXX%02d MIN (5 MIN PRIOR TO)\nXXX%02.0f XXX%02.0f SEC (FIRST EXPOSURE)\nXX%03d XX%03d T ALIGN\nXXX%02d XXX%02d MIN (IF REQ)\n"
 				"XXX%02.0f XXX%02.0f SEC\nXXX%02.0f XXX%02.0f EXPOSURE INTER-SEC\nXX%03d XX%03d NUMBER OF EXPOSURES\n",
-				buffer, form->Area[2 * i], form->Area[2 * i + 1], form->FDAIAngles[2 * i].x, form->FDAIAngles[2 * i + 1].x, form->FDAIAngles[2 * i].y, 
+				form->Area[2 * i], form->Area[2 * i + 1], form->FDAIAngles[2 * i].x, form->FDAIAngles[2 * i + 1].x, form->FDAIAngles[2 * i].y, 
 				form->FDAIAngles[2 * i + 1].y, form->FDAIAngles[2 * i].z, form->FDAIAngles[2 * i + 1].z, hh[2 * i], hh[2 * i + 1], mm[2 * i], mm[2 * i + 1], 
 				ss[2 * i], ss[2 * i + 1], hh2[2 * i], hh2[2 * i + 1], mm2[2 * i], mm2[2 * i + 1], ss2[2 * i], ss2[2 * i + 1],
 				form->ExposureInterval[2 * i], form->ExposureInterval[2 * i + 1], form->ExposureNum[2 * i], form->ExposureNum[2 * i + 1]);
 
 			if (form->OrbRate[2 * i])
 			{
-				sprintf(buffer, "%sORB RATE X ATTITUDE CONTROL", buffer);
+				annotation += fmt(buffer, "ORB RATE X ATTITUDE CONTROL");
 			}
 			else
 			{
-				sprintf(buffer, "%sINERTIAL X ATTITUDE CONTROL", buffer);
+				annotation += fmt(buffer, "INERTIAL X ATTITUDE CONTROL");
 			}
 		}
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP11AGSACT:
@@ -3146,9 +3077,8 @@ void MCC::drawPad(bool writetofile){
 
 		SStoHHMMSS(form->KFactor, hh, mm, ss);
 
-		sprintf(buffer, "AGS ACTIVATION\n%d:%02d:%05.2f GET\n224 %+06d\n225 %+06d\n226 %+06d\n227 %+06d", hh, mm, ss, form->DEDA224, form->DEDA225, form->DEDA226, form->DEDA227);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "AGS ACTIVATION\n%d:%02d:%05.2f GET\n224 %+06d\n225 %+06d\n226 %+06d\n227 %+06d",
+										hh, mm, ss, form->DEDA224, form->DEDA225, form->DEDA226, form->DEDA227));
 	}
 	break;
 	case PT_AP11PDIPAD:
@@ -3161,10 +3091,8 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->GETI, hh[0], mm[0], ss[0]);
 		SStoHHMMSS(form->t_go, hh[1], mm[1], ss[1]);
 
-		sprintf(buffer, "PDI PAD\n%+06d HRS TIG\n%+06d MIN PDI\n%+07.2f SEC\nXX%02d:%02.0f TGO N61\n%+07.1f CROSSRANGE\nXXX%03.0f R FDAI\nXXX%03.0f P AT TIG\n"
-			"XXX%03.0f Y\n%+06.0f DEDA 231 IF RQD", hh[0], mm[0], ss[0], mm[1], ss[1], form->CR, form->Att.x, form->Att.y, form->Att.z, form->DEDA231);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "PDI PAD\n%+06d HRS TIG\n%+06d MIN PDI\n%+07.2f SEC\nXX%02d:%02.0f TGO N61\n%+07.1f CROSSRANGE\nXXX%03.0f R FDAI\nXXX%03.0f P AT TIG\n"
+			"XXX%03.0f Y\n%+06.0f DEDA 231 IF RQD", hh[0], mm[0], ss[0], mm[1], ss[1], form->CR, form->Att.x, form->Att.y, form->Att.z, form->DEDA231));
 	}
 	break;
 	case PT_PDIABORTPAD:
@@ -3180,16 +3108,14 @@ void MCC::drawPad(bool writetofile){
 
 		if (form->type == 0)
 		{
-			sprintf(buffer, "PDI ABORT <10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nPDI ABORT >10 MIN\n%+06d HRS\n%+06d MIN\n%+07.2f SEC PHASING TIG\n"
-				"%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC", hh[0], mm[0], ss[0], hh[1], mm[1], ss[1], hh[2], mm[2], ss[2]);
+			oapiAnnotationSetText(NHpad, fmt(buffer, "PDI ABORT <10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nPDI ABORT >10 MIN\n%+06d HRS\n%+06d MIN\n%+07.2f SEC PHASING TIG\n"
+									"%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC", hh[0], mm[0], ss[0], hh[1], mm[1], ss[1], hh[2], mm[2], ss[2]));
 		}
 		else
 		{
-			sprintf(buffer, "CSM RESCUE PAD\nPHAS 33 %d:%02d:%05.2f\nTPI (PDI<10) 37 %d:%02d:%05.2f\nTPI (PDI>10) 37 %d:%02d:%05.2f",
-				hh[1], mm[1], ss[1], hh[0], mm[0], ss[0], hh[2], mm[2], ss[2]);
+			oapiAnnotationSetText(NHpad, fmt(buffer, "CSM RESCUE PAD\nPHAS 33 %d:%02d:%05.2f\nTPI (PDI<10) 37 %d:%02d:%05.2f\nTPI (PDI>10) 37 %d:%02d:%05.2f",
+									hh[1], mm[1], ss[1], hh[0], mm[0], ss[0], hh[2], mm[2], ss[2]));
 		}
-
-		oapiAnnotationSetText(NHpad, buffer);
 	}
 	break;
 	case PT_AP11LUNSURFPAD:
@@ -3209,14 +3135,12 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->T3_t_CSI, hh[7], mm[7], ss[7]);
 		SStoHHMMSS(form->T3_t_TPI, hh[8], mm[8], ss[8]);
 
-		sprintf(buffer, "T2 ABORT\n%+06d HRS T2\n%+06d MIN TIG\n%+07.2f SEC\n%+06d HRS N33\n%+06d MIN PHASING\n%+07.2f SEC TIG\n"
+		oapiAnnotationSetText(NHpad, fmt(buffer, "T2 ABORT\n%+06d HRS T2\n%+06d MIN TIG\n%+07.2f SEC\n%+06d HRS N33\n%+06d MIN PHASING\n%+07.2f SEC TIG\n"
 			"%+06d HRS N11\n%+06d MIN CSI1\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\n"
 			"T3 ABORT\n%+06d HRS T3\n%+06d MIN TIG\n%+07.2f SEC\n%+06d HRS CSM\n%+06d MIN PERIOD\n%+07.2f SEC\n"
 			"%+06d HRS\n%+06d MIN P+DT\n%+07.2f SEC\n%+06d HRS N11\n%+06d MIN CSI TIG\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC",
 			hh[0], mm[0], ss[0], hh[1], mm[1], ss[1], hh[2], mm[2], ss[2], hh[3], mm[3], ss[3], hh[4], mm[4], ss[4], hh[5], mm[5], ss[5],
-			hh[6], mm[6], ss[6], hh[7], mm[7], ss[7], hh[8], mm[8], ss[8]);
-
-		oapiAnnotationSetText(NHpad, buffer);
+			hh[6], mm[6], ss[6], hh[7], mm[7], ss[7], hh[8], mm[8], ss[8]));
 	}
 	break;
 	case PT_AP11P76PAD:
@@ -3226,17 +3150,17 @@ void MCC::drawPad(bool writetofile){
 		int hh, mm;
 		double ss;
 
-		strcpy(buffer, "P76 UPDATE PAD\n");
+		annotation = "P76 UPDATE PAD\n";
 
 		for (int i = 0;i < form->entries;i++)
 		{
 			SStoHHMMSS(form->TIG[i], hh, mm, ss);
 
-			sprintf(buffer, "%s%s PURPOSE\n%+06d HRS N33\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f DVX N84\n%+07.1f DVY\n%+07.1f DVZ\n", 
-				buffer, form->purpose[i], hh, mm, ss, form->DV[i].x, form->DV[i].y, form->DV[i].z);
+			annotation += fmt(buffer, "%s PURPOSE\n%+06d HRS N33\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f DVX N84\n%+07.1f DVY\n%+07.1f DVZ\n",
+				form->purpose[i], hh, mm, ss, form->DV[i].x, form->DV[i].y, form->DV[i].z);
 		}
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_AP11LMASCPAD:
@@ -3248,36 +3172,32 @@ void MCC::drawPad(bool writetofile){
 
 		SStoHHMMSS(form->TIG, hh, mm, ss);
 
-		sprintf(buffer, "LM ASCENT PAD\n%+06d HRS\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f V (HOR)\n%+07.1f V (VERT) N76\n%+07.1f CROSSRANGE\n"
-			"%+06d DEDA 047\n%+06d DEDA 053\n%+06.0f DEDA 225/226\n%+06.0f DEDA 231\nRemarks: %s", hh, mm, ss, form->V_hor, form->V_vert, form->CR,
-			form->DEDA047, form->DEDA053, form->DEDA225_226, form->DEDA231, form->remarks);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "LM ASCENT PAD\n%+06d HRS\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f V (HOR)\n%+07.1f V (VERT) N76\n%+07.1f CROSSRANGE\n"
+								"%+06d DEDA 047\n%+06d DEDA 053\n%+06.0f DEDA 225/226\n%+06.0f DEDA 231\nRemarks: %s", hh, mm, ss, form->V_hor, form->V_vert, form->CR,
+								form->DEDA047, form->DEDA053, form->DEDA225_226, form->DEDA231, form->remarks));
 	}
 	break;
 	case PT_LIFTOFFTIMES:
 	{
 		LIFTOFFTIMES *form = (LIFTOFFTIMES*)padForm;
 
-		strcpy(buffer, "LIFTOFF TIMES\n");
+		annotation = "LIFTOFF TIMES\n";
 
 		for (int i = 0;i < form->entries;i++)
 		{
 			format_time(tmpbuf, form->TIG[i]);
-			sprintf(buffer, "%sT%d %s\n", buffer, form->startdigit + i, tmpbuf);
+			annotation += fmt(buffer, "T%d %s\n", form->startdigit + i, tmpbuf);
 		}
 
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, const_cast<char *>(annotation.c_str()));
 	}
 	break;
 	case PT_LMACTDATA:
 	{
 		LMACTDATA *form = (LMACTDATA*)padForm;
 
-		sprintf(buffer, "DAP PAD\n%+06.0f\n%+06.0f\n%+07.2f\n%+07.2f\nGYRO TORQUING ANGLES\nX %+07.3f\nY %+07.3f\n Z %+07.3f", 
-			form->LMWeight, form->CSMWeight, form->PitchTrim, form->RollTrim, form->V42Angles.x, form->V42Angles.y, form->V42Angles.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "DAP PAD\n%+06.0f\n%+06.0f\n%+07.2f\n%+07.2f\nGYRO TORQUING ANGLES\nX %+07.3f\nY %+07.3f\n Z %+07.3f",
+								form->LMWeight, form->CSMWeight, form->PitchTrim, form->RollTrim, form->V42Angles.x, form->V42Angles.y, form->V42Angles.z));
 	}
 	break;
 	case PT_RETROORIENTATION:
@@ -3290,10 +3210,8 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->GET_Day, hh1, mm1, ss1);
 		SStoHHMMSS(form->GET_Night, hh2, mm2, ss2);
 
-		sprintf_s(buffer, "RETRO ORIENTATION\nMODE A: DAY\nHRS %05d\nMIN %05d\nSEC %06.2f\nR %06.2lf\nP %06.2lf\nY %06.2lf\nMODE B: NIGHT\nHRS %05d\nMIN %05d\nSEC %06.2f\nR %06.2lf\nP %06.2lf\nY %06.2lf",
-			hh1, mm1, ss1, form->RetroAtt_Day.x, form->RetroAtt_Day.y, form->RetroAtt_Day.z, hh2, mm2, ss2, form->RetroAtt_Night.x, form->RetroAtt_Night.y, form->RetroAtt_Night.z);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "RETRO ORIENTATION\nMODE A: DAY\nHRS %05d\nMIN %05d\nSEC %06.2f\nR %06.2lf\nP %06.2lf\nY %06.2lf\nMODE B: NIGHT\nHRS %05d\nMIN %05d\nSEC %06.2f\nR %06.2lf\nP %06.2lf\nY %06.2lf",
+			hh1, mm1, ss1, form->RetroAtt_Day.x, form->RetroAtt_Day.y, form->RetroAtt_Day.z, hh2, mm2, ss2, form->RetroAtt_Night.x, form->RetroAtt_Night.y, form->RetroAtt_Night.z));
 	}
 	break;
 	case PT_AP12PDIABORTPAD:
@@ -3306,9 +3224,8 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->T_TPI_Pre10Min, hh[0], mm[0], ss[0]);
 		SStoHHMMSS(form->T_TPI_Post10Min, hh[1], mm[1], ss[1]);
 
-		sprintf(buffer, "PDI ABORT <10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nPDI ABORT >10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC", hh[0], mm[0], ss[0], hh[1], mm[1], ss[1]);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "PDI ABORT <10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nPDI ABORT >10 MIN\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC", 
+								hh[0], mm[0], ss[0], hh[1], mm[1], ss[1]));
 	}
 	break;
 	case PT_AP12LUNSURFPAD:
@@ -3322,10 +3239,8 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->T2_t_TPI, hh[1], mm[1], ss[1]);
 		SStoHHMMSS(form->T3_TIG, hh[2], mm[2], ss[2]);
 
-		sprintf(buffer, "T2 ABORT\n%+06d HRS T2\n%+06d MIN TIG\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nT3 ABORT\n%+06d HRS T3\n%+06d MIN TIG\n%+07.2f SEC",
-			hh[0], mm[0], ss[0], hh[1], mm[1], ss[1], hh[2], mm[2], ss[2]);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "T2 ABORT\n%+06d HRS T2\n%+06d MIN TIG\n%+07.2f SEC\n%+06d HRS N37\n%+06d MIN TPI\n%+07.2f SEC\nT3 ABORT\n%+06d HRS T3\n%+06d MIN TIG\n%+07.2f SEC",
+			hh[0], mm[0], ss[0], hh[1], mm[1], ss[1], hh[2], mm[2], ss[2]));
 	}
 	break;
 	case PT_LMP22ACQPAD:
@@ -3337,9 +3252,7 @@ void MCC::drawPad(bool writetofile){
 
 		SStoHHMMSS(form->P22_ACQ, hh, mm, ss);
 
-		sprintf(buffer, "P22 ACQUISITION\n%+06d HRS\n%+06d MIN\n%+07.2f SEC", hh, mm, ss);
-
-		oapiAnnotationSetText(NHpad, buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "P22 ACQUISITION\n%+06d HRS\n%+06d MIN\n%+07.2f SEC", hh, mm, ss));
 	}
 	break;
 	case PT_AP12LMASCPAD:
@@ -3352,12 +3265,10 @@ void MCC::drawPad(bool writetofile){
 		SStoHHMMSS(form->TIG, hh[0], mm[0], ss[0]);
 		SStoHHMMSS(form->TIG_2, hh[1], mm[1], ss[1]);
 
-		sprintf(buffer, "LM ASCENT PAD\n%+06d HRS\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f V (HOR)\n%+07.1f V (VERT) N76\n%+07.1f CROSSRANGE\n"
+		oapiAnnotationSetText(NHpad, fmt(buffer, "LM ASCENT PAD\n%+06d HRS\n%+06d MIN TIG\n%+07.2f SEC\n%+07.1f V (HOR)\n%+07.1f V (VERT) N76\n%+07.1f CROSSRANGE\n"
 			"%+06d 047\n%+06d 053\n%+06.0f 225/226\n%+06.0f 231\n%+07.1f 465\n%+06d HRS\n%+06d MIN TIG\n%+07.2f SEC\n%+06.0f LM WT\n%+06.0f CSM WT\nRemarks: %s",
 			hh[0], mm[0], ss[0], form->V_hor, form->V_vert, form->CR, form->DEDA047, form->DEDA053, form->DEDA225_226, form->DEDA231, form->DEDA465, hh[1], mm[1], ss[1],
-			form->LMWeight, form->CSMWeight, form->remarks);
-
-		oapiAnnotationSetText(NHpad, buffer);
+			form->LMWeight, form->CSMWeight, form->remarks));
 	}
 	break;
 	case PT_GENERIC:
@@ -3368,8 +3279,7 @@ void MCC::drawPad(bool writetofile){
 	}
 	break;
 	default:
-		sprintf(buffer,"Unknown padNumber %d",padNumber);
-		oapiAnnotationSetText(NHpad,buffer);
+		oapiAnnotationSetText(NHpad, fmt(buffer, "Unknown padNumber %d", padNumber));
 		break;
 	}
 
@@ -3385,8 +3295,14 @@ void MCC::drawPad(bool writetofile){
 			//Clear file
 			mcclog.open("MCCPreAdvisoryData.log");
 			logfileinit = true;
-		}		
-		mcclog << buffer;
+		}
+		if (annotation.length() > 0) {
+			mcclog << annotation;
+		}
+		else
+		{
+			mcclog << buffer;
+		}
 		mcclog << std::endl << std::endl;
 		mcclog.close();
 	}

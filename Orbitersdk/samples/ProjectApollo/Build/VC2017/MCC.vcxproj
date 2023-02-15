@@ -149,6 +149,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src_aux\nassputils.cpp" />
     <ClCompile Include="..\..\src_launch\mccvessel.cpp" />
     <ClCompile Include="..\..\src_launch\MCC_Mission_B.cpp" />
     <ClCompile Include="..\..\src_launch\MCC_Mission_C.cpp" />
@@ -156,7 +157,7 @@
     <ClCompile Include="..\..\src_launch\MCC_Mission_D.cpp" />
     <ClCompile Include="..\..\src_launch\MCC_Mission_F.cpp" />
     <ClCompile Include="..\..\src_launch\MCC_Mission_G.cpp" />
-	<ClCompile Include="..\..\src_launch\MCC_Mission_H1.cpp" />
+    <ClCompile Include="..\..\src_launch\MCC_Mission_H1.cpp" />
     <ClCompile Include="..\..\src_launch\rtcc.cpp" />
     <ClCompile Include="..\..\src_launch\RTCC_Mission_B.cpp" />
     <ClCompile Include="..\..\src_launch\RTCC_Mission_C.cpp" />
@@ -165,7 +166,7 @@
     <ClCompile Include="..\..\src_launch\RTCC_Mission_D.cpp" />
     <ClCompile Include="..\..\src_launch\RTCC_Mission_F.cpp" />
     <ClCompile Include="..\..\src_launch\RTCC_Mission_G.cpp" />
-	<ClCompile Include="..\..\src_launch\RTCC_Mission_H1.cpp" />
+    <ClCompile Include="..\..\src_launch\RTCC_Mission_H1.cpp" />
     <ClCompile Include="..\..\src_rtccmfd\CoastNumericalIntegrator.cpp" />
     <ClCompile Include="..\..\src_rtccmfd\CSMLMGuidanceSim.cpp" />
     <ClCompile Include="..\..\src_rtccmfd\EnckeIntegrator.cpp" />
@@ -198,7 +199,7 @@
     <ClInclude Include="..\..\src_launch\MCC_Mission_D.h" />
     <ClInclude Include="..\..\src_launch\MCC_Mission_F.h" />
     <ClInclude Include="..\..\src_launch\MCC_Mission_G.h" />
-	<ClInclude Include="..\..\src_launch\MCC_Mission_H1.h" />
+    <ClInclude Include="..\..\src_launch\MCC_Mission_H1.h" />
     <ClInclude Include="..\..\src_launch\rtcc.h" />
     <ClInclude Include="..\..\src_rtccmfd\CoastNumericalIntegrator.h" />
     <ClInclude Include="..\..\src_rtccmfd\CSMLMGuidanceSim.h" />

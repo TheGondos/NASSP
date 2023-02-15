@@ -33,6 +33,7 @@
 
 #include "nasspdefs.h"
 #include "nasspsound.h"
+#include "nassputils.h"
 
 #include "soundlib.h"
 #include "toggleswitch.h"
@@ -43,6 +44,8 @@
 #include "Mission.h"
 
 #include "connector.h"
+
+using nassp::utils::fmt;
 
 static char ThreeSpace[] = "   ";
 static char SixSpace[] = "      ";
@@ -831,9 +834,7 @@ void LEM_AEA::SetMissionInfo(std::string ProgramName)
 	if (AEAInitialized) { return; }
 
 	char binfile[100];
-
-	sprintf_s(binfile, 100, "Config/ProjectApollo/%s.bin", ProgramName.c_str());
-	InitVirtualAGS(binfile);
+	InitVirtualAGS(fmt(binfile, 100, "Config/ProjectApollo/%s.bin", ProgramName.c_str()));
 
 	AEAInitialized = true;
 }

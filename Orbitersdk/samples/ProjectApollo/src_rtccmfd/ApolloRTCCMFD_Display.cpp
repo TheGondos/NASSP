@@ -4,6 +4,7 @@
 #include "nassputils.h"
 
 using nassp::utils::skpTextFmt;
+using nassp::utils::fmt;
 
 char Buffer[100];
 
@@ -273,7 +274,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skpTextFmt(skp, 1 * W / 16, 4 * H / 14, "Chaser: %s", G->vessel->GetName());
 			if (G->target)
 			{
-				sprintf_s(Buffer, "Target: %s", G->target->GetName());
+				fmt(Buffer, "Target: %s", G->target->GetName());
 			}
 			else
 			{
@@ -649,7 +650,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 				{
 					if (G->target != NULL)
 					{
-						sprintf_s(Buffer, "CSM: %s", G->target->GetName());
+						fmt(Buffer, "CSM: %s", G->target->GetName());
 					}
 					else
 					{
@@ -895,11 +896,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (G->manpad_ullage_opt)
 			{
-				sprintf_s(Buffer, "4 quads, %.1f s", G->manpad_ullage_dt);
+				fmt(Buffer, "4 quads, %.1f s", G->manpad_ullage_dt);
 			}
 			else
 			{
-				sprintf_s(Buffer, "2 quads, %.1f s", G->manpad_ullage_dt);
+				fmt(Buffer, "2 quads, %.1f s", G->manpad_ullage_dt);
 			}
 			skp->Text(1 * W / 16, 8 * H / 14, Buffer, strlen(Buffer));
 
@@ -2543,20 +2544,20 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			skp->Text((9 + 12 * i) * W / 32, 30 * H / 32, Buffer, strlen(Buffer));
 			if (tab->md_lat > 0)
 			{
-				sprintf_s(Buffer, "%.0lfN", tab->md_lat / 1852.0);
+				fmt(Buffer, "%.0lfN", tab->md_lat / 1852.0);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.0lfS", abs(tab->md_lat / 1852.0));
+				fmt(Buffer, "%.0lfS", abs(tab->md_lat / 1852.0));
 			}
 			skp->Text((15 + 12 * i) * W / 32, 30 * H / 32, Buffer, strlen(Buffer));
 			if (tab->md_lng > 0)
 			{
-				sprintf_s(Buffer, "%.0lfE", tab->md_lng / 1852.0);
+				fmt(Buffer, "%.0lfE", tab->md_lng / 1852.0);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.0lfW", abs(tab->md_lng / 1852.0));
+				fmt(Buffer, "%.0lfW", abs(tab->md_lng / 1852.0));
 			}
 			skp->Text((17 + 12 * i) * W / 32, 30 * H / 32, Buffer, strlen(Buffer));
 		}
@@ -4276,11 +4277,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			if (GC->rtcc->med_m72.UllageQuads)
 			{
-				sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
+				fmt(Buffer, "4 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
 			}
 			else
 			{
-				sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
+				fmt(Buffer, "2 quads, %.1f s", GC->rtcc->med_m72.UllageDT);
 			}
 		}
 		skp->Text(1 * W / 8, 12 * H / 14, Buffer, strlen(Buffer));
@@ -4390,11 +4391,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			if (GC->rtcc->med_m70.UllageQuads)
 			{
-				sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
+				fmt(Buffer, "4 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
 			}
 			else
 			{
-				sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
+				fmt(Buffer, "2 quads, %.1f s", GC->rtcc->med_m70.UllageDT);
 			}
 		}
 		skp->Text(1 * W / 8, 8 * H / 14, Buffer, strlen(Buffer));
@@ -4596,7 +4597,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%lf s", GC->rtcc->med_m65.UllageDT);
+				fmt(Buffer, "%lf s", GC->rtcc->med_m65.UllageDT);
 			}
 			skp->Text(1 * W / 16, 10 * H / 14, Buffer, strlen(Buffer));
 
@@ -5909,11 +5910,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skpTextFmt(skp, 40 * W / 64, 10 * H / 32, "%.2f", tab->DT_TO);
 		if (tab->DV_TO >= 10.0)
 		{
-			sprintf_s(Buffer, "%.1f", tab->DV_TO);
+			fmt(Buffer, "%.1f", tab->DV_TO);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f", tab->DV_TO);
+			fmt(Buffer, "%.2f", tab->DV_TO);
 		}
 		skp->Text(40 * W / 64, 11 * H / 32, Buffer, strlen(Buffer));
 		skpTextFmt(skp, 39 * W / 64, 12 * H / 32, "%.1f", tab->IMUAtt.x);
@@ -5943,20 +5944,20 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skpTextFmt(skp, 28 * W / 64, 16 * H / 32, "%.1f", tab->H_BI);
 		if (tab->P_BI > 0)
 		{
-			sprintf_s(Buffer, "%.2f N", tab->P_BI);
+			fmt(Buffer, "%.2f N", tab->P_BI);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f S", abs(tab->P_BI));
+			fmt(Buffer, "%.2f S", abs(tab->P_BI));
 		}
 		skp->Text(28 * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
 		if (tab->L_BI > 0)
 		{
-			sprintf_s(Buffer, "%.2f E", tab->L_BI);
+			fmt(Buffer, "%.2f E", tab->L_BI);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f W", abs(tab->L_BI));
+			fmt(Buffer, "%.2f W", abs(tab->L_BI));
 		}
 		skp->Text(28 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
 		skpTextFmt(skp, 28 * W / 64, 19 * H / 32, "%.2f", tab->F_BI);
@@ -5965,11 +5966,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skpTextFmt(skp, 41 * W / 64, 17 * H / 32, "%.3f", tab->HP);
 		if (tab->L_AN > 0)
 		{
-			sprintf_s(Buffer, "%.2f E", tab->L_AN);
+			fmt(Buffer, "%.2f E", tab->L_AN);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f W", abs(tab->L_AN));
+			fmt(Buffer, "%.2f W", abs(tab->L_AN));
 		}
 		skp->Text(41 * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
 		skpTextFmt(skp, 41 * W / 64, 19 * H / 32, "%.8f", tab->E);
@@ -5981,20 +5982,20 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skpTextFmt(skp, 57 * W / 64, 18 * H / 32, "%.2f", tab->DELTA_P);
 		if (tab->P_LLS > 0)
 		{
-			sprintf_s(Buffer, "%.2f N", tab->P_LLS);
+			fmt(Buffer, "%.2f N", tab->P_LLS);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f S", abs(tab->P_LLS));
+			fmt(Buffer, "%.2f S", abs(tab->P_LLS));
 		}
 		skp->Text(57 * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
 		if (tab->L_LLS > 0)
 		{
-			sprintf_s(Buffer, "%.2f E", tab->L_LLS);
+			fmt(Buffer, "%.2f E", tab->L_LLS);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.2f W", abs(tab->L_LLS));
+			fmt(Buffer, "%.2f W", abs(tab->L_LLS));
 		}
 		skp->Text(57 * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
 		skpTextFmt(skp, 57 * W / 64, 21 * H / 32, "%.2f", tab->R_LLS);
@@ -6034,12 +6035,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		if (GC->rtcc->GZGENCSN.TPIDefinition == 1)
 		{
 			skp->Text(1 * W / 16, 10 * H / 14, "Chaser Day/Night Time", 21);
-			sprintf_s(Buffer, "%.1f min", GC->rtcc->GZGENCSN.TPIDefinitionValue / 60.0);
+			fmt(Buffer, "%.1f min", GC->rtcc->GZGENCSN.TPIDefinitionValue / 60.0);
 		}
 		else if (GC->rtcc->GZGENCSN.TPIDefinition == 2)
 		{
 			skp->Text(1 * W / 16, 10 * H / 14, "Chaser Longitude", 18);
-			sprintf_s(Buffer, "%.1f°", GC->rtcc->GZGENCSN.TPIDefinitionValue*DEG);
+			fmt(Buffer, "%.1f°", GC->rtcc->GZGENCSN.TPIDefinitionValue*DEG);
 		}
 		else if (GC->rtcc->GZGENCSN.TPIDefinition == 3)
 		{
@@ -6049,12 +6050,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		else if (GC->rtcc->GZGENCSN.TPIDefinition == 4)
 		{
 			skp->Text(1 * W / 16, 10 * H / 14, "Target Day/Night Time", 21);
-			sprintf_s(Buffer, "%.1f min", GC->rtcc->GZGENCSN.TPIDefinitionValue / 60.0);
+			fmt(Buffer, "%.1f min", GC->rtcc->GZGENCSN.TPIDefinitionValue / 60.0);
 		}
 		else if (GC->rtcc->GZGENCSN.TPIDefinition == 5)
 		{
 			skp->Text(1 * W / 16, 10 * H / 14, "Target Longitude", 16);
-			sprintf_s(Buffer, "%.1f°", GC->rtcc->GZGENCSN.TPIDefinitionValue*DEG);
+			fmt(Buffer, "%.1f°", GC->rtcc->GZGENCSN.TPIDefinitionValue*DEG);
 		}
 		skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 
@@ -6063,7 +6064,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		if (GC->rtcc->med_k01.I_CDH == 1)
 		{
 			skp->Text(15 * W / 16, 2 * H / 14, "CDH at upcoming apsis (AEG):", 28);
-			sprintf_s(Buffer, "%d", GC->rtcc->med_k01.CDH_Apsis);
+			fmt(Buffer, "%d", GC->rtcc->med_k01.CDH_Apsis);
 		}
 		else if (GC->rtcc->med_k01.I_CDH == 2)
 		{
@@ -6073,12 +6074,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		else if (GC->rtcc->med_k01.I_CDH == 3)
 		{
 			skp->Text(15 * W / 16, 2 * H / 14, "Angle from CSI to CDH:", 22);
-			sprintf_s(Buffer, "%.1lf°", GC->rtcc->med_k01.CDH_Angle*DEG);
+			fmt(Buffer, "%.1lf°", GC->rtcc->med_k01.CDH_Angle*DEG);
 		}
 		else
 		{
 			skp->Text(15 * W / 16, 2 * H / 14, "CDH at upcoming apsis (Keplerian):", 34);
-			sprintf_s(Buffer, "%d", GC->rtcc->med_k01.CDH_Apsis);
+			fmt(Buffer, "%d", GC->rtcc->med_k01.CDH_Apsis);
 		}
 
 		skp->Text(15 * W / 16, 4 * H / 14, Buffer, strlen(Buffer));
@@ -6181,11 +6182,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				if (GC->rtcc->med_m78.UllageQuads)
 				{
-					sprintf_s(Buffer, "4 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
+					fmt(Buffer, "4 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
 				}
 				else
 				{
-					sprintf_s(Buffer, "2 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
+					fmt(Buffer, "2 quads, %.1f s", GC->rtcc->med_m78.UllageDT);
 				}
 			}
 			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
@@ -6689,7 +6690,7 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.0lfs Ullage DT", GC->rtcc->med_m66.UllageDT);
+			fmt(Buffer, "%.0lfs Ullage DT", GC->rtcc->med_m66.UllageDT);
 		}
 		skp->Text(1 * W / 16, 2 * H / 14, Buffer, strlen(Buffer));
 
@@ -6867,12 +6868,12 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].PETorShaft);
+				fmt(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].PETorShaft);
 			}
 			skp->Text(5 * W / 32, (10 + i * 2) * H / 32, Buffer, strlen(Buffer));
 			if (GC->rtcc->EZRMDT.data[i].R <= 9999.9)
 			{
-				sprintf_s(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].R);
+				fmt(Buffer, "%.1lf", GC->rtcc->EZRMDT.data[i].R);
 				skp->Text(35 * W / 128, (9 + i * 2) * H / 32, Buffer, strlen(Buffer));
 			}
 			if (GC->rtcc->EZRMDT.Mode == '1')
@@ -7084,11 +7085,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		skpTextFmt(skp, 31 * W / 32, 4 * H / 32, "%.1lf h", GC->rtcc->PZLTRT.MaxAscLifetime / 3600.0);
 		if (GC->rtcc->med_k15.Chaser == 1)
 		{
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLTRT.CSMMaxDeltaV / 0.3048);
+			fmt(Buffer, "%.0lf", GC->rtcc->PZLTRT.CSMMaxDeltaV / 0.3048);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%.0lf", GC->rtcc->PZLTRT.LMMaxDeltaV / 0.3048);
+			fmt(Buffer, "%.0lf", GC->rtcc->PZLTRT.LMMaxDeltaV / 0.3048);
 		}
 		skp->Text(31 * W / 32, 5 * H / 32, Buffer, strlen(Buffer));
 		skpTextFmt(skp, 31 * W / 32, 6 * H / 32, "%.1lf", GC->rtcc->PZLTRT.MinSafeHeight / 1852.0);
@@ -7393,184 +7394,184 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 			{
 				if (i == 0)
 				{
-					sprintf_s(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HA);
+					fmt(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HA);
 				}
 				else
 				{
-					sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HA);
+					fmt(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HA);
 				}
 				skp->Text((21 + 14 * i) * W / 64, 10 * H / 32, Buffer, strlen(Buffer));
 			}
 			skpTextFmt(skp, (21 + 14 * i) * W / 64, 11 * H / 32, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].HP);
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
+				fmt(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
+				fmt(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].v);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 12 * H / 32, Buffer, strlen(Buffer));
 			skpTextFmt(skp, (21 + 14 * i) * W / 64, 13 * H / 32, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].gamma);
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].psi);
+				fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].psi);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].psi);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].psi);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 14 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
 				if (GC->rtcc->VectorCompareDisplayBuffer.data[i].phi > 0)
 				{
-					sprintf_s(Buffer, "%.5lfN", GC->rtcc->VectorCompareDisplayBuffer.data[i].phi);
+					fmt(Buffer, "%.5lfN", GC->rtcc->VectorCompareDisplayBuffer.data[i].phi);
 				}
 				else
 				{
-					sprintf_s(Buffer, "%.5lfS", abs(GC->rtcc->VectorCompareDisplayBuffer.data[i].phi));
+					fmt(Buffer, "%.5lfS", abs(GC->rtcc->VectorCompareDisplayBuffer.data[i].phi));
 				}
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].phi);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].phi);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 15 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
 				if (GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda > 0)
 				{
-					sprintf_s(Buffer, "%.5lfE", GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda);
+					fmt(Buffer, "%.5lfE", GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda);
 				}
 				else
 				{
-					sprintf_s(Buffer, "%.5lfW", abs(GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda));
+					fmt(Buffer, "%.5lfW", abs(GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda));
 				}
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].lambda);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 16 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].h);
+				fmt(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].h);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].h);
+				fmt(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].h);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 17 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].a);
+				fmt(Buffer, "%.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].a);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].a);
+				fmt(Buffer, "%+.3lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].a);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 18 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].e);
+				fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].e);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].e);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].e);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 19 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].i);
+				fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].i);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].i);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].i);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 20 * H / 32, Buffer, strlen(Buffer));
 			if (GC->rtcc->VectorCompareDisplayBuffer.showWPAndTA[i])
 			{
 				if (i == 0)
 				{
-					sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].theta_p);
+					fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].theta_p);
 				}
 				else
 				{
-					sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].theta_p);
+					fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].theta_p);
 				}
 				skp->Text((21 + 14 * i) * W / 64, 21 * H / 32, Buffer, strlen(Buffer));
 				if (i == 0)
 				{
-					sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].nu);
+					fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].nu);
 				}
 				else
 				{
-					sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].nu);
+					fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].nu);
 				}
 				skp->Text((21 + 14 * i) * W / 64, 23 * H / 32, Buffer, strlen(Buffer));
 			}
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].Omega);
+				fmt(Buffer, "%.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].Omega);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].Omega);
+				fmt(Buffer, "%+.5lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].Omega);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 22 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 24 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 25 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 26 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U_dot);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U_dot);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U_dot);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].U_dot);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 27 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V_dot);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V_dot);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V_dot);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].V_dot);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 28 * H / 32, Buffer, strlen(Buffer));
 			if (i == 0)
 			{
-				sprintf_s(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W_dot);
+				fmt(Buffer, "%.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W_dot);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W_dot);
+				fmt(Buffer, "%+.2lf", GC->rtcc->VectorCompareDisplayBuffer.data[i].W_dot);
 			}
 			skp->Text((21 + 14 * i) * W / 64, 29 * H / 32, Buffer, strlen(Buffer));
 		}
@@ -7967,11 +7968,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 		{
 			if (GC->rtcc->RZJCTTC.R31_Use4UllageThrusters)
 			{
-				sprintf_s(Buffer, "4 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
+				fmt(Buffer, "4 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
 			}
 			else
 			{
-				sprintf_s(Buffer, "2 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
+				fmt(Buffer, "2 quads, %.1lf s ullage", GC->rtcc->RZJCTTC.R31_UllageTime);
 			}
 			skp->Text(1 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
 		}
@@ -8304,15 +8305,15 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 			if (tab->dv >= 304.8)
 			{
-				sprintf_s(Buffer, "%.0lf", tab->dv / 0.3048);
+				fmt(Buffer, "%.0lf", tab->dv / 0.3048);
 			}
 			else if (tab->dv >= 30.48)
 			{
-				sprintf_s(Buffer, "%.1lf", tab->dv / 0.3048);
+				fmt(Buffer, "%.1lf", tab->dv / 0.3048);
 			}
 			else
 			{
-				sprintf_s(Buffer, "%.2lf", tab->dv / 0.3048);
+				fmt(Buffer, "%.2lf", tab->dv / 0.3048);
 			}
 			skp->Text(29 * W / 64, (10 + 3 * i) * H / 32, Buffer, strlen(Buffer));
 			if (tab->incl_EI < 0)
@@ -8533,11 +8534,11 @@ bool ApolloRTCCMFD::Update(oapi::Sketchpad *skp)
 
 		//skp->Text(8 * W / 16, 10 * H / 14, "TEPHEM:", 10);
 
-		//sprintf_s(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 56.0, 0));
+		//fmt(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 56.0, 0));
 		//skp->Text(8 * W / 16, 11 * H / 14, Buffer, strlen(Buffer));
-		//sprintf_s(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 42.0, 0));
+		//fmt(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 42.0, 0));
 		//skp->Text(8 * W / 16, 12 * H / 14, Buffer, strlen(Buffer));
-		//sprintf_s(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 28.0, 0));
+		//fmt(Buffer, "%05o", OrbMech::DoubleToBuffer(lotime*100.0, 28.0, 0));
 		//skp->Text(8 * W / 16, 13 * H / 14, Buffer, strlen(Buffer));
 	}
 	else if (screen == 115)

@@ -72,5 +72,14 @@ namespace nassp
 		}
 
 		void skpTextFmt(oapi::Sketchpad* skp, int x, int y, const char* fmt, ...);
+		char *fmt(char *buf, int len, const char* format, ...);
+		template <size_t size, typename... Args>
+		char *fmt(
+			char(&buffer)[size],
+			const char* format,
+			Args... args
+		) {
+			return fmt(buffer, size, format, args...);
+		}
 	}
 }

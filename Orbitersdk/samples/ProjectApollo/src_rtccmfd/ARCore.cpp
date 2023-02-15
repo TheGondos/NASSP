@@ -17,6 +17,7 @@
 #include "nassputils.h"
 
 using namespace nassp;
+using nassp::utils::fmt;
 
 static WSADATA wsaData;
 static SOCKET m_socket;
@@ -319,8 +320,7 @@ int AR_GCore::MPTTrajectoryUpdate(VESSEL *ves, bool csm)
 		rtcc->BZUSEVEC.data[id].LandingSiteIndicator = false;
 	}
 	char Buff[16];
-	sprintf_s(Buff, "API%c%03d", letter, rtcc->BZUSEVEC.data[id].ID);
-	rtcc->BZUSEVEC.data[id].VectorCode.assign(Buff);
+	rtcc->BZUSEVEC.data[id].VectorCode = fmt(Buff, "API%c%03d", letter, rtcc->BZUSEVEC.data[id].ID);
 	return 0;
 }
 
@@ -1250,8 +1250,7 @@ void ARCore::UpdateGRRTime(VESSEL *v)
 	double ss;
 	char Buff[128];
 	OrbMech::SStoHHMMSS(T_L, hh, mm, ss);
-	sprintf_s(Buff, "P12,IU1,%d:%d:%.2lf,%.3lf;", hh, mm, ss, Azi*DEG);
-	GC->rtcc->GMGMED(Buff);
+	GC->rtcc->GMGMED(fmt(Buff, "P12,IU1,%d:%d:%.2lf,%.3lf;", hh, mm, ss, Azi * DEG));
 }
 
 void ARCore::GetStateVectorFromIU()

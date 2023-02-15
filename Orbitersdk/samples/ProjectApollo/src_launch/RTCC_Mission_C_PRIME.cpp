@@ -33,6 +33,8 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include "../src_rtccmfd/OrbMech.h"
 #include "mcc.h"
 #include "rtcc.h"
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 bool RTCC::CalculationMTP_C_PRIME(int fcn, LPVOID &pad, char * upString, char * upDesc, char * upMessage)
 {
@@ -49,8 +51,7 @@ bool RTCC::CalculationMTP_C_PRIME(int fcn, LPVOID &pad, char * upString, char * 
 		char Buff[128];
 
 		//P80 MED: mission initialization
-		sprintf_s(Buff, "P80,1,CSM,%d,%d,%d;", GZGENCSN.MonthofLiftoff, GZGENCSN.DayofLiftoff, GZGENCSN.Year);
-		GMGMED(Buff);
+		GMGMED(fmt(Buff, "P80,1,CSM,%d,%d,%d;", GZGENCSN.MonthofLiftoff, GZGENCSN.DayofLiftoff, GZGENCSN.Year));
 
 		//P10 MED: Enter actual liftoff time
 		double TEPHEM0, tephem_scal;
@@ -67,8 +68,7 @@ bool RTCC::CalculationMTP_C_PRIME(int fcn, LPVOID &pad, char * upString, char * 
 
 		OrbMech::SStoHHMMSS(LaunchMJD*3600.0, hh, mm, ss);
 
-		sprintf_s(Buff, "P10,CSM,%d:%d:%.2lf;", hh, mm, ss);
-		GMGMED(Buff);
+		GMGMED(fmt(Buff, "P10,CSM,%d:%d:%.2lf;", hh, mm, ss));
 
 		//P12: CSM GRR and Azimuth
 		SaturnV *SatV = (SaturnV*)cm;
@@ -76,17 +76,14 @@ bool RTCC::CalculationMTP_C_PRIME(int fcn, LPVOID &pad, char * upString, char * 
 		double Azi = lvdc->Azimuth*DEG;
 		double T_GRR = lvdc->T_L;
 
-		sprintf_s(Buff, "P12,CSM,%d:%d:%.2lf,%.2lf;", hh, mm, ss, Azi);
-		GMGMED(Buff);
+		GMGMED(fmt(Buff, "P12,CSM,%d:%d:%.2lf,%.2lf;", hh, mm, ss, Azi));
 
 		//P15: CMC clock zero
-		sprintf_s(Buff, "P15,AGC,%d:%d:%.2lf;", hh, mm, ss);
-		GMGMED(Buff);
+		GMGMED(fmt(Buff, "P15,AGC,%d:%d:%.2lf;", hh, mm, ss));
 
 		//P12: IU GRR and Azimuth
 		OrbMech::SStoHHMMSS(T_GRR, hh, mm, ss);
-		sprintf_s(Buff, "P12,IU1,%d:%d:%.2lf,%.2lf;", hh, mm, ss, Azi);
-		GMGMED(Buff);
+		GMGMED(fmt(Buff, "P12,IU1,%d:%d:%.2lf,%.2lf;", hh, mm, ss, Azi));
 
 		//Get actual liftoff REFSMMAT from telemetry
 		BZSTLM.CMC_REFSMMAT = GetREFSMMATfromAGC(&mcc->cm->agc.vagc, true);

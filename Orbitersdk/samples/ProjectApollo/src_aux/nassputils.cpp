@@ -41,5 +41,14 @@ namespace nassp
 			skp->Text(x, y, buf, len);
 		}
 
+		char* fmt(char* buf, int len, const char* format, ...) {
+			va_list ap;
+			va_start(ap, format);
+			vsnprintf(buf, len, format, ap);
+			va_end(ap);
+			buf[len - 1] = '\0';
+			return buf;
+		}
+
 	}
 }

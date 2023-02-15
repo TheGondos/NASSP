@@ -23,6 +23,8 @@
   **************************************************************************/
 
 #include "LCC_MFD.h"
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 LCC_MFD::LCC_MFD(DWORD w, DWORD h, VESSEL *v) :MFD2(w, h, v)
 {
@@ -120,9 +122,6 @@ bool LoadCheckoutProgramInput(void *id, char *str, void *data)
 
 void  LCC_MFD::LoadCheckoutProgram(const char *str)
 {
-	char str2[128];
-
-	sprintf_s(str2, 128, "Config\\ProjectApollo\\Checkout\\%s.csv", str);
-
-	pLCC->SLCCLoadProgram(str2);
+	char buf[128];
+	pLCC->SLCCLoadProgram(fmt(buf, "Config\\ProjectApollo\\Checkout\\%s.csv", str));
 }

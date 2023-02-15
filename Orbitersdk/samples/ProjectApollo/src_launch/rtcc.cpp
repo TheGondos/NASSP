@@ -43,6 +43,8 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include "../src_rtccmfd/ReentryNumericalIntegrator.h"
 #include "mcc.h"
 #include "rtcc.h"
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 // SCENARIO FILE MACROLOGY
 #define SAVE_BOOL(KEY,VALUE) oapiWriteScenario_int(scn, KEY, VALUE)
@@ -67,7 +69,7 @@ void format_time_rtcc(char *buf, double time) {
 	hours = (int)(time / 3600);
 	minutes = (int)((time / 60) - (hours * 60));
 	seconds = (int)((time - (hours * 3600)) - (minutes * 60));
-	sprintf_s(buf, 64, "%03d:%02d:%02d", hours, minutes, seconds);
+	fmt(buf, 64, "%03d:%02d:%02d", hours, minutes, seconds);
 }
 
 //Ephemeris format 2 to format 1
@@ -1161,8 +1163,8 @@ void MissionPlanTable::SaveState(FILEHANDLE scn, char *start_str, char *end_str)
 	oapiWriteScenario_int(scn, "LastExecutedManeuver", LastExecutedManeuver);
 	for (unsigned i = 0;i < ManeuverNum;i++)
 	{
-		sprintf_s(Buff, "MAN%d_BEGIN", i + 1);
-		sprintf_s(Buff2, "MAN%d_END", i + 1);
+		fmt(Buff, "MAN%d_BEGIN", i + 1);
+		fmt(Buff2, "MAN%d_END", i + 1);
 		mantable[i].SaveState(scn, Buff, Buff2);
 	}
 	oapiWriteLine(scn, end_str);
@@ -1187,8 +1189,8 @@ void MissionPlanTable::LoadState(FILEHANDLE scn, char *end_str)
 			{
 				mantable.resize(ManeuverNum);
 				mannum = 0;
-				sprintf_s(manbuff, "MAN%d_BEGIN", mannum + 1);
-				sprintf_s(manbuff2, "MAN%d_END", mannum + 1);
+				fmt(manbuff, "MAN%d_BEGIN", mannum + 1);
+				fmt(manbuff2, "MAN%d_END", mannum + 1);
 			}
 			else
 			{
@@ -1233,8 +1235,8 @@ void MissionPlanTable::LoadState(FILEHANDLE scn, char *end_str)
 				{
 					mantable[mannum].LoadState(scn, manbuff2);
 					mannum++;
-					sprintf_s(manbuff, "MAN%d_BEGIN", mannum + 1);
-					sprintf_s(manbuff2, "MAN%d_END", mannum + 1);
+					fmt(manbuff, "MAN%d_BEGIN", mannum + 1);
+					fmt(manbuff2, "MAN%d_END", mannum + 1);
 				}
 			}
 		}
@@ -1479,7 +1481,7 @@ void RTCC::QMSEARCH(int year, int month, int day)
 {
 	//This function loads the skeleton flight plan for the launch day
 	char fname[128];
-	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d SFP.txt", year, month, day);
+	fmt(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d SFP.txt", year, month, day);
 
 	ifstream startable(fname);
 	if (startable.is_open())
@@ -1600,7 +1602,7 @@ void RTCC::QMMBLD(int year, int month, int day)
 	//This function loads the TLI targeting parameters for the launch day
 	//Loaded file has to have the punch card format from MSC memo 69-FM-171. One punch card = one line
 	char Buff[128];
-	sprintf_s(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d TLI.txt", year, month, day);
+	fmt(Buff, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d TLI.txt", year, month, day);
 
 	ifstream startable(Buff);
 
@@ -1737,7 +1739,7 @@ void RTCC::LoadMissionInitParameters(int year, int month, int day)
 {
 	//This function loads launch day specific parameters that might be updated and might be saved/loaded
 	char fname[128];
-	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d Init.txt", year, month, day);
+	fmt(fname, ".\\Config\\ProjectApollo\\RTCC\\%d-%02d-%02d Init.txt", year, month, day);
 
 	ifstream startable(fname);
 	if (startable.is_open())
@@ -1847,7 +1849,7 @@ void RTCC::LoadMissionConstantsFile(char *file)
 {
 	//This function loads mission specific constants that will rarely be changed or saved/loaded
 	char fname[128];
-	sprintf_s(fname, ".\\Config\\ProjectApollo\\RTCC\\%s.txt", file);
+	fmt(fname, ".\\Config\\ProjectApollo\\RTCC\\%s.txt", file);
 
 	ifstream startable(fname);
 	if (startable.is_open())
@@ -12408,7 +12410,7 @@ void RTCC::MPTMassUpdate(VESSEL *vessel, MED_M50 &med1, MED_M55 &med2, MED_M49 &
 
 	char Buffer[100];
 
-	sprintf_s(Buffer, vessel->GetClassNameA());
+	fmt(Buffer, vessel->GetClassNameA());
 
 	if (!stricmp(Buffer, "ProjectApollo\\Saturn5") ||
 		!stricmp(Buffer, "ProjectApollo/Saturn5") ||
@@ -13370,16 +13372,13 @@ void RTCC::PMXSPT(std::string source, int n)
 		message.push_back("INVALID CONFIGURATION CODE OR THRUSTER CODE - MPT UNCHANGED.");
 		break;
 	case 7:
-		sprintf_s(Buffer, "PERIFOCUS CONVERGENCE FAILED FOR MANEUVER %d - FINAL SOLUTION ACCEPTED.", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "PERIFOCUS CONVERGENCE FAILED FOR MANEUVER %d - FINAL SOLUTION ACCEPTED.", RTCCONLINEMON.IntBuffer[0]));
 		break;
 	case 8:
-		sprintf_s(Buffer, "AEG ERROR COMPUTING MANEUVER %d - NO SOLUTION AVAILABLE.", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "AEG ERROR COMPUTING MANEUVER %d - NO SOLUTION AVAILABLE.", RTCCONLINEMON.IntBuffer[0]));
 		break;
 	case 9:
-		sprintf_s(Buffer, "PERIFOCUS ADJUST MANEUVER %d IS AN ILLEGAL REQUEST.", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "PERIFOCUS ADJUST MANEUVER %d IS AN ILLEGAL REQUEST.", RTCCONLINEMON.IntBuffer[0]));
 		break;
 	case 10:
 		message.push_back("MANEUVER EXECUTED - CANNOT FREEZE");
@@ -13440,17 +13439,9 @@ void RTCC::PMXSPT(std::string source, int n)
 		OnlinePrintTimeDDHHMMSS(RTCCONLINEMON.DoubleBuffer[0], temp1);
 		message.push_back(RTCCONLINEMON.TextBuffer[0] + ", BEGIN TIME = " + temp1);
 		OnlinePrintTimeDDHHMMSS(RTCCONLINEMON.DoubleBuffer[1], temp1);
-		sprintf_s(Buffer, "%.1lf", RTCCONLINEMON.DoubleBuffer[2]);
-		temp2.assign(Buffer);
-		sprintf_s(Buffer, "%.1lf", RTCCONLINEMON.DoubleBuffer[3]);
-		temp3.assign(Buffer);
-		message.push_back("T = " + temp1 + " AREA = " + temp2 + " WEIGHT = " + temp3);
-		sprintf_s(Buffer, "R = %.8lf %.8lf %.8lf", RTCCONLINEMON.VectorBuffer[0].x, RTCCONLINEMON.VectorBuffer[0].y, RTCCONLINEMON.VectorBuffer[0].z);
-		temp1.assign(Buffer);
-		message.push_back(temp1);
-		sprintf_s(Buffer, "V = %.8lf %.8lf %.8lf", RTCCONLINEMON.VectorBuffer[1].x, RTCCONLINEMON.VectorBuffer[1].y, RTCCONLINEMON.VectorBuffer[1].z);
-		temp1.assign(Buffer);
-		message.push_back(temp1);
+		message.push_back(fmt(Buffer, "T = %s AREA = %.1lf WEIGHT =  %.1lf", temp1.c_str(), RTCCONLINEMON.DoubleBuffer[2], RTCCONLINEMON.DoubleBuffer[3]));
+		message.push_back(fmt(Buffer, "R = %.8lf %.8lf %.8lf", RTCCONLINEMON.VectorBuffer[0].x, RTCCONLINEMON.VectorBuffer[0].y, RTCCONLINEMON.VectorBuffer[0].z));
+		message.push_back(fmt(Buffer, "V = %.8lf %.8lf %.8lf", RTCCONLINEMON.VectorBuffer[1].x, RTCCONLINEMON.VectorBuffer[1].y, RTCCONLINEMON.VectorBuffer[1].z));
 		break;
 	case 37:
 		message.push_back("DELETION TIME IS PRIOR TO A FROZEN MANEUVER - MPT UNCHANGED.");
@@ -13493,8 +13484,7 @@ void RTCC::PMXSPT(std::string source, int n)
 		message.push_back("UNABLE TO FETCH VECTOR FOR RENDEZVOUS PLANNING REQUEST");
 		break;
 	case 50:
-		sprintf_s(Buffer, "ERROR CODE %d FROM POWERED FLIGHT ITERATOR", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "ERROR CODE %d FROM POWERED FLIGHT ITERATOR", RTCCONLINEMON.IntBuffer[0]));
 		message.push_back("MNVR TRANSFERRED USING BEST PARAMETERS AVAILABLE");
 		break;
 	case 51:
@@ -13526,13 +13516,11 @@ void RTCC::PMXSPT(std::string source, int n)
 		message.push_back("FAILURE TO CONVERGE. PLANS DELETED.");
 		break;
 	case 60:
-		sprintf_s(Buffer, "ALL SUBSEQUENCE MANEUVERS TO %d MUST BE REPLACED/DELETED/CONFIRMED", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "ALL SUBSEQUENCE MANEUVERS TO %d MUST BE REPLACED/DELETED/CONFIRMED", RTCCONLINEMON.IntBuffer[0]));
 		message.push_back("IN CHRONOLOGICAL ORDER DUE TO THIS CONFIGURATION CHANGE.");
 		break;
 	case 61:
-		sprintf_s(Buffer, "VECTOR FOR FREEZE REQUEST IS WITHIN RANGE OF MANEUVER %d", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "VECTOR FOR FREEZE REQUEST IS WITHIN RANGE OF MANEUVER %d", RTCCONLINEMON.IntBuffer[0]));
 		message.push_back("- CANNOT FREZE ON THIS VECTOR.");
 		break;
 	case 62:
@@ -13540,8 +13528,7 @@ void RTCC::PMXSPT(std::string source, int n)
 		message.push_back("CANNOT FREEZE POST_TLI MANEUVER ON THIS VECTOR.");
 		break;
 	case 63:
-		sprintf_s(Buffer, "INVALID CONFIGURATION CODE (%d)", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "INVALID CONFIGURATION CODE (%d)", RTCCONLINEMON.IntBuffer[0]));
 		break;
 	case 64:
 		message.push_back("THE AMOUNT OF TIME TO UPDATE THE ELEMENTS EXCEEDS FOUR DAYS.");
@@ -13623,17 +13610,12 @@ void RTCC::PMXSPT(std::string source, int n)
 			int hh, mm;
 			double ss;
 			OrbMech::SStoHHMMSSTH(RTCCONLINEMON.DoubleBuffer[0], hh, mm, ss);
-			sprintf_s(Buffer, "LIFTOFF TIME(GMT) = 00/%02d/%02d/%05.2lf", hh, mm, ss);
-			message.push_back(Buffer);
-			sprintf_s(Buffer, "LAUNCH AZIMUTH (DEG) = %.6lf", RTCCONLINEMON.DoubleBuffer[1]);
-			message.push_back(Buffer);
+			message.push_back(fmt(Buffer, "LIFTOFF TIME(GMT) = 00/%02d/%02d/%05.2lf", hh, mm, ss));
+			message.push_back(fmt(Buffer, "LAUNCH AZIMUTH (DEG) = %.6lf", RTCCONLINEMON.DoubleBuffer[1]));
 			OrbMech::SStoHHMMSSTH(RTCCONLINEMON.DoubleBuffer[2], hh, mm, ss);
-			sprintf_s(Buffer, "VECTOR TIME(HRS) = 00/%02d/%02d/%05.2lf CS = ECT", hh, mm, ss);
-			message.push_back(Buffer);
-			sprintf_s(Buffer, "   R(ER) = %.10lf %.10lf %.10lf", RTCCONLINEMON.VectorBuffer[0].x, RTCCONLINEMON.VectorBuffer[0].y, RTCCONLINEMON.VectorBuffer[0].z);
-			message.push_back(Buffer);
-			sprintf_s(Buffer, "V(ER/HR) = %.10lf %.10lf %.10lf", RTCCONLINEMON.VectorBuffer[1].x, RTCCONLINEMON.VectorBuffer[1].y, RTCCONLINEMON.VectorBuffer[1].z);
-			message.push_back(Buffer);
+			message.push_back(fmt(Buffer, "VECTOR TIME(HRS) = 00/%02d/%02d/%05.2lf CS = ECT", hh, mm, ss));
+			message.push_back(fmt(Buffer, "   R(ER) = %.10lf %.10lf %.10lf", RTCCONLINEMON.VectorBuffer[0].x, RTCCONLINEMON.VectorBuffer[0].y, RTCCONLINEMON.VectorBuffer[0].z));
+			message.push_back(fmt(Buffer, "V(ER/HR) = %.10lf %.10lf %.10lf", RTCCONLINEMON.VectorBuffer[1].x, RTCCONLINEMON.VectorBuffer[1].y, RTCCONLINEMON.VectorBuffer[1].z));
 		}
 		break;
 	case 124:
@@ -13793,8 +13775,7 @@ void RTCC::OnlinePrintTimeDDHHMMSS(double TIME_SEC, std::string &time)
 	minutes = trunc((TIME_SEC - 86400.0 * days - 3600.0 * hours) / 60.0);
 	seconds = TIME_SEC - 86400.0*days - 3600.0*hours - 60.0*minutes;
 
-	sprintf(Buffer, "%02.0lf/%02.0lf/%02.0lf/%05.2lf", days, hours, minutes, seconds);
-	time.assign(Buffer);
+	time = fmt(Buffer, "%02.0lf/%02.0lf/%02.0lf/%05.2lf", days, hours, minutes, seconds);
 }
 
 void RTCC::OnlinePrintTimeHHHMMSS(double TIME_SEC, std::string &time)
@@ -13809,8 +13790,7 @@ void RTCC::OnlinePrintTimeHHHMMSS(double TIME_SEC, std::string &time)
 	minutes = trunc((TIME_SEC - 3600.0 * hours) / 60.0);
 	seconds = TIME_SEC - 3600.0*hours - 60.0*minutes;
 
-	sprintf(Buffer, "%03.0lf/%02.0lf/%05.2lf", hours, minutes, seconds);
-	time.assign(Buffer);
+	time = fmt(Buffer, "%03.0lf/%02.0lf/%05.2lf", hours, minutes, seconds);
 }
 
 void RTCC::EMGGPCHR(double lat, double lng, double alt, int body, Station *stat)
@@ -26489,14 +26469,12 @@ bool RTCC::GMGMED(char *str)
 	char Buffer[128];
 	if (err == 0)
 	{
-		sprintf_s(Buffer, "%c%s OK", medtype, code.c_str());
-		RTCCONLINEMON.TextBuffer[0].assign(Buffer);
+		RTCCONLINEMON.TextBuffer[0] = fmt(Buffer, "%c%s OK", medtype, code.c_str());
 		GMSPRINT("GMGMED", 51);
 	}
 	else
 	{
-		sprintf_s(Buffer, "%c%s ERR %d", medtype, code.c_str(), err);
-		RTCCONLINEMON.TextBuffer[0].assign(Buffer);
+		RTCCONLINEMON.TextBuffer[0] = fmt(Buffer, "%c%s ERR %d", medtype, code.c_str(), err);
 		GMSPRINT("GMGMED", 51);
 	}
 
@@ -31163,11 +31141,9 @@ void RTCC::EMGSTSTM(int L, MATRIX3 REFS, int id, double gmt)
 	{
 		vname = "LEM";
 	}
-
-	sprintf_s(Buffer, "NEW IMU MATRIX %s%03d %s", EMGSTGENName(id), tab->data[id - 1].ID, vname);
-	RTCCONLINEMON.TextBuffer[0].assign(Buffer);
-	sprintf_s(Buffer, "GET = %s", Buff2);
-	RTCCONLINEMON.TextBuffer[1].assign(Buffer);
+		
+	RTCCONLINEMON.TextBuffer[0] = fmt(Buffer, "NEW IMU MATRIX %s%03d %s", EMGSTGENName(id), tab->data[id - 1].ID, vname);
+	RTCCONLINEMON.TextBuffer[1] = fmt(Buffer, "GET = %s", Buff2);
 	RTCCONLINEMON.MatrixBuffer = tab->data[id - 1].REFSMMAT;
 	EMGPRINT("EMGSTSTM", 19);
 }
@@ -31290,20 +31266,20 @@ void RTCC::EMGPRINT(std::string source, int i)
 		message.push_back(RTCCONLINEMON.TextBuffer[0] + " BELOW " + RTCCONLINEMON.TextBuffer[1] + " ALTITUDE");
 		if (RTCCONLINEMON.DoubleBuffer[0] >= 0)
 		{
-			sprintf_s(Buffer, "GET = %s LAT = %06.2lf N", RTCCONLINEMON.TextBuffer[2].c_str(), RTCCONLINEMON.DoubleBuffer[0]);
+			fmt(Buffer, "GET = %s LAT = %06.2lf N", RTCCONLINEMON.TextBuffer[2].c_str(), RTCCONLINEMON.DoubleBuffer[0]);
 		}
 		else
 		{
-			sprintf_s(Buffer, "GET = %s LAT = %06.2lf S", RTCCONLINEMON.TextBuffer[2].c_str(), abs(RTCCONLINEMON.DoubleBuffer[0]));
+			fmt(Buffer, "GET = %s LAT = %06.2lf S", RTCCONLINEMON.TextBuffer[2].c_str(), abs(RTCCONLINEMON.DoubleBuffer[0]));
 		}
 		message.push_back(Buffer);
 		if (RTCCONLINEMON.DoubleBuffer[1] >= 0)
 		{
-			sprintf_s(Buffer, "LON = %06.2lf E", RTCCONLINEMON.DoubleBuffer[1]);
+			fmt(Buffer, "LON = %06.2lf E", RTCCONLINEMON.DoubleBuffer[1]);
 		}
 		else
 		{
-			sprintf_s(Buffer, "LON = %06.2lf W", abs(RTCCONLINEMON.DoubleBuffer[1]));
+			fmt(Buffer, "LON = %06.2lf W", abs(RTCCONLINEMON.DoubleBuffer[1]));
 		}
 		message.push_back(Buffer);
 		break;
@@ -31314,14 +31290,11 @@ void RTCC::EMGPRINT(std::string source, int i)
 		message.push_back(RTCCONLINEMON.TextBuffer[0] + " MINIMUM EPHEMERIS WAS NOT GENERATED");
 		break;
 	case 14:
-		sprintf_s(Buffer, "%s ORBITAL ELEM. FOR UPDATE NO. %d", RTCCONLINEMON.TextBuffer[0].c_str(), RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "A = %.1lf NM MEAN ANOMALY = %.2lf H(AP) = %.0lf", RTCCONLINEMON.DoubleBuffer[0], RTCCONLINEMON.DoubleBuffer[1], RTCCONLINEMON.DoubleBuffer[2]);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "E = %.3lf ARG. PERIGEE = %.2lf H(PER) = %.0lf", RTCCONLINEMON.DoubleBuffer[3], RTCCONLINEMON.DoubleBuffer[4], RTCCONLINEMON.DoubleBuffer[5]);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "I = %.2lf ARG ASCEND. NODE = %.2lf", RTCCONLINEMON.DoubleBuffer[6], RTCCONLINEMON.DoubleBuffer[7]);
-		message.push_back(Buffer);
+		;
+		message.push_back(fmt(Buffer, "%s ORBITAL ELEM. FOR UPDATE NO. %d", RTCCONLINEMON.TextBuffer[0].c_str(), RTCCONLINEMON.IntBuffer[0]));
+		message.push_back(fmt(Buffer, "A = %.1lf NM MEAN ANOMALY = %.2lf H(AP) = %.0lf", RTCCONLINEMON.DoubleBuffer[0], RTCCONLINEMON.DoubleBuffer[1], RTCCONLINEMON.DoubleBuffer[2]));
+		message.push_back(fmt(Buffer, "E = %.3lf ARG. PERIGEE = %.2lf H(PER) = %.0lf", RTCCONLINEMON.DoubleBuffer[3], RTCCONLINEMON.DoubleBuffer[4], RTCCONLINEMON.DoubleBuffer[5]));
+		message.push_back(fmt(Buffer, "I = %.2lf ARG ASCEND. NODE = %.2lf", RTCCONLINEMON.DoubleBuffer[6], RTCCONLINEMON.DoubleBuffer[7]));
 		break;
 	case 15:
 		message.push_back(RTCCONLINEMON.TextBuffer[0] + " EPHEMERIS LIMITS");
@@ -31329,20 +31302,15 @@ void RTCC::EMGPRINT(std::string source, int i)
 		break;
 	case 17:
 		message.push_back("ERROR RETURN FROM MANEUVER");
-		sprintf_s(Buffer, "INTEGRATOR, ERROR CODE = %d", RTCCONLINEMON.IntBuffer[0]);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "MANEUVER NO. = %d MPT = %s", RTCCONLINEMON.IntBuffer[1], RTCCONLINEMON.TextBuffer[0].c_str());
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "INTEGRATOR, ERROR CODE = %d", RTCCONLINEMON.IntBuffer[0]));
+		message.push_back(fmt(Buffer, "MANEUVER NO. = %d MPT = %s", RTCCONLINEMON.IntBuffer[1], RTCCONLINEMON.TextBuffer[0].c_str()));
 		break;
 	case 19:
 		message.push_back(RTCCONLINEMON.TextBuffer[0]);
 		message.push_back(RTCCONLINEMON.TextBuffer[1]);
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m11, RTCCONLINEMON.MatrixBuffer.m12, RTCCONLINEMON.MatrixBuffer.m13);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m21, RTCCONLINEMON.MatrixBuffer.m22, RTCCONLINEMON.MatrixBuffer.m23);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m31, RTCCONLINEMON.MatrixBuffer.m32, RTCCONLINEMON.MatrixBuffer.m33);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m11, RTCCONLINEMON.MatrixBuffer.m12, RTCCONLINEMON.MatrixBuffer.m13));
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m21, RTCCONLINEMON.MatrixBuffer.m22, RTCCONLINEMON.MatrixBuffer.m23));
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m31, RTCCONLINEMON.MatrixBuffer.m32, RTCCONLINEMON.MatrixBuffer.m33));
 		break;
 	case 20:
 		message.push_back("ATTITUDE NOT AVAILABLE");
@@ -31363,8 +31331,7 @@ void RTCC::EMGPRINT(std::string source, int i)
 		message.push_back("RMMASCND CONVERGENCE LIMIT");
 		break;
 	case 31:
-		sprintf_s(Buffer, "%d %s STATION CONTACTS GENERATED", RTCCONLINEMON.IntBuffer[0], RTCCONLINEMON.TextBuffer[0].c_str());
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "%d %s STATION CONTACTS GENERATED", RTCCONLINEMON.IntBuffer[0], RTCCONLINEMON.TextBuffer[0].c_str()));
 		break;
 	case 35:
 		message.push_back("C-BAND CONTACT GENERATION " + RTCCONLINEMON.TextBuffer[0]);
@@ -33954,8 +33921,8 @@ RTCC_BMSVPS_1:
 		{
 			BZEVLVEC.data[tabid].ID++;
 		}
-		sprintf_s(Buff2, "%s%03d", prefix, BZEVLVEC.data[tabid].ID);
-		BZEVLVEC.data[tabid].VectorCode.assign(Buff2);
+		
+		BZEVLVEC.data[tabid].VectorCode = fmt(Buff2, "%s%03d", prefix, BZEVLVEC.data[tabid].ID);
 	}
 	//To usable slot?
 	else if (PBIID >= 316 && PBIID <= 323)
@@ -34021,8 +33988,8 @@ RTCC_BMSVPS_1:
 		{
 			BZUSEVEC.data[utabid].ID++;
 		}
-		sprintf_s(Buff2, "%s%03d", prefix, BZUSEVEC.data[utabid].ID);
-		BZUSEVEC.data[utabid].VectorCode.assign(Buff2);
+		
+		BZUSEVEC.data[utabid].VectorCode = fmt(Buff2, "%s%03d", prefix, BZUSEVEC.data[utabid].ID);
 
 		RTCCONLINEMON.TextBuffer[0] = BZUSEVEC.data[utabid].VectorCode;
 		if (etabid <= 3)
@@ -34635,12 +34602,9 @@ void RTCC::LMXPRNTR(std::string source, int n)
 		break;
 	case 10:
 		message.push_back(RTCCONLINEMON.TextBuffer[0] + " REFSMMAT");
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m11, RTCCONLINEMON.MatrixBuffer.m12, RTCCONLINEMON.MatrixBuffer.m13);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m21, RTCCONLINEMON.MatrixBuffer.m22, RTCCONLINEMON.MatrixBuffer.m23);
-		message.push_back(Buffer);
-		sprintf_s(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m31, RTCCONLINEMON.MatrixBuffer.m32, RTCCONLINEMON.MatrixBuffer.m33);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m11, RTCCONLINEMON.MatrixBuffer.m12, RTCCONLINEMON.MatrixBuffer.m13));
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m21, RTCCONLINEMON.MatrixBuffer.m22, RTCCONLINEMON.MatrixBuffer.m23));
+		message.push_back(fmt(Buffer, "%+.7lf %+.7lf %+.7lf", RTCCONLINEMON.MatrixBuffer.m31, RTCCONLINEMON.MatrixBuffer.m32, RTCCONLINEMON.MatrixBuffer.m33));
 		break;
 	case 11:
 		message.push_back("VEHICLE OPTION INVALID - NO PLATFORM COMPUTED");
@@ -35151,8 +35115,8 @@ void RTCC::EMMGSTMP()
 		MATRIX3 Rot = SystemParameters.MAT_J2000_BRCS;
 		u = mul(Rot, u);
 		char buff[4];
-		sprintf_s(buff, "%03o", EZGSTMED.G14_Star);
-		EZJGSTTB.Landmark_SC.assign(buff);
+		
+		EZJGSTTB.Landmark_SC = fmt(buff, "%03o", EZGSTMED.G14_Star);
 		EZJGSTTB.Landmark_LOS = u;
 		EZJGSTTB.Landmark_DEC = acos(u.z);
 		EZJGSTTB.Landmark_RA = atan2(u.y, u.x);

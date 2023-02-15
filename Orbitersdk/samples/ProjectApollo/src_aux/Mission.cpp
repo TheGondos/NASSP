@@ -25,6 +25,8 @@
 #include "Mission.h"
 #include "OrbiterAPI.h"
 #include <map>
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 std::map<std::string, mission::Mission*> pa_mission_hashmap;
 
@@ -119,13 +121,10 @@ namespace mission {
 	bool Mission::LoadMission(const std::string& strMission)
 	{
 		char buffer[256];
-		std::string filename;
-		filename = "Missions\\ProjectApollo\\" + strMission + ".cfg";
+		std::string filename = "Missions\\ProjectApollo\\" + strMission + ".cfg";
 		strFileName = strMission;
 
-		sprintf_s(buffer, 255, "(Mission) Loading mission %s from file %s",
-			strMission.c_str(), filename.c_str());
-		oapiWriteLog(buffer);
+		oapiWriteLog(fmt(buffer, "(Mission) Loading mission %s from file %s", strMission.c_str(), filename.c_str()));
 		FILEHANDLE hFile = oapiOpenFile(filename.c_str(), FILE_IN);
 
 		if (hFile == NULL)

@@ -28,6 +28,8 @@ See http://nassp.sourceforge.net/license/ for more details.
 #include "EntryCalculations.h"
 #include "CSMLMGuidanceSim.h"
 #include "rtcc.h"
+#include "nassputils.h"
+using nassp::utils::fmt;
 
 namespace EntryCalculations
 {
@@ -2836,8 +2838,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		message.push_back("MSK 356 RECEIVED AN INVALID VEHICLE ID");
 		break;
 	case 3:
-		sprintf_s(Buffer, "LONGITUDE CONVERGENCE FAILURE - LONGITUDE DIFFERENCE = %08.3lf (RAD)", pRTCC->RTCCONLINEMON.DoubleBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "LONGITUDE CONVERGENCE FAILURE - LONGITUDE DIFFERENCE = %08.3lf (RAD)", pRTCC->RTCCONLINEMON.DoubleBuffer[0]));
 		break;
 	case 4:
 		message.push_back("MSK 355 RECEIVED AN INVALID VEHICLE ID");
@@ -2951,33 +2952,27 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		message.push_back("RECEIVED AN INVALID VEHICLE ID");
 		break;
 	case 41:
-		sprintf(Buffer, "CONVERGED. E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "CONVERGED. E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 42:
 		message.push_back("LESS THAN 5 MIN. SEPARATING MANEUVERS");
-		sprintf(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 43:
 		message.push_back("NO DOWNRANGE CONVERGENCE");
-		sprintf(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 44:
 		message.push_back("NO CROSSRANGE CONVERGENCE");
-		sprintf(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 45:
 		message.push_back("TL OR TR BOUNDS STOPPED CONVERGENCE");
-		sprintf(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 46:
 		message.push_back("V, GAMMA EI CONDITIONS VIOLATED");
-		sprintf(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "E-W MISS = %.2lf N-S MISS = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 47:
 		message.push_back("NO DELTA-V POSSIBLE");
@@ -2987,8 +2982,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		break;
 	case 49:
 		message.push_back("EI TARGET CURVE NOT HIT");
-		sprintf(Buffer, "VEL = %.1lf GAMMA = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "VEL = %.1lf GAMMA = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 50:
 		message.push_back("(RCMDBM) ENTERED");
@@ -2998,8 +2992,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		break;
 	case 52:
 		message.push_back("NO DOWRANGE CONVERGENCE IN 15 ITERATIONS");
-		sprintf(Buffer, "MISS DISTANCE = %.1lf NM", pRTCC->RTCCONLINEMON.DoubleBuffer[0]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "MISS DISTANCE = %.1lf NM", pRTCC->RTCCONLINEMON.DoubleBuffer[0]));
 		break;
 	case 53:
 		message.push_back("NO INTERSECTION WITH EI");
@@ -3009,8 +3002,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		break;
 	case 55:
 		message.push_back("VEL, GAMMA BEYOND CURVE FIT");
-		sprintf(Buffer, "VEL = %.1lf GAMMA = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "VEL = %.1lf GAMMA = %.2lf", pRTCC->RTCCONLINEMON.DoubleBuffer[0], pRTCC->RTCCONLINEMON.DoubleBuffer[1]));
 		break;
 	case 56:
 		message.push_back("HYPERBOLIC ORBIT FROM 2-BODY ROUTINE");
@@ -3021,24 +3013,21 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		RetrofireDisplayParametersTableData *tab = &pRTCC->RZRFDP.data[2];
 
 		//Line 1
-		sprintf_s(Buffer, "MANUAL TIME-TO-FIRE PARAMETERS TYPE %d COMPUTATION", pRTCC->RZJCTTC.R32_Code);
-		message.push_back(Buffer);
+		message.push_back(fmt(Buffer, "MANUAL TIME-TO-FIRE PARAMETERS TYPE %d COMPUTATION", pRTCC->RZJCTTC.R32_Code));
 		if (pRTCC->RZJCTTC.R32_Code == 2)
 		{
 			if (ManeuverType == 1)
 			{
-				Buffer2.assign("-SEPARATION MNVR");
+				Buffer2 = "-SEPARATION MNVR";
 			}
 			else
 			{
-				Buffer2.assign("SHAPING MANEUVER");
+				Buffer2 = "SHAPING MANEUVER";
 			}
-			Buffer2.append(" PARAMETERS VEH=CSM AREA=");
-			sprintf_s(Buffer, "%06.2lf", Area / 0.3048 / 0.3048);
-			Buffer2.append(Buffer);
+			Buffer2 += " PARAMETERS VEH=CSM AREA=";
+			Buffer2 += fmt(Buffer, "%06.2lf", Area / 0.3048 / 0.3048);
 			Buffer2 += " WT=";
-			sprintf_s(Buffer, "%08.2lf", tab->CSMWeightSep);
-			Buffer2.append(Buffer);
+			Buffer2 += fmt(Buffer, "%08.2lf", tab->CSMWeightSep);
 			Buffer2 += " GETI=";
 			pRTCC->OnlinePrintTimeHHHMMSS(tab->GETI_Sep, Buffer3);
 			Buffer2 += Buffer3;
@@ -3065,7 +3054,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 			Buffer2 += Buffer3;
 			message.push_back(Buffer2);
 
-			Buffer2.assign("CONSTRAINT=");
+			Buffer2 = "CONSTRAINT=";
 			if (pRTCC->RZJCTTC.R30_DeltaV > 0)
 			{
 				Buffer3 = "DV";
@@ -3076,51 +3065,44 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 			}
 			Buffer2 += Buffer3;
 			Buffer2 += " DV=";
-			sprintf_s(Buffer, "%08.2lf", tab->DVT_Sep);
-			Buffer2.append(Buffer);
+		
+			Buffer2 += fmt(Buffer, "%08.2lf", tab->DVT_Sep);
 			Buffer2 += " DT=";
-			sprintf_s(Buffer, "%06.2lf", tab->BurnTime_Sep);
-			Buffer2.append(Buffer);
+			
+			Buffer2 += fmt(Buffer, "%06.2lf", tab->BurnTime_Sep);
 			Buffer2 += " DT ULL=";
-			sprintf_s(Buffer, "%05.2lf", tab->UllageDT_Sep);
-			Buffer2.append(Buffer);
+			
+			Buffer2 += fmt(Buffer, "%05.2lf", tab->UllageDT_Sep);
 			Buffer2 += " ";
-			sprintf_s(Buffer, "%d", tab->UllageQuads_Sep);
-			Buffer2.append(Buffer);
+			
+			Buffer2 += fmt(Buffer, "%d", tab->UllageQuads_Sep);
 			Buffer2 += " QUADS";
 			message.push_back(Buffer2);
-
-			sprintf_s(Buffer, "INPUT ATT-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLE IND=", pRTCC->RZJCTTC.R30_Att.x*DEG, pRTCC->RZJCTTC.R30_Att.y*DEG, pRTCC->RZJCTTC.R30_Att.z*DEG);
-			Buffer2.assign(Buffer);
+						
+			Buffer2 = fmt(Buffer, "INPUT ATT-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLE IND=", pRTCC->RZJCTTC.R30_Att.x * DEG, pRTCC->RZJCTTC.R30_Att.y * DEG, pRTCC->RZJCTTC.R30_Att.z * DEG);
 			if (pRTCC->RZJCTTC.R30_GimbalIndicator == -1)
 			{
-				Buffer2.append("C");
+				Buffer2 += "C";
 			}
 			else
 			{
-				Buffer2.append("I");
+				Buffer2 += "I";
 			}
 			message.push_back(Buffer2);
 			//Line 5
-			sprintf_s(Buffer, "LVLH BODY-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLES--PITCH=%+07.2lf YAW=%+07.2lf", tab->Att_LVLH_Sep.x, tab->Att_LVLH_Sep.y, tab->Att_LVLH_Sep.z, tab->P_G_Sep, tab->Y_G_Sep);
-			Buffer2.assign(Buffer);
-			message.push_back(Buffer2);
+			message.push_back(fmt(Buffer, "LVLH BODY-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLES--PITCH=%+07.2lf YAW=%+07.2lf", tab->Att_LVLH_Sep.x, tab->Att_LVLH_Sep.y, tab->Att_LVLH_Sep.z, tab->P_G_Sep, tab->Y_G_Sep));
 			//Line 6
-			sprintf_s(Buffer, "IMU-------ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf DT SEP=", tab->Att_IMU_Sep.x, tab->Att_IMU_Sep.y, tab->Att_IMU_Sep.z);
-			Buffer2.assign(Buffer);
+			Buffer2 = fmt(Buffer, "IMU-------ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf DT SEP=", tab->Att_IMU_Sep.x, tab->Att_IMU_Sep.y, tab->Att_IMU_Sep.z);
 			pRTCC->OnlinePrintTimeHHHMMSS(pRTCC->RZJCTTC.R30_DeltaT_Sep, Buffer3);
 			Buffer2 += Buffer3;
-			sprintf_s(Buffer, " TRUE ANOMALY AT GETI(SEP)=%+07.2lf", tab->TrueAnomalySep);
-			Buffer2.append(Buffer);
+			Buffer2 += fmt(Buffer, " TRUE ANOMALY AT GETI(SEP)=%+07.2lf", tab->TrueAnomalySep);
 			message.push_back(Buffer2);
 		}
 		//Line 2
-		Buffer2.assign("--MANEUVER PARAMETERS VEH=CSM AREA="); //RETRO
-		sprintf_s(Buffer, "%06.2lf", Area / 0.3048 / 0.3048);
-		Buffer2.append(Buffer);
+		Buffer2 = "--MANEUVER PARAMETERS VEH=CSM AREA="; //RETRO
+		Buffer2 += fmt(Buffer, "%06.2lf", Area / 0.3048 / 0.3048);
 		Buffer2 += " WT=";
-		sprintf_s(Buffer, "%08.2lf", tab->CSMWeightRetro);
-		Buffer2.append(Buffer);
+		Buffer2 += fmt(Buffer, "%08.2lf", tab->CSMWeightRetro);
 		Buffer2 += " GETI=";
 		pRTCC->OnlinePrintTimeHHHMMSS(tab->GETI, Buffer3);
 		Buffer2 += Buffer3;
@@ -3147,7 +3129,7 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		Buffer2 += Buffer3;
 		message.push_back(Buffer2);
 		//Line 3
-		Buffer2.assign("CONSTRAINT=");
+		Buffer2 = "CONSTRAINT=";
 		switch (BurnMode)
 		{
 		case 1:
@@ -3162,185 +3144,156 @@ void RetrofirePlanning::RMGTTF(std::string source, int i)
 		}
 		Buffer2 += Buffer3;
 		Buffer2 += " DV=";
-		sprintf_s(Buffer, "%08.2lf", tab->DVT);
-		Buffer2.append(Buffer);
+		
+		Buffer2 += fmt(Buffer, "%08.2lf", tab->DVT);
 		Buffer2 += " DT=";
-		sprintf_s(Buffer, "%06.2lf", tab->BurnTime);
-		Buffer2.append(Buffer);
+		
+		Buffer2 += fmt(Buffer, "%06.2lf", tab->BurnTime);
 		Buffer2 += " DT ULL=";
-		sprintf_s(Buffer, "%05.2lf", tab->UllageDT);
-		Buffer2.append(Buffer);
+
+		Buffer2 += fmt(Buffer, "%05.2lf", tab->UllageDT);
 		Buffer2 += " ";
-		sprintf_s(Buffer, "%d", tab->UllageQuads);
-		Buffer2.append(Buffer);
+		Buffer2 += fmt(Buffer, "%d", tab->UllageQuads);
 		Buffer2 += " QUADS POSTBURN WT=";
-		sprintf_s(Buffer, "%08.2lf", burnaux.WTEND*LBS*1000.0);
-		Buffer2.append(Buffer);
+		Buffer2 += fmt(Buffer, "%08.2lf", burnaux.WTEND * LBS * 1000.0);
 		message.push_back(Buffer2);
 		//Line 4
-		sprintf_s(Buffer, "INPUT ATT-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLE IND=", LVLHAtt.x*DEG, LVLHAtt.y*DEG, LVLHAtt.z*DEG);
-		Buffer2.assign(Buffer);
+		Buffer2 = fmt(Buffer, "INPUT ATT-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLE IND=", LVLHAtt.x * DEG, LVLHAtt.y * DEG, LVLHAtt.z * DEG);
 		if (GimbalIndicator == -1)
 		{
-			Buffer2.append("C");
+			Buffer2 += "C";
 		}
 		else
 		{
-			Buffer2.append("I");
+			Buffer2 += "I";
 		}
 		message.push_back(Buffer2);
 		//Line 5
-		sprintf_s(Buffer, "LVLH BODY-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLES--PITCH=%+07.2lf YAW=%+07.2lf", BodyAtt.x*DEG, BodyAtt.y*DEG, BodyAtt.z*DEG, tab->P_G, tab->Y_G);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "LVLH BODY-ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf TRIM ANGLES--PITCH=%+07.2lf YAW=%+07.2lf", BodyAtt.x* DEG, BodyAtt.y* DEG, BodyAtt.z* DEG, tab->P_G, tab->Y_G));
 		//Line 6
-		sprintf_s(Buffer, "IMU-------ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf HT AT RETRO=%+07.2lf TRUE ANOMALY AT GETI(RET)=%+07.2lf", IMUAtt.x*DEG, IMUAtt.y*DEG, IMUAtt.z*DEG, tab->H_Retro, tab->TrueAnomalyRetro);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "IMU-------ROLL=%+07.2lf PITCH=%+07.2lf YAW=%+07.2lf HT AT RETRO=%+07.2lf TRUE ANOMALY AT GETI(RET)=%+07.2lf", IMUAtt.x* DEG, IMUAtt.y* DEG, IMUAtt.z* DEG, tab->H_Retro, tab->TrueAnomalyRetro));
 		//Line 7
-		Buffer2.assign("REFSMMAT ID=");
 		std::string REFSMMAT_ID;
 		pRTCC->FormatREFSMMATCode(refsid, refsdata.ID, REFSMMAT_ID);
-		Buffer2.append(REFSMMAT_ID);
-		sprintf_s(Buffer, " XX=%+.8lf XY=%+.8lf XZ=%+.8lf", refsdata.REFSMMAT.m11, refsdata.REFSMMAT.m12, refsdata.REFSMMAT.m13);
-		Buffer2.append(Buffer);
+		Buffer2 = "REFSMMAT ID=";
+		Buffer2 += REFSMMAT_ID;
+		Buffer2 += fmt(Buffer, " XX=%+.8lf XY=%+.8lf XZ=%+.8lf", refsdata.REFSMMAT.m11, refsdata.REFSMMAT.m12, refsdata.REFSMMAT.m13);
 		message.push_back(Buffer2);
 		//Line 8
-		sprintf_s(Buffer, "                   YX=%+.8lf YY=%+.8lf YZ=%+.8lf", refsdata.REFSMMAT.m21, refsdata.REFSMMAT.m22, refsdata.REFSMMAT.m23);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "                   YX=%+.8lf YY=%+.8lf YZ=%+.8lf", refsdata.REFSMMAT.m21, refsdata.REFSMMAT.m22, refsdata.REFSMMAT.m23));
 		//Line 9
-		sprintf_s(Buffer, "                   ZX=%+.8lf ZY=%+.8lf ZZ=%+.8lf", refsdata.REFSMMAT.m31, refsdata.REFSMMAT.m32, refsdata.REFSMMAT.m33);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "                   ZX=%+.8lf ZY=%+.8lf ZZ=%+.8lf", refsdata.REFSMMAT.m31, refsdata.REFSMMAT.m32, refsdata.REFSMMAT.m33));
 		//Line 10
-		sprintf_s(Buffer, "LVLH XDV(TRUE) VGX=%+09.2lf VGY=%+09.2lf VGZ=%+09.2lf", tab->VG_XDX.x, tab->VG_XDX.y, tab->VG_XDX.z);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "LVLH XDV(TRUE) VGX=%+09.2lf VGY=%+09.2lf VGZ=%+09.2lf", tab->VG_XDX.x, tab->VG_XDX.y, tab->VG_XDX.z));
 		//Line 11
 		VECTOR3 vtemp = sv_TIG.R / OrbMech::R_Earth;
 		VECTOR3 vtemp2 = sv_TIG.V / OrbMech::R_Earth*3600.0;
-		sprintf_s(Buffer, "VECTOR AT GETI(RETRO) X=%+.6lf Y=%+.6lf Z=%+.6lf XV=%+.6lf YV=%+.6lf ZV=%+.6lf", vtemp.x, vtemp.y, vtemp.z, vtemp2.x, vtemp2.y, vtemp2.z);
-		Buffer2.assign(Buffer);
-		message.push_back(Buffer2);
+		message.push_back(fmt(Buffer, "VECTOR AT GETI(RETRO) X=%+.6lf Y=%+.6lf Z=%+.6lf XV=%+.6lf YV=%+.6lf ZV=%+.6lf", vtemp.x, vtemp.y, vtemp.z, vtemp2.x, vtemp2.y, vtemp2.z));
 		//Line 12
 		message.push_back("ENTRY PARAMETERS");
 		//Line 13
-		Buffer2.assign("ENTRY PROFILE=() INITIAL BANK=");
-		sprintf_s(Buffer, "%+07.2lf", pRTCC->RZJCTTC.R31_InitialBankAngle*DEG);
-		Buffer2.append(Buffer);
-		sprintf_s(Buffer, " G-LEVEL=%.2lf", pRTCC->RZJCTTC.R31_GLevel);
-		Buffer2.append(Buffer);
+		Buffer2 = "ENTRY PROFILE=() INITIAL BANK=";
+		Buffer2 += fmt(Buffer, "%+07.2lf", pRTCC->RZJCTTC.R31_InitialBankAngle * DEG);
+		Buffer2 += fmt(Buffer, " G-LEVEL=%.2lf", pRTCC->RZJCTTC.R31_GLevel);
 		Buffer2 += " FINAL-BANK=";
 		if (pRTCC->RZJCTTC.R31_FinalBankAngle > 0)
 		{
-			sprintf_s(Buffer, "RL%03.0lf", pRTCC->RZJCTTC.R31_FinalBankAngle*DEG);
+			Buffer2 += fmt(Buffer, "RL%03.0lf", pRTCC->RZJCTTC.R31_FinalBankAngle*DEG);
 		}
 		else
 		{
-			sprintf_s(Buffer, "RR%03.0lf", abs(pRTCC->RZJCTTC.R31_FinalBankAngle)*DEG);
+			Buffer2 += fmt(Buffer, "RR%03.0lf", abs(pRTCC->RZJCTTC.R31_FinalBankAngle)*DEG);
 		}
-		Buffer2.append(Buffer);
 		Buffer2 += " GETRB=";
 		pRTCC->OnlinePrintTimeHHHMMSS(pRTCC->GETfromGMT(sv_EI.GMT + tab->RETRB), Buffer3);
-		Buffer2.append(Buffer3);
+		Buffer2 += Buffer3;
 		message.push_back(Buffer2);
 		//Line 14
-		Buffer2.assign("TARGET LAT=");
+		Buffer2 = "TARGET LAT=";
 		if (tab->lat_T >= 0.0)
 		{
-			sprintf_s(Buffer, "%07.4lfN", tab->lat_T);
+			Buffer2 += fmt(Buffer, "%07.4lfN", tab->lat_T);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%07.4lfS", abs(tab->lat_T));
+			Buffer2 += fmt(Buffer, "%07.4lfS", abs(tab->lat_T));
 		}
-		Buffer2.append(Buffer);
-		Buffer2.append(" LONG=");
+		Buffer2 += " LONG=";
 		if (tab->lng_T >= 0.0)
 		{
-			sprintf_s(Buffer, "%08.4lfE", tab->lng_T);
+			Buffer2 += fmt(Buffer, "%08.4lfE", tab->lng_T);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%08.4lfW", abs(tab->lng_T));
+			Buffer2 += fmt(Buffer, "%08.4lfW", abs(tab->lng_T));
 		}
-		Buffer2.append(Buffer);
 		message.push_back(Buffer2);
 		//Line 15
-		Buffer2.assign("IMPACT LAT=");
+		Buffer2 = "IMPACT LAT=";
 		if (tab->lat_IP >= 0.0)
 		{
-			sprintf_s(Buffer, "%07.4lfN", tab->lat_IP);
+			Buffer2 += fmt(Buffer, "%07.4lfN", tab->lat_IP);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%07.4lfS", abs(tab->lat_IP));
+			Buffer2 += fmt(Buffer, "%07.4lfS", abs(tab->lat_IP));
 		}
-		Buffer2.append(Buffer);
-		Buffer2.append(" LONG=");
+		Buffer2 += " LONG=";
 		if (tab->lng_IP >= 0.0)
 		{
-			sprintf_s(Buffer, "%08.4lfE", tab->lng_IP);
+			Buffer2 += fmt(Buffer, "%08.4lfE", tab->lng_IP);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%08.4lfW", abs(tab->lng_IP));
+			Buffer2 += fmt(Buffer, "%08.4lfW", abs(tab->lng_IP));
 		}
-		Buffer2.append(Buffer);
-		Buffer2.append(" GETEI=");
+		Buffer2 += " GETEI=";
 		pRTCC->OnlinePrintTimeHHHMMSS(pRTCC->GETfromGMT(sv_EI.GMT), Buffer3);
-		Buffer2.append(Buffer3);
-		sprintf_s(Buffer, " VEI=%08.2lf GEI= %+06.2lf", tab->V400k, tab->Gamma400k);
-		Buffer2.append(Buffer);
+		Buffer2 += Buffer3;
+		Buffer2 += fmt(Buffer, " VEI=%08.2lf GEI= %+06.2lf", tab->V400k, tab->Gamma400k);
 		message.push_back(Buffer2);
 		//Line 16
-		Buffer2.assign("MAX IP LAT=");
+		Buffer2 = "MAX IP LAT=";
 		if (tab->lat_ML >= 0.0)
 		{
-			sprintf_s(Buffer, "%07.4lfN", tab->lat_ML);
+			Buffer2 += fmt(Buffer, "%07.4lfN", tab->lat_ML);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%07.4lfS", abs(tab->lat_ML));
+			Buffer2 += fmt(Buffer, "%07.4lfS", abs(tab->lat_ML));
 		}
-		Buffer2.append(Buffer);
-		Buffer2.append(" LONG=");
+		Buffer2 += " LONG=";
 		if (tab->lng_ML >= 0.0)
 		{
-			sprintf_s(Buffer, "%08.4lfE", tab->lng_ML);
+			Buffer2 += fmt(Buffer, "%08.4lfE", tab->lng_ML);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%08.4lfW", abs(tab->lng_ML));
+			Buffer2 += fmt(Buffer, "%08.4lfW", abs(tab->lng_ML));
 		}
-		Buffer2.append(Buffer);
-		sprintf_s(Buffer, " MAX G=%05.2lf GET OF MAX G=", gmax);
-		Buffer2.append(Buffer);
+		Buffer2 += fmt(Buffer, " MAX G=%05.2lf GET OF MAX G=", gmax);
 		pRTCC->OnlinePrintTimeHHHMMSS(pRTCC->GETfromGMT(gmt_gmax), Buffer3);
-		Buffer2.append(Buffer3);
+		Buffer2 += Buffer3;
 		message.push_back(Buffer2);
 		//Line 17
-		Buffer2.assign("MIN IP LAT=");
+		Buffer2 = "MIN IP LAT=";
 		if (tab->lat_ZL >= 0.0)
 		{
-			sprintf_s(Buffer, "%07.4lfN", tab->lat_ZL);
+			Buffer2 += fmt(Buffer, "%07.4lfN", tab->lat_ZL);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%07.4lfS", abs(tab->lat_ZL));
+			Buffer2 += fmt(Buffer, "%07.4lfS", abs(tab->lat_ZL));
 		}
-		Buffer2.append(Buffer);
-		Buffer2.append(" LONG=");
+		Buffer2 += " LONG=";
 		if (tab->lng_ZL >= 0.0)
 		{
-			sprintf_s(Buffer, "%08.4lfE", tab->lng_ZL);
+			Buffer2 += fmt(Buffer, "%08.4lfE", tab->lng_ZL);
 		}
 		else
 		{
-			sprintf_s(Buffer, "%08.4lfW", abs(tab->lng_ZL));
+			Buffer2 += fmt(Buffer, "%08.4lfW", abs(tab->lng_ZL));
 		}
-		Buffer2.append(Buffer);
 		message.push_back(Buffer2);
 		break;
 	}

@@ -96,7 +96,7 @@
       <AssemblerListingLocation>.\Release\LCC/</AssemblerListingLocation>
       <ObjectFileName>.\Release\LCC/</ObjectFileName>
       <ProgramDataBaseFileName>.\Release\LCC/</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>../../src_rtccmfd;../../src_sys;../../../../include;../../../../../Sound/OrbiterSound_SDK/VESSELSOUND_SDK/ShuttlePB_project;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src_rtccmfd;../../src_aux;../../src_sys;../../../../include;../../../../../Sound/OrbiterSound_SDK/VESSELSOUND_SDK/ShuttlePB_project;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DIRECTSOUNDENABLED;WIN32;NDEBUG;_WINDOWS;_USRDLL;MCC_EXPORTS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -127,7 +127,7 @@
       <AssemblerListingLocation>.\Debug\LCC/</AssemblerListingLocation>
       <ObjectFileName>.\Debug\LCC/</ObjectFileName>
       <ProgramDataBaseFileName>.\Debug\LCC/</ProgramDataBaseFileName>
-      <AdditionalIncludeDirectories>../../src_rtccmfd;../../src_sys;../../../../include;../../../../../Sound/OrbiterSound_SDK/VESSELSOUND_SDK/ShuttlePB_project;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src_rtccmfd;../../src_aux;../../src_sys;../../../../include;../../../../../Sound/OrbiterSound_SDK/VESSELSOUND_SDK/ShuttlePB_project;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DIRECTSOUNDENABLED;WIN32;_DEBUG;_WINDOWS;_USRDLL;MCC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\src_launch\RCA110A.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src_aux\nassputils.cpp" />
     <ClCompile Include="..\..\src_launch\LCC.cpp" />
     <ClCompile Include="..\..\src_launch\LCCMFDButtons.cpp" />
     <ClCompile Include="..\..\src_launch\LCC_MFD.cpp" />
